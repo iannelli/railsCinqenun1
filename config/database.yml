@@ -62,20 +62,15 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
+
 production:
   <<: *default
-  database: bddcinqenun1
-  username: root
-  password: <%= ENV['TESTAPP_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
 
 production_sec:
-  adapter: mysql2
-  database: bddcinqenunold1
-  username: root
-  password: <%= ENV['TESTAPP_DATABASE_PASSWORD'] %>
-  
+  <<: *default
+url: <%= ENV['DATABASE_URL_2'] %>
+
 production_tro:
-  adapter: mysql2
-  database: bddgescinqenun
-  username: root
-  password: <%= ENV['TESTAPP_DATABASE_PASSWORD'] %>
+  <<: *default
+url: <%= ENV['DATABASE_URL_3'] %>
