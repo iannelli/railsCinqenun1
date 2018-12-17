@@ -65,12 +65,12 @@ test:
 
 production:
   <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
+  url: <%= ENV['DATABASE_URL_2'] %>
 
 production_sec:
   <<: *default
-url: <%= ENV['DATABASE_URL_2'] %>
+  url: <%= ENV['DATABASE_URL_3'] %>
 
 production_tro:
   <<: *default
-url: <%= ENV['DATABASE_URL_3'] %>
+  url: <%= ENV['DATABASE_URL'] %>
