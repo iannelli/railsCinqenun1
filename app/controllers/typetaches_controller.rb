@@ -8,7 +8,7 @@ class TypetachesController < ApplicationController
 
       if dateConnex.to_i > @paramun.parDateConnex.to_i
           respond_to do |format|
-              format.xml { render text: "ttypErreurS" }
+              format.xml { render text: "ttypErreurS0" }
           end
       end
   end
@@ -21,7 +21,7 @@ class TypetachesController < ApplicationController
 
       respond_to do |format|
           if @typetaches.empty?
-               format.xml { render request.format.to_sym => "ttypErreurA" } ## Aucun Typetache collecté
+               format.xml { render request.format.to_sym => "ttypErreurA0" } ## Aucun Typetache collecté
           else  
                format.xml { render xml: @typetaches }
           end
@@ -53,7 +53,7 @@ class TypetachesController < ApplicationController
           if @erreurCreate == 0
               format.xml { render xml: @typetache }
           else
-              format.xml { render request.format.to_sym => "ttypErreurC" }
+              format.xml { render request.format.to_sym => "ttypErreurC0" }
           end
       end
   end
@@ -95,7 +95,7 @@ class TypetachesController < ApplicationController
           if @erreurUpdate == 0
               format.xml { render request.format.to_sym => "ttypetacheOK" }
           else
-              format.xml { render request.format.to_sym => "ttypErreurU" }
+              format.xml { render request.format.to_sym => "ttypErreurU0" }
           end
       end
   end
@@ -104,7 +104,7 @@ class TypetachesController < ApplicationController
   # DELETE /typetaches/1 ********* SUPPRESSION ******************
   # DELETE /typetaches/1.xml
   def destroy
-      @erreurDestroy = 0
+      @destroyOK = 0
       begin
           @typetache = Typetache.find(params[:id])
       rescue => e  # Incident Find Typetache
@@ -117,9 +117,19 @@ class TypetachesController < ApplicationController
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
-          @erreurDestroy = 1
+          @destroyOK = 1
       end
-      if @erreurDestroy == 0
+      if @typetache.taches.length != 0
+          @tacheArray = []
+          @tacheString = ""          
+          @typetache.taches.each do |tache|
+              @tacheArray << tache.tacLibCourt.to_s
+              @tacheArray << tache.tacProLib.to_s             
+          end
+          @destroyOK = 3
+          @tacheString = "ttypErreurNO" + @tacheArray.join('|')
+      end
+      if @destroyOK == 0
           begin
               @typetache.destroy
           rescue => e # Incident destroy Typetache
@@ -128,18 +138,23 @@ class TypetachesController < ApplicationController
               @erreur.dateHeure = current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = 'rails - TypetachesController - destroy'
               @erreur.origine = "erreur Delete Typetache - typetache.id=" + params[:id].to_s
-              @erreur.numLigne = '124'
+              @erreur.numLigne = '134'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
-              @erreurDestroy = 1
+              @destroyOK = 2
           end
       end
       respond_to do |format|
-          if @erreurDestroy == 0
-              format.xml { render request.format.to_sym => "ttypetacheOK" }
-          else
-              format.xml { render request.format.to_sym => "ttypErreurD" }
+          case @destroyOK
+              when 0
+                  format.xml { render request.format.to_sym => "ttypetacheOK" }
+              when 1
+                  format.xml { render request.format.to_sym => "ttypErreurD1" } # Incident Find
+              when 2
+                  format.xml { render request.format.to_sym => "ttypErreurD2" } # Incident Destroy
+              when 3                     
+                  format.xml { render request.format.to_sym => @tacheString }  # Présence de Tache pour ce Type de tache           
           end
       end
   end

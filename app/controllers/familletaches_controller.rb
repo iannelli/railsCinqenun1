@@ -33,27 +33,47 @@ class FamilletachesController < ApplicationController
   # POST /familletaches.xml
   def create
     @current_time = DateTime.now
-    @erreurCreate = 0
-    @familletache = Familletache.new(familletache_params)
-    @familletache.parametreId = params[:parametre][:id].to_i
-    begin
-        @familletache.save
-    rescue => e # Incident création Familletache
-        @erreur = Erreur.new
-        @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-        @erreur.appli = "rails - FamilletachesController - create"
-        @erreur.origine = "erreur Création Familletache"
-        @erreur.numLigne = '40'
-        @erreur.message = e.message
-        @erreur.parametreId = params[:parametre][:id].to_s
-        @erreur.save
-        @erreurCreate = 1
+    @CreateOK = 0
+    @erreurCreate = ["0","0"]
+    if @paramun.familletaches.length != 0
+        @paramun.familletaches.each do |familletache|
+            if familletache.famtacNum.to_s == params[:familletache][:famtacNum].to_s
+                @erreurCreate[1] = "1" # 'famtacNum' déjà existant
+            end
+            if familletache.famtacLib.to_s == params[:familletache][:famtacLib].to_s
+                @erreurCreate[0] = "1" # 'famtacLib' déjà existant
+            end       
+        end
+        if @erreurCreate[1].to_s == "1" || @erreurCreate[0].to_s == "1"
+            @CreateOK = 1
+            @famErreurC = "ffamErreurC" + @erreurCreate.join.to_s
+        end
+    end
+    if @CreateOK == 0
+        @familletache = Familletache.new(familletache_params)
+        @familletache.parametreId = params[:parametre][:id].to_i
+        begin
+            @familletache.save
+        rescue => e # Incident création Familletache
+            @erreur = Erreur.new
+            @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+            @erreur.appli = "rails - FamilletachesController - create"
+            @erreur.origine = "erreur Création Familletache"
+            @erreur.numLigne = '40'
+            @erreur.message = e.message
+            @erreur.parametreId = params[:parametre][:id].to_s
+            @erreur.save
+            @CreateOK = 2
+        end
     end
     respond_to do |format|
-        if @erreurCreate == 0
-            format.xml { render xml: @familletache }
-        else
-            format.xml { render request.format.to_sym => "ffamErreurC" }
+        case @CreateOK
+            when 0
+                format.xml { render xml: @familletache }
+            when 1               
+                format.xml { render request.format.to_sym => @famErreurC }
+            when 2
+                format.xml { render request.format.to_sym => "ffamErreurC2" }
         end
     end
   end
@@ -63,21 +83,39 @@ class FamilletachesController < ApplicationController
   # PUT /familletaches/1.xml
   def update
     @current_time = DateTime.now
-    @erreurUpdate = 0
+    @UpdateOK = 0
+    @erreurUpdate = ["0","0"]
     begin
         @familletache = Familletache.find(params[:id])
-        begin
-            @familletache.update(familletache_params)
-        rescue => e # Incident Save Familletache
-            @erreur = Erreur.new
-            @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = "rails - FamilletachesController - update"
-            @erreur.origine = "erreur Save Familletache - Familletache.id=" + params[:id].to_s
-            @erreur.numLigne = '70'
-            @erreur.message = e.message
-            @erreur.parametreId = params[:parametre][:id].to_s
-            @erreur.save
-            @erreurUpdate = 1
+        @paramun.familletaches.each do |familletache|
+            if familletache.id.to_i != params[:id].to_i
+                if familletache.famtacNum.to_s == params[:familletache][:famtacNum].to_s
+                    @erreurUpdate[1] = "1" # 'famtacNum' déjà existant
+                end
+                if familletache.famtacLib.to_s == params[:familletache][:famtacLib].to_s
+                    @erreurUpdate[0] = "1" # 'famtacLib' déjà existant
+                end
+            end      
+        end
+        if @erreurUpdate[1].to_s == "1" || @erreurUpdate[0].to_s == "1"
+            @UpdateOK = 1
+            @famErreurU = "ffamErreurU" + @erreurUpdate.join.to_s
+        end
+        
+        if @UpdateOK == 0
+            begin
+                @familletache.update(familletache_params)
+            rescue => e # Incident Save Familletache
+                @erreur = Erreur.new
+                @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                @erreur.appli = "rails - FamilletachesController - update"
+                @erreur.origine = "erreur Save Familletache - Familletache.id=" + params[:id].to_s
+                @erreur.numLigne = '70'
+                @erreur.message = e.message
+                @erreur.parametreId = params[:parametre][:id].to_s
+                @erreur.save
+                @UpdateOK = 2
+            end
         end
     rescue => e # Incident Find de Familletache
         @erreur = Erreur.new
@@ -88,13 +126,16 @@ class FamilletachesController < ApplicationController
         @erreur.message = e.message
         @erreur.parametreId = params[:parametre][:id].to_s
         @erreur.save
-        @erreurUpdate = 1
+        @UpdateOK = 2
     end
     respond_to do |format|
-        if @erreurUpdate == 0
-          format.xml { render request.format.to_sym => "ffamilleOK" }
-        else
-          format.xml { render request.format.to_sym => "ffamErreurU" }
+        case @UpdateOK
+            when 0
+                format.xml { render request.format.to_sym => "ffamilleOK" }
+            when 1
+                format.xml { render request.format.to_sym => @famErreurU }
+            when 2
+                format.xml { render request.format.to_sym => "ffamErreurU2" }
         end
     end
   end
