@@ -593,38 +593,34 @@ class ParamunsController < ApplicationController
           ## Examen des Types de Tache ------------------------------
           @typetacheArray = params[:parametre][:typetacheString].split(",")
           if @typetacheArray.length != 0 ## si au moins une Typetache à actualiser
-              @typetacheArray.uniq!
+              @typetacheArray.uniq! #Unification des id de même valeur en un seul id
               for t in @typetacheArray
                   begin
                       @typetache = Typetache.find(t)
                       if @typetache.typetacNat.to_s == 'FA'
-                          @calTypetacMarge = 0
                           @margeCumul = 0
-                          @nbreTache = 0
-                          @typetache.taches.each do |tache|
-                              if tache.tacStatut.to_s == "3Facturé" || tache.tacStatut.to_s == "3miFacturé" || tache.tacStatut.to_s == "3Réglé"
+                          @margeMoy1 = 0
+                          @margeMoy2 = 0
+                          @tempsArray = [0,0]
+                          @nbreHH = 0
+                          @nbreMN = 0
+                          @totDuree = 0   
+                          if @typetache.taches.length == 0
+                              @typetache.typetacMarge = '0'
+                              @typetache.save
+                          else 
+                              @typetache.taches.each do |tache|
                                   ## Re-Calcul des marges type ---------
                                   @margeCumul += tache.tacMarge.to_i
-                                  @nbreTache += 1
+                                  @tempsArray = tache.tacDureeBdc.split(':')
+                                  @nbreHH += @tempsArray[0].to_i
+                                  @nbreMN += @tempsArray[1].to_i
                               end
-                          end
-                          if @nbreTache > 0
-                              @calTypetacMarge = ((@margeCumul / @nbreTache) * 100).to_i
-                              @typetache.typetacMarge = @calTypetacMarge.to_s
-                              @typetache.typetacMarge = @calTypetacMarge.round.to_s
-                              begin
-                                  @typetache.save
-                              rescue => e  # incident Save Typetache
-                                  @erreur = Erreur.new
-                                  @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                                  @erreur.appli = 'rails - ParametresController - destroy'
-                                  @erreur.origine = "erreur Save Typetache.id= " + t.to_s
-                                  @erreur.numLigne = '86'
-                                  @erreur.message = e.message
-                                  @erreur.parametreId = params[:id].to_s
-                                  @erreur.save
-                                  break
-                              end
+                              @totDuree = @nbreHH + (@nbreMN / 60)
+                              @margeMoy1 = @margeCumul / @totDuree
+                              @margeMoy2 = (@typetache.typetacMarge.to_i + @margeMoy1) / 2
+                              @typetache.typetacMarge = @margeMoy2.round.to_s
+                              @typetache.save
                           end
                       end
                   rescue => e  # Incident Find Typetache
