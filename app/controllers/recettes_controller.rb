@@ -57,13 +57,13 @@ class RecettesController < ApplicationController
               nbre = @nbreRecetteArray[0].to_i + 1
               @nbreRecetteArray[0] = nbre.to_s
               temRecette = @parRecetteArray[0].to_i + @recette.facReglMont.to_i
-              @parRecetteArray[0].to_s = temRecette.to_s
+              @parRecetteArray[0] = temRecette.to_s
           end
           if anReception.to_i == current_year.to_i-1
               nbre = @nbreRecetteArray[1].to_i + 1
               @nbreRecetteArray[1] = nbre.to_s
               temRecette = @parRecetteArray[1].to_i + @recette.facReglMont.to_i
-              @parRecetteArray[1].to_s = temRecette.to_s
+              @parRecetteArray[1] = temRecette.to_s
           end
           @paramun.nbreRecette = @nbreRecetteArray.join(',')
           @paramun.parRecette = @parRecetteArray.join(',')

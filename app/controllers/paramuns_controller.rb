@@ -21,6 +21,81 @@ class ParamunsController < ApplicationController
       @current_time = DateTime.now
       begin
           @paramun = Paramun.find(params[:parametre][:id])
+          anCourant = Time.new.year
+          anPrecedent = anCourant - 1
+          if anCourant > @paramun.parDateConnex.slice(0,4).to_i # Archivage des Recettes/Dépenses au changement d'année
+              # parRecette (Recette)
+              @parRecetteNewArray = []
+              @parRecetteOldArray = @paramun.parRecette.split(',')
+              @parRecetteNewArray[0] = anCourant
+              @parRepriseNewArray[1] = 0
+              @parRecetteNewArray[2] = @parRecetteOldArray[0]
+              @parRepriseNewArray[3] = @parRecetteOldArray[1]
+              @parRecetteNewArray[4] = @parRecetteOldArray[2]
+              @parRepriseNewArray[5] = @parRecetteOldArray[3]
+              @paramun.parRecette = @parRecetteNewArray.join(',')
+              # nbreRecette
+              @nbreRecetteNewArray = []
+              @nbreRecetteOldArray = @paramun.nbreRecette.split(',')
+              @nbreRecetteNewArray[0] = 0
+              @nbreRecetteNewArray[1] = @nbreRecetteOldArray[0]
+              @nbreRecetteNewArray[2] = @nbreRecetteOldArray[1]
+              @nbreRecetteNewArray[3] = @nbreRecetteOldArray[2]
+              @nbreRecetteNewArray[4] = @nbreRecetteOldArray[3]
+              @nbreRecetteNewArray[5] = @nbreRecetteOldArray[4]
+              @nbreRecetteNewArray[6] = @nbreRecetteOldArray[5]
+              @paramun.nbreRecette = @nbreRecetteNewArray.join(',')
+              # nbreDepense
+              @nbreDepenseNewArray = []
+              @nbreDepenseOldArray = @paramun.nbreDepense.split(',')
+              @nbreDepenseNewArray[0] = 0
+              @nbreDepenseNewArray[1] = @nbreDepenseOldArray[0]
+              @nbreDepenseNewArray[2] = @nbreDepenseOldArray[1]
+              @nbreDepenseNewArray[3] = @nbreDepenseOldArray[2]
+              @nbreDepenseNewArray[4] = @nbreDepenseOldArray[3]
+              @nbreDepenseNewArray[5] = @nbreDepenseOldArray[4]
+              @nbreDepenseNewArray[6] = @nbreDepenseOldArray[5]
+              @paramun.nbreDepense = @nbreDepenseNewArray.join(',')
+
+              # Archivage des Recettes
+              if @paramun.recettes.length != 0
+                  @paramun.recettes.each do |recette|
+                      if recette.facDateReception.slice(6,4) == anPrecedent.to_s
+                          @recetteold = Recetteold.new()
+                          @recetteold.id = recette.id
+                          @recetteold.facDateEmis = recette.facDateEmis
+                          @recetteold.facDateReception = recette.facDateReception
+                          @recetteold.facRef = recette.facRef
+                          @recetteold.cliRaison = recette.cliRaison
+                          @recetteold.proLib = recette.proLib
+                          @recetteold.facReglMont = recette.facReglMont
+                          @recetteold.modePaieLib = recette.modePaieLib
+                          @recetteold.factureId = recette.factureId
+                          @recetteold.parametreoldId = recette.parametreId
+                          @recetteold.save
+                          recette.destroy
+                      end
+                  end
+              end
+              # Archivage des Depenses
+              if @paramun.depenses.length != 0
+                  @paramun.depenses.each do |depense|
+                      if depense.dateRegl.slice(6,4) == anPrecedent.to_s
+                          @depenseold = Depenseold.new()
+                          @depenseold.id = depense.id
+                          @depenseold.dateRegl = depense.dateRegl
+                          @depenseold.refFacture = depense.refFacture
+                          @depenseold.fournisseur = depense.fournisseur
+                          @depenseold.nature = depense.nature
+                          @depenseold.montant = depense.montant
+                          @depenseold.modeRegl = depense.modeRegl
+                          @depenseold.parametreoldId = depense.parametreId
+                          @depenseold.save
+                          depense.destroy
+                      end
+                  end
+              end
+          end
           @paramun.parDateConnex = (@current_time.strftime "%Y%m%d%H%M%S").to_s #Date-Heure Connexion 'aaaammjjhhmnss'
           @paramun.save
       rescue => e # Incident Find de Paramun
@@ -34,7 +109,6 @@ class ParamunsController < ApplicationController
           @erreur.save
           @indexOK = 1
       end
-
       respond_to do |format|
           case @indexOK
               when 0
