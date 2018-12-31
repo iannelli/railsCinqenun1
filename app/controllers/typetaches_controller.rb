@@ -62,22 +62,23 @@ class TypetachesController < ApplicationController
    # PUT /typetaches/1 ********* MISE A JOUR ******************
   # PUT /typetaches/1.xml
   def update
-      @erreurUpdate = 0
+      @UpdateOK = 0
       begin
           @typetache = Typetache.find(params[:id])
-          begin
+          if @typetache.taches.length != 0
+              @tacheArray = []
+              @tacheString = ""          
+              @typetache.taches.each do |tache|
+                  if tache.typetacUnite.to_s != params[:typetache][:typetacUnite].to_s
+                      @tacheArray << tache.tacLibCourt.to_s
+                      @tacheArray << tache.tacProLib.to_s
+                  end             
+              end
+              @UpdateOK = 2
+              @tacheString = "ttypErreurU1" + @tacheArray.join('|')
+          end
+          if @UpdateOK == 0
               @typetache.update(typetache_params)
-          rescue => e # Incident update Typetache
-              @erreur = Erreur.new
-              current_time = DateTime.now
-              @erreur.dateHeure = current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - TypetachesController - update"
-              @erreur.origine = "Incident update Typetache.id=" + params[:id].to_s
-              @erreur.numLigne = '69'
-              @erreur.message = e.message
-              @erreur.parametreId = params[:parametre][:id].to_s
-              @erreur.save
-              @erreurUpdate = 1
           end
       rescue => e # Incident Find Typetache
           @erreur = Erreur.new
@@ -89,13 +90,16 @@ class TypetachesController < ApplicationController
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
-          @erreurUpdate = 1
+          @UpdateOK = 1
       end
       respond_to do |format|
-          if @erreurUpdate == 0
-              format.xml { render request.format.to_sym => "ttypetacheOK" }
-          else
-              format.xml { render request.format.to_sym => "ttypErreurU0" }
+           case @UpdateOK
+              when 0
+                  format.xml { render request.format.to_sym => "ttypetacheOK" }
+              when 1
+                  format.xml { render request.format.to_sym => "ttypErreurU0" } # Erreur Find Typetache
+              when 2
+                  format.xml { render request.format.to_sym => @tacheString }  # Présence de Tache de 'typetacUnite' différent
           end
       end
   end
@@ -154,7 +158,7 @@ class TypetachesController < ApplicationController
               when 2
                   format.xml { render request.format.to_sym => "ttypErreurD2" } # Incident Destroy
               when 3                     
-                  format.xml { render request.format.to_sym => @tacheString }  # Présence de Tache pour ce Type de tache           
+                  format.xml { render request.format.to_sym => @tacheString }  # Présence de Tache pour ce Type de tache
           end
       end
   end
