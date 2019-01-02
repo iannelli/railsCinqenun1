@@ -25,19 +25,14 @@ class ParamunsController < ApplicationController
           anPrecedent = anCourant - 1
           if anCourant > @paramun.parDateConnex.slice(0,4).to_i # Archivage des Recettes/Dépenses au changement d'année
               # parRecette (Recette)
-              @parRecetteNewArray = []
+              @parRecetteNewArray = [0,0,0]
               @parRecetteOldArray = @paramun.parRecette.split(',')
-              @parRecetteNewArray[0] = anCourant
-              @parRepriseNewArray[1] = 0
-              @parRecetteNewArray[2] = @parRecetteOldArray[0]
-              @parRepriseNewArray[3] = @parRecetteOldArray[1]
-              @parRecetteNewArray[4] = @parRecetteOldArray[2]
-              @parRepriseNewArray[5] = @parRecetteOldArray[3]
+              @parRecetteNewArray[1] = @parRecetteOldArray[0]
+              @parRecetteNewArray[2] = @parRecetteOldArray[1]             
               @paramun.parRecette = @parRecetteNewArray.join(',')
               # nbreRecette
-              @nbreRecetteNewArray = []
+              @nbreRecetteNewArray = [0,0,0,0,0,0,0]
               @nbreRecetteOldArray = @paramun.nbreRecette.split(',')
-              @nbreRecetteNewArray[0] = 0
               @nbreRecetteNewArray[1] = @nbreRecetteOldArray[0]
               @nbreRecetteNewArray[2] = @nbreRecetteOldArray[1]
               @nbreRecetteNewArray[3] = @nbreRecetteOldArray[2]
@@ -46,16 +41,15 @@ class ParamunsController < ApplicationController
               @nbreRecetteNewArray[6] = @nbreRecetteOldArray[5]
               @paramun.nbreRecette = @nbreRecetteNewArray.join(',')
               # nbreDepense
-              @nbreDepenseNewArray = []
+              @nbreDepenseNewArray = [0,0,0,0,0,0,0]
               @nbreDepenseOldArray = @paramun.nbreDepense.split(',')
-              @nbreDepenseNewArray[0] = 0
               @nbreDepenseNewArray[1] = @nbreDepenseOldArray[0]
               @nbreDepenseNewArray[2] = @nbreDepenseOldArray[1]
               @nbreDepenseNewArray[3] = @nbreDepenseOldArray[2]
               @nbreDepenseNewArray[4] = @nbreDepenseOldArray[3]
               @nbreDepenseNewArray[5] = @nbreDepenseOldArray[4]
               @nbreDepenseNewArray[6] = @nbreDepenseOldArray[5]
-              @paramun.nbreDepense = @nbreDepenseNewArray.join(',')
+              @paramun.nbreDepense = @nbreDepenseNewArray.join(',')              
 
               # Archivage des Recettes
               if @paramun.recettes.length != 0
@@ -95,6 +89,9 @@ class ParamunsController < ApplicationController
                       end
                   end
               end
+              # Maj de parAnFac et parNumFact
+              @paramun.parAnFact = anCourant.to_s
+              @paramun.parNumFact = '00000'
           end
           @paramun.parDateConnex = (@current_time.strftime "%Y%m%d%H%M%S").to_s #Date-Heure Connexion 'aaaammjjhhmnss'
           @paramun.save
@@ -105,7 +102,7 @@ class ParamunsController < ApplicationController
           @erreur.origine = "erreur Find Paramun - params[:parametre][:id]=" + params[:parametre][:id].to_s
           @erreur.numLigne = '23'
           @erreur.message = e.message
-          @erreur.parametreId = params[:parametre][:id].to_s
+          @erreur.parametreId = params[:parametre][:id].to_i
           @erreur.save
           @indexOK = 1
       end
@@ -115,24 +112,6 @@ class ParamunsController < ApplicationController
                   format.xml  { render xml: @paramun }
               when 1
                   format.xml { render request.format.to_sym => "pparErreurI" } # Incident Find Paramun
-          end
-      end
-  end
-
-
-  # POST /@paramuns
-  # POST /@paramuns.json
-  def create
-      @paramun = Paramun.new(paramun_params)
-      #Application.application.Parametre.parAnFact = Application.application.dateTimeServeur.slice(6,10);
-      #  Application.application.Abonne.aboNumFact = '00000';
-      respond_to do |format|
-          if @paramun.save
-            format.html { redirect_to @paramun, notice: 'Parametre was successfully created.' }
-            format.json { render :show, status: :created, location: @paramun }
-          else
-            format.html { render :new }
-            format.json { render json: @paramun.errors, status: :unprocessable_entity }
           end
       end
   end
