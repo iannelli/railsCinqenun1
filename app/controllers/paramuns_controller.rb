@@ -22,7 +22,8 @@ class ParamunsController < ApplicationController
       begin
           @paramun = Paramun.find(params[:parametre][:id])
           anCourant = Time.new.year
-          anPrecedent = anCourant - 1
+          moisCourant = Time.new.month
+          anMoins2 = anCourant - 2
           if anCourant > @paramun.parDateConnex.slice(0,4).to_i # Archivage des Recettes/Dépenses au changement d'année
               # parRecette (Recette)
               @parRecetteNewArray = [0,0,0]
@@ -51,10 +52,10 @@ class ParamunsController < ApplicationController
               @nbreDepenseNewArray[6] = @nbreDepenseOldArray[5]
               @paramun.nbreDepense = @nbreDepenseNewArray.join(',')              
 
-              # Archivage des Recettes
+              # Archivage des Recettes de l'année N-2
               if @paramun.recettes.length != 0
                   @paramun.recettes.each do |recette|
-                      if recette.facDateReception.slice(6,4) == anPrecedent.to_s
+                      if recette.facDateReception.slice(6,4) == anMoins2.to_s
                           @recetteold = Recetteold.new()
                           @recetteold.id = recette.id
                           @recetteold.facDateEmis = recette.facDateEmis
@@ -71,10 +72,10 @@ class ParamunsController < ApplicationController
                       end
                   end
               end
-              # Archivage des Depenses
+              # Archivage des Depenses de l'année N-2
               if @paramun.depenses.length != 0
                   @paramun.depenses.each do |depense|
-                      if depense.dateRegl.slice(6,4) == anPrecedent.to_s
+                      if depense.dateRegl.slice(6,4) == anMoins2.to_s
                           @depenseold = Depenseold.new()
                           @depenseold.id = depense.id
                           @depenseold.dateRegl = depense.dateRegl
