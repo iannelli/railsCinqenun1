@@ -24,14 +24,17 @@ class ParamunsController < ApplicationController
           anCourant = Time.new.year
           moisCourant = Time.new.month
           anMoins2 = anCourant - 2
-          if anCourant > @paramun.parDateConnex.slice(0,4).to_i # Archivage des Recettes/Dépenses au changement d'année
-              # parRecette (Recette)
+          # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses
+          if anCourant > @paramun.parDateConnex.slice(0,4).to_i 
+              # parRecette ----
               @parRecetteNewArray = [0,0,0]
               @parRecetteOldArray = @paramun.parRecette.split(',')
               @parRecetteNewArray[1] = @parRecetteOldArray[0]
               @parRecetteNewArray[2] = @parRecetteOldArray[1]             
               @paramun.parRecette = @parRecetteNewArray.join(',')
-              # nbreRecette
+              # parDepass ----
+              @paramun.parDepass = "neant,v"              
+              # nbreRecette -----
               @nbreRecetteNewArray = [0,0,0,0,0,0,0]
               @nbreRecetteOldArray = @paramun.nbreRecette.split(',')
               @nbreRecetteNewArray[1] = @nbreRecetteOldArray[0]
@@ -41,7 +44,7 @@ class ParamunsController < ApplicationController
               @nbreRecetteNewArray[5] = @nbreRecetteOldArray[4]
               @nbreRecetteNewArray[6] = @nbreRecetteOldArray[5]
               @paramun.nbreRecette = @nbreRecetteNewArray.join(',')
-              # nbreDepense
+              # nbreDepense ----
               @nbreDepenseNewArray = [0,0,0,0,0,0,0]
               @nbreDepenseOldArray = @paramun.nbreDepense.split(',')
               @nbreDepenseNewArray[1] = @nbreDepenseOldArray[0]
@@ -51,8 +54,7 @@ class ParamunsController < ApplicationController
               @nbreDepenseNewArray[5] = @nbreDepenseOldArray[4]
               @nbreDepenseNewArray[6] = @nbreDepenseOldArray[5]
               @paramun.nbreDepense = @nbreDepenseNewArray.join(',')              
-
-              # Archivage des Recettes de l'année N-2
+              # Archivage des Recettes de l'année N-2 ------------
               if @paramun.recettes.length != 0
                   @paramun.recettes.each do |recette|
                       if recette.facDateReception.slice(6,4) == anMoins2.to_s
@@ -72,7 +74,7 @@ class ParamunsController < ApplicationController
                       end
                   end
               end
-              # Archivage des Depenses de l'année N-2
+              # Archivage des Depenses de l'année N-2 ----------------
               if @paramun.depenses.length != 0
                   @paramun.depenses.each do |depense|
                       if depense.dateRegl.slice(6,4) == anMoins2.to_s
@@ -90,7 +92,7 @@ class ParamunsController < ApplicationController
                       end
                   end
               end
-              # Maj de parAnFac et parNumFact
+              # Maj de parAnFac et parNumFact -----------
               @paramun.parAnFact = anCourant.to_s
               @paramun.parNumFact = '00000'
           end

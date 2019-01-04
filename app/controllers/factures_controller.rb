@@ -259,9 +259,9 @@ class FacturesController < ApplicationController
   def updateParametreNumFact
       @current_time = DateTime.now
       begin
-          @abonne = Abonne.find(params[:parametre][:id].to_i)
-          @abonne.aboNumFact = params[:abonne][:aboNumFact].to_s
-          @abonne.save
+          @paramun = Paramun.find(params[:parametre][:id].to_i)
+          @paramun.parNumFact = params[:parametre][:parNumFact].to_s
+          @paramun.save
       rescue => e  # Incident Maj Parametre
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
