@@ -33,6 +33,7 @@ class DepensesController < ApplicationController
   # POST /depenses.xml
   def create
       @current_time = DateTime.now
+      current_year = DateTime.now.year
       @depense = Depense.new(depense_params)
       @CreateOK = 0
       begin
@@ -50,8 +51,15 @@ class DepensesController < ApplicationController
       end
       if @CreateOK == 0
           @nbreDepenseArray = @paramun.nbreDepense.split(",")
-          nbre = @nbreDepenseArray[0].to_i + 1
-          @nbreDepenseArray[0] = nbre.to_s
+          anReglement = @depense.dateRegl.slice(6,4) #jj/mm/aaaa
+          if anReglement.to_i == current_year.to_i          
+              nbre = @nbreDepenseArray[0].to_i + 1
+              @nbreDepenseArray[0] = nbre.to_s
+          end
+          if anReglement.to_i == current_year.to_i-1
+              nbre = @nbreDepenseArray[1].to_i + 1
+              @nbreDepenseArray[1] = nbre.to_s
+          end
           @paramun.nbreDepense = @nbreDepenseArray.join(',')
           begin
               @paramun.save
@@ -84,7 +92,8 @@ class DepensesController < ApplicationController
   # PUT /depenses/1.xml
   def update
       @current_time = DateTime.now
-      @erreurUpdate = 0
+      @updateOK = 0
+      @changeExercice = 0
       begin
           @depense = Depense.find(params[:id])
           begin
@@ -98,7 +107,7 @@ class DepensesController < ApplicationController
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
-              @erreurUpdate = 1
+              @updateOK = 1
           end
       rescue => e # erreur Find Depense
           @erreur = Erreur.new
@@ -109,10 +118,29 @@ class DepensesController < ApplicationController
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
-          @erreurUpdate = 1
+          @updateOK = 1
+      end
+      if @updateOK == 0
+          if params[:parametre][:changeAnRegl].to_s != '0'
+              @nbreDepenseArray = @paramun.nbreDepense.split(",")
+              if params[:parametre][:changeAnRegl].to_s == '2' # Changement de l'année du Règlement anPrécédent --> AnCourant
+                  nbre = @nbreDepenseArray[0].to_i + 1
+                  @nbreDepenseArray[0] = nbre.to_s
+                  nbre = @nbreDepenseArray[1].to_i - 1
+                  @nbreDepenseArray[1] = nbre.to_s
+              end
+              if params[:parametre][:changeAnRegl].to_s == '1' # Changement de l'année du Règlement AnCourant --> anPrécédent
+                  nbre = @nbreDepenseArray[0].to_i - 1
+                  @nbreDepenseArray[0] = nbre.to_s
+                  nbre = @nbreDepenseArray[1].to_i + 1
+                  @nbreDepenseArray[1] = nbre.to_s
+              end
+              @paramun.nbreDepense = @nbreDepenseArray.join(',')
+              @paramun.save
+          end
       end
       respond_to do |format|
-          if @erreurUpdate == 0
+          if @updateOK == 0
               format.xml { render request.format.to_sym => "ddepenseOK" }
           else
               format.xml { render request.format.to_sym => "ddepErreurU" }

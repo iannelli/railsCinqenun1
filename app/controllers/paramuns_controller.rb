@@ -30,10 +30,10 @@ class ParamunsController < ApplicationController
               @parRecetteNewArray = [0,0,0]
               @parRecetteOldArray = @paramun.parRecette.split(',')
               @parRecetteNewArray[1] = @parRecetteOldArray[0]
-              @parRecetteNewArray[2] = @parRecetteOldArray[1]             
+              @parRecetteNewArray[2] = @parRecetteOldArray[1]
               @paramun.parRecette = @parRecetteNewArray.join(',')
               # parDepass ----
-              @paramun.parDepass = "neant,v"              
+              @paramun.parDepass = "neant,v"
               # nbreRecette -----
               @nbreRecetteNewArray = [0,0,0,0,0,0,0]
               @nbreRecetteOldArray = @paramun.nbreRecette.split(',')
@@ -53,7 +53,7 @@ class ParamunsController < ApplicationController
               @nbreDepenseNewArray[4] = @nbreDepenseOldArray[3]
               @nbreDepenseNewArray[5] = @nbreDepenseOldArray[4]
               @nbreDepenseNewArray[6] = @nbreDepenseOldArray[5]
-              @paramun.nbreDepense = @nbreDepenseNewArray.join(',')              
+              @paramun.nbreDepense = @nbreDepenseNewArray.join(',')
               # Archivage des Recettes de l'année N-2 ------------
               if @paramun.recettes.length != 0
                   @paramun.recettes.each do |recette|
