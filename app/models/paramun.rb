@@ -14,5 +14,7 @@ class Paramun < ApplicationRecord
     has_many :soustraitants, :foreign_key => 'parametreId'
 
     has_many :typetaches, :class_name => 'Typetache', :foreign_key => 'parametreId'
+    
+    has_many :tvaimpots, :foreign_key => 'parametreId'
   
 end

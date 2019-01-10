@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :tvaimpotolds
+  resources :tvaimpots
   resources :paramunolds
   resources :paramuns
   resources :factureolds
