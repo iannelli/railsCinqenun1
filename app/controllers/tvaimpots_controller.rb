@@ -1,5 +1,5 @@
 class TvaimpotsController < ApplicationController
-  before_action :set_tvaimpot, only: [:show, :edit, :update, :destroy]
+  #before_action :set_tvaimpot, only: [:show, :edit, :update, :destroy]
 
   # GET /tvaimpots
   # GET /tvaimpots.json
