@@ -69,13 +69,16 @@ class TypetachesController < ApplicationController
               @tacheArray = []
               @tacheString = ""          
               @typetache.taches.each do |tache|
-                  if tache.typetacUnite.to_s != params[:typetache][:typetacUnite].to_s
+                  if (tache.typetacUnite.to_s != params[:typetache][:typetacUnite].to_s ||
+                      tache.typetacET.to_s != params[:typetache][:typetacET].to_s)
                       @tacheArray << tache.tacLibCourt.to_s
                       @tacheArray << tache.tacProLib.to_s
                   end             
               end
-              @UpdateOK = 2
-              @tacheString = "ttypErreurU1" + @tacheArray.join('|')
+              if @tacheArray.length != 0
+                  @UpdateOK = 2
+                  @tacheString = "ttypErreurU1" + @tacheArray.join('|')
+              end
           end
           if @UpdateOK == 0
               @typetache.update(typetache_params)
@@ -130,8 +133,10 @@ class TypetachesController < ApplicationController
               @tacheArray << tache.tacLibCourt.to_s
               @tacheArray << tache.tacProLib.to_s             
           end
-          @destroyOK = 3
-          @tacheString = "ttypErreurNO" + @tacheArray.join('|')
+          if @tacheArray.length != 0
+              @destroyOK = 3
+              @tacheString = "ttypErreurNO" + @tacheArray.join('|')
+          end
       end
       if @destroyOK == 0
           begin
