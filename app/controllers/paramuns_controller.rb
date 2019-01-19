@@ -238,7 +238,7 @@ class ParamunsController < ApplicationController
           @erreurArchivage = 0
           @archivageOK = 0
           @nbreProjetArchiver = 0
-          ## Examen des Projets ----------------------------------------------
+          ## Examen des Conditions de Dépassement de la Franchise TVA ----------------------------------------------
           @paramun = Paramun.find(params[:id])
           @parDepassArray = @paramun.parDepass.split(",")
           @depassOK = 0
@@ -247,12 +247,12 @@ class ParamunsController < ApplicationController
                   @depassOK = 1
               end
           end
-          # Archivage des Projets 
+          ## Examen des Projets ----------------------------------------------
           @paramun.projets.each do |projet|
               @archivageOK = 0
               @majProjet = 0
+              ## MAJ des Suivi des Statuts **TACHE** et Incidence sur le Projet ---------------
               if projet.taches.length != 0
-                  ## MAJ des Suivi des Statuts **TACHE** et Incidence sur le Projet ---------------
                   proSuiviTac = [0,0,0,0]
                   projet.taches.each do |tache|
                       if tache.typetacNat.to_s == "FA"
@@ -335,7 +335,7 @@ class ParamunsController < ApplicationController
                       end
                   end
               end
-              # Situation du Projet au regard du Dépassement du Seuil de la Franchise
+              # Situation du Projet au regard du Dépassement du Seuil de la Franchise ---------------------------
               if @depassOK == 1
                   if @cptFacture > 0
                       projet.proDepass = '1'
@@ -361,7 +361,7 @@ class ParamunsController < ApplicationController
                       @erreurSaveProjet = 1
                   end
               end
-              ## Examen de l'Archivage du Projet --------------------------
+              ## Examen des Conditions d'Archivage du Projet --------------------------
               @archivageOK = 0
               if projet.taches.length != 0
                   regle = 1
@@ -405,7 +405,7 @@ class ParamunsController < ApplicationController
                   if projet.proDepass.to_s == '1'
                        @cptProjet -= 1
                   end
-                  # Archivage du Projet
+                  # Archivage du Projet --------------------------
                   @projetold = Projetold.new()
                   @projetold.id = projet.id
                   @projetold.proLib = projet.proLib
@@ -660,7 +660,7 @@ class ParamunsController < ApplicationController
                           @tempsArray = [0,0]
                           @nbreHH = 0
                           @nbreMN = 0
-                          @totDuree = 0   
+                          @totDuree = 0
                           if @typetache.taches.length == 0
                               @typetache.typetacMarge = '0'
                               @typetache.save

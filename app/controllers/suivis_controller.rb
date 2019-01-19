@@ -146,7 +146,7 @@ class SuivisController < ApplicationController
                       end
                   end
               end
-          end         
+          end
       end
       # Fin Collecte ------------------------------------------
       if @suiviArray.length != 0
@@ -158,6 +158,6 @@ class SuivisController < ApplicationController
           else
                format.xml { render request.format.to_sym => @suiviString }
           end
-      end     
+      end
   end
 end

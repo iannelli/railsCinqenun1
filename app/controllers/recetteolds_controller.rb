@@ -9,15 +9,15 @@ class RecetteoldsController < ApplicationController
       begin
           @paramunold = Paramunold.find(params[:parametre][:id].to_i)
        rescue => e
-          @erreurold = Erreurold.new
+          @erreur = Erreur.new
           @current_time = DateTime.now
-          @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreurold.appli = 'rails - RecetteoldsController - index'
-          @erreurold.origine = 'Incident Find Parametreold - @paramunold.id=' + params[:parametre][:id].to_s
-          @erreurold.numLigne = '10'
-          @erreurold.message = e.message
-          @erreurold.parametreoldId = params[:parametre][:id].to_s
-          @erreurold.save
+          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+          @erreur.appli = 'rails - RecetteoldsController - index'
+          @erreur.origine = 'Incident Find Parametreold - @paramunold.id=' + params[:parametre][:id].to_s
+          @erreur.numLigne = '10'
+          @erreur.message = e.message
+          @erreur.parametreId = params[:parametre][:id].to_s
+          @erreur.save
           @IndexOK = 1
       end
       if @IndexOK == 0

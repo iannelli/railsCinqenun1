@@ -22,7 +22,7 @@ class TypetachesController < ApplicationController
       respond_to do |format|
           if @typetaches.empty?
                format.xml { render request.format.to_sym => "ttypErreurA0" } ## Aucun Typetache collecté
-          else  
+          else
                format.xml { render xml: @typetaches }
           end
       end
@@ -67,13 +67,13 @@ class TypetachesController < ApplicationController
           @typetache = Typetache.find(params[:id])
           if @typetache.taches.length != 0
               @tacheArray = []
-              @tacheString = ""          
+              @tacheString = ""
               @typetache.taches.each do |tache|
                   if (tache.typetacUnite.to_s != params[:typetache][:typetacUnite].to_s ||
                       tache.typetacET.to_s != params[:typetache][:typetacET].to_s)
                       @tacheArray << tache.tacLibCourt.to_s
                       @tacheArray << tache.tacProLib.to_s
-                  end             
+                  end
               end
               if @tacheArray.length != 0
                   @UpdateOK = 2
@@ -128,10 +128,10 @@ class TypetachesController < ApplicationController
       end
       if @typetache.taches.length != 0
           @tacheArray = []
-          @tacheString = ""          
+          @tacheString = ""
           @typetache.taches.each do |tache|
               @tacheArray << tache.tacLibCourt.to_s
-              @tacheArray << tache.tacProLib.to_s             
+              @tacheArray << tache.tacProLib.to_s
           end
           if @tacheArray.length != 0
               @destroyOK = 3

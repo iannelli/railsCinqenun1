@@ -73,11 +73,24 @@ class ProjetsController < ApplicationController
   # PUT /projets/1.xml
   def update
       @current_time = DateTime.now
-      @erreurUpdate = 0
+      @UpdateOK = 0
+      @UpdateOProLib = 0
+      
       begin
           @projet = Projet.find(params[:id])
+          if @projet.proLib.to_s != params[:projet][:proLib].to_s
+              @UpdateOProLib = 1
+          end          
           begin
               @projet.update(projet_params)
+              if @UpdateOProLib == 1
+                  if @projet.taches.length != 0
+                      @projet.taches.each do |tache|
+                          tache.tacProLib = @projet.proLib.to_s
+                          tache.save
+                      end
+                  end
+              end             
           rescue => e # Incident Maj Projet
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
@@ -87,7 +100,7 @@ class ProjetsController < ApplicationController
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
-              @erreurUpdate = 1
+              @UpdateOK = 1
           end
       rescue => e # Incident Find Projet
           @erreur = Erreur.new
@@ -98,10 +111,10 @@ class ProjetsController < ApplicationController
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
-          @erreurUpdate = 1
+          @UpdateOK = 1
       end
       respond_to do |format|
-          if @erreurUpdate == 0
+          if @UpdateOK == 0
               format.xml { render request.format.to_sym => "pprojetOK" }
           else
               format.xml { render request.format.to_sym => "pproErreurU" }

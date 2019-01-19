@@ -9,15 +9,15 @@ class ProjetoldsController < ApplicationController
       begin
           @paramunold = Paramunold.find(params[:parametre][:id].to_i)
        rescue => e
-          @erreurold = Erreurold.new
+          @erreur = Erreur.new
           @current_time = DateTime.now
-          @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreurold.appli = 'rails - ProjetoldsController - index'
-          @erreurold.origine = 'Incident Find Parametreold - @paramunold.id=' + params[:parametre][:id].to_s
-          @erreurold.numLigne = '9'
-          @erreurold.message = e.message
-          @erreurold.parametreoldId = params[:parametre][:id].to_s
-          @erreurold.save
+          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+          @erreur.appli = 'rails - ProjetoldsController - index'
+          @erreur.origine = 'Incident Find Parametreold - @paramunold.id=' + params[:parametre][:id].to_s
+          @erreur.numLigne = '9'
+          @erreur.message = e.message
+          @erreur.parametreId = params[:parametre][:id].to_s
+          @erreur.save
           @IndexOK = 1
       end
       if @IndexOK == 0
@@ -46,14 +46,14 @@ class ProjetoldsController < ApplicationController
       begin
           @paramun = Paramun.find(params[:parametre][:parametreId].to_i)
        rescue => e
-          @erreurold = Erreurold.new
-          @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreurold.appli = 'rails - ProjetoldsController - create'
-          @erreurold.origine = 'Incident Find Parametre - @paramun.id=' + params[:parametre][:parametreId].to_s
-          @erreurold.numLigne = '46'
-          @erreurold.message = e.message
-          @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-          @erreurold.save
+          @erreur = Erreur.new
+          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+          @erreur.appli = 'rails - ProjetoldsController - create'
+          @erreur.origine = 'Incident Find Parametre - @paramun.id=' + params[:parametre][:parametreId].to_s
+          @erreur.numLigne = '46'
+          @erreur.message = e.message
+          @erreur.parametreId = params[:parametre][:parametreId].to_s
+          @erreur.save
           @erreurArchivage = 1
       end
       # Find Projet ---
