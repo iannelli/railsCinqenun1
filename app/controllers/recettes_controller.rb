@@ -42,82 +42,107 @@ class RecettesController < ApplicationController
           @erreur.dateHeure = current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = "rails - RecettesController - create"
           @erreur.origine = "erreur Création Recette"
-          @erreur.numLigne = '48'
+          @erreur.numLigne = '39'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
           @CreateOK = 1
       end
       if @CreateOK == 0
-          # Incidence de la création de la recette sur la Franchise TVA
-          @nbreRecetteArray = @paramun.nbreRecette.split(',')
-          @parRecetteArray = @paramun.parRecette.split(',')
-          anReception = @recette.facDateReception.slice(6,4) #jj/mm/aaaa
-          if anReception.to_i == current_year.to_i
-              nbre = @nbreRecetteArray[0].to_i + 1
-              @nbreRecetteArray[0] = nbre.to_s
-              facRegl = @recette.facReglMont.slice(0, @recette.facReglMont.length-2)
-              temRecette = @parRecetteArray[0].to_i + facRegl.to_i
-              @parRecetteArray[0] = temRecette.to_s
-          end
-          if anReception.to_i == current_year.to_i-1
-              nbre = @nbreRecetteArray[1].to_i + 1
-              @nbreRecetteArray[1] = nbre.to_s
-              facRegl = @recette.facReglMont.slice(0, @recette.facReglMont.length-2)
-              temRecette = @parRecetteArray[1].to_i + facRegl.to_i
-              @parRecetteArray[1] = temRecette.to_s
-          end
-          @paramun.nbreRecette = @nbreRecetteArray.join(',')
-          @paramun.parRecette = @parRecetteArray.join(',')
-          # Condition d'Application de la Franchise ----
-          depass = 0
-          case params[:parametre][:parNbreAnActivite].to_i
-              when 0 # 1ère année d'activité
-                  if @parRecetteArray[0].to_i > params[:parametre][:parSeuilMajo].to_i
-                      depass = 1 # Mémorisation du mmaaaa du dépassement
-                  end
-              when 1 # 2ème année d'activité
-                  if @parRecetteArray[1].to_i <= params[:parametre][:parSeuilBase].to_i
+          if @paramun.parRegimeTva == 0  # régime de la Franchise[exonération] TVA
+              # Incidence de la création de la recette sur la Franchise TVA
+              @nbreRecetteArray = @paramun.nbreRecette.split(',')
+              @parRecetteArray = @paramun.parRecette.split(',')
+              anReception = @recette.facDateReception.slice(6,4) #jj/mm/aaaa
+              if anReception.to_i == current_year.to_i
+                  nbre = @nbreRecetteArray[0].to_i + 1
+                  @nbreRecetteArray[0] = nbre.to_s
+                  facRegl = @recette.facReglMont.slice(0, @recette.facReglMont.length-2)
+                  temRecette = @parRecetteArray[0].to_i + facRegl.to_i
+                  @parRecetteArray[0] = temRecette.to_s
+              end
+              if anReception.to_i == current_year.to_i-1
+                  nbre = @nbreRecetteArray[1].to_i + 1
+                  @nbreRecetteArray[1] = nbre.to_s
+                  facRegl = @recette.facReglMont.slice(0, @recette.facReglMont.length-2)
+                  temRecette = @parRecetteArray[1].to_i + facRegl.to_i
+                  @parRecetteArray[1] = temRecette.to_s
+              end
+              @paramun.nbreRecette = @nbreRecetteArray.join(',')
+              @paramun.parRecette = @parRecetteArray.join(',')
+              # Condition d'Application de la Franchise ----
+              depass = 0
+              case params[:parametre][:parNbreAnActivite].to_i
+                  when 0 # 1ère année d'activité
                       if @parRecetteArray[0].to_i > params[:parametre][:parSeuilMajo].to_i
                           depass = 1 # Mémorisation du mmaaaa du dépassement
                       end
-                  else
-                      depass = 2 # Imposition TVA sur toute l'année N
-                  end
-              when 2 # 3ème année d'activité
-                  if @parRecetteArray[2].to_i <= params[:parametre][:parSeuilBase].to_i
-                      if @parRecetteArray[1].to_i <= params[:parametre][:parSeuilMajo].to_i
+                  when 1 # 2ème année d'activité
+                      if @parRecetteArray[1].to_i <= params[:parametre][:parSeuilBase].to_i
                           if @parRecetteArray[0].to_i > params[:parametre][:parSeuilMajo].to_i
                               depass = 1 # Mémorisation du mmaaaa du dépassement
                           end
                       else
                           depass = 2 # Imposition TVA sur toute l'année N
                       end
-                  else
-                      depass = 2 # Imposition TVA sur toute l'année N
-                  end
-          end
-          if depass == 0
-              @paramun.parDepass = "neant,v"
-          else
-              @paramun.parRegimeTva = 1
-              @paramun.parChoixTauxTva = 0
-              @paramun.parDepass = current_time.strftime("%m") + "/" + anReception.to_s + ",v"
-          end
-          begin
-              @paramun.save
-          rescue => e # Incident save Parametre
-              @erreur = Erreur.new
-              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - RecettesController - create"
-              @erreur.origine = "erreur save Parametre"
-              @erreur.numLigne = '67'
-              @erreur.message = e.message
-              @erreur.parametreId = params[:parametre][:id].to_s
-              @erreur.save
-              @CreateOK = 2
+                  else # au moins 3 années d'activité
+                      if @parRecetteArray[2].to_i <= params[:parametre][:parSeuilBase].to_i
+                          if @parRecetteArray[1].to_i <= params[:parametre][:parSeuilMajo].to_i
+                              if @parRecetteArray[0].to_i > params[:parametre][:parSeuilMajo].to_i
+                                  depass = 1 # Mémorisation du mmaaaa du dépassement
+                              end
+                          else
+                              depass = 2 # Imposition TVA sur toute l'année N
+                          end
+                      else
+                          depass = 2 # Imposition TVA sur toute l'année N
+                      end
+              end
+              if depass == 0
+                  @paramun.parDepass = "neant,v"
+              else
+                  @paramun.parRegimeTva = 1
+                  @paramun.parChoixTauxTva = 0
+                  @paramun.parDepass = current_time.strftime("%m") + "/" + anReception.to_s + ",v"
+              end
+              begin
+                  @paramun.save
+              rescue => e # Incident save Parametre
+                  @erreur = Erreur.new
+                  @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                  @erreur.appli = "rails - RecettesController - create"
+                  @erreur.origine = "erreur save Parametre"
+                  @erreur.numLigne = '109'
+                  @erreur.message = e.message
+                  @erreur.parametreId = params[:parametre][:id].to_s
+                  @erreur.save
+                  @CreateOK = 2
+              end
+          else ## régime de la Franchise TVA[Perte exonération] ou Option Taxation TVA
+              @tvaimpot = Tvaimpot.new
+              @tvaimpot.tvaMoisAn = @recette.facDateReception.slice(3,2) + @recette.facDateReception.slice(6,4)
+              @tvaimpot.tvaType = '0'
+              @tvaimpot.tvaBase = @recette.montantHt.to_s
+              @tvaimpot.tvaMontant = @recette.montantTva.to_s
+              @tvaimpot.parametreId = @recette.parametreId
+              begin
+                  @tvaimpot.save
+                  @recette.tvaimpotId = @tvaimpot.id
+                  @recette.save
+              rescue => e # Incident save Parametre
+                  @erreur = Erreur.new
+                  @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                  @erreur.appli = "rails - RecettesController - create"
+                  @erreur.origine = "erreur save Tvaimpot"
+                  @erreur.numLigne = '129'
+                  @erreur.message = e.message
+                  @erreur.parametreId = params[:parametre][:id].to_s
+                  @erreur.save
+                  @CreateOK = 3
+              end
           end
       end
+
       respond_to do |format|
           case @CreateOK
               when 0
@@ -126,6 +151,8 @@ class RecettesController < ApplicationController
                   format.xml { render request.format.to_sym => "rrecErreurC1" }
               when 2
                   format.xml { render request.format.to_sym => "rrecErreurC2" }
+              when 3
+                  format.xml { render request.format.to_sym => "rrecErreurC3" }
           end
       end
   end

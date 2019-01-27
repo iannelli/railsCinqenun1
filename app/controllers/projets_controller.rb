@@ -48,6 +48,24 @@ class ProjetsController < ApplicationController
       begin
           @projet.parametreId = @paramun.id
           @projet.save
+          if params[:projet][:clienteleFactureId].length != 0
+              @clientele1 = Clientele.where(["id = ?", @projet.clienteleFactureId.to_i]).first
+              unless @clientele1.nil?
+                  if @clientele1.cliNature.to_s == 'Prospect'
+                      @clientele1.cliNature = 'Client'
+                      @clientele1.save
+                  end
+              end
+          end
+          unless params[:projet][:clienteleProjetId].nil?
+              @clientele2 = Clientele.where(["id = ?", @projet.clienteleProjetId.to_i]).first
+              unless @clientele2.nil?
+                  if @clientele2.cliNature.to_s == 'Prospect'
+                      @clientele2.cliNature = 'Client'
+                      @clientele2.save
+                  end
+              end
+          end          
       rescue => e # Incident création du Projet
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
@@ -88,6 +106,25 @@ class ProjetsController < ApplicationController
                       @projet.taches.each do |tache|
                           tache.tacProLib = @projet.proLib.to_s
                           tache.save
+                      end
+                  end
+              end
+              ## Mal éventuelle de Clientele.cliNature
+              if params[:projet][:clienteleFactureId].length != 0
+                  @clientele1 = Clientele.where(["id = ?", @projet.clienteleFactureId]).first
+                  unless @clientele1.nil?
+                      if @clientele1.cliNature.to_s == 'Prospect'
+                          @clientele1.cliNature = 'Client'
+                          @clientele1.save
+                      end
+                  end
+              end
+              unless params[:projet][:clienteleProjetId].nil?
+                  @clientele2 = Clientele.where(["id = ?", @projet.clienteleProjetId]).first
+                  unless @clientele2.nil?
+                      if @clientele2.cliNature.to_s == 'Prospect'
+                          @clientele2.cliNature = 'Client'
+                          @clientele2.save
                       end
                   end
               end             

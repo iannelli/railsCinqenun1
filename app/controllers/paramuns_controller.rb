@@ -25,7 +25,7 @@ class ParamunsController < ApplicationController
           moisCourant = Time.new.month
           anMoins2 = anCourant - 2
           # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses
-          if anCourant > @paramun.parDateConnex.slice(0,4).to_i 
+          if anCourant > @paramun.parDateConnex.slice(0,4).to_i
               # parRecette ----
               @parRecetteNewArray = [0,0,0]
               @parRecetteOldArray = @paramun.parRecette.split(',')
@@ -118,6 +118,8 @@ class ParamunsController < ApplicationController
           end
       end
   end
+
+
 
 
   # PATCH/PUT /paramuns/1
@@ -226,6 +228,8 @@ class ParamunsController < ApplicationController
   end
 
 
+
+
   # DELETE /paramuns/1
   # DELETE /paramuns/1.json
   def destroy     
@@ -247,408 +251,422 @@ class ParamunsController < ApplicationController
                   @depassOK = 1
               end
           end
-          ## Examen des Projets ----------------------------------------------
-          @paramun.projets.each do |projet|
-              @archivageOK = 0
-              @majProjet = 0
-              ## MAJ des Suivi des Statuts **TACHE** et Incidence sur le Projet ---------------
-              if projet.taches.length != 0
-                  proSuiviTac = [0,0,0,0]
-                  projet.taches.each do |tache|
-                      if tache.typetacNat.to_s == "FA"
-                          if tache.tacStatut.slice(0,1) == "3"
-                              proSuiviTac[3] = 1
-                          else
-                              tacDeadLine = DateTime.new(tache.tacDeadLine.slice(6,4).to_i, tache.tacDeadLine.slice(3,2).to_i, tache.tacDeadLine.slice(0,2).to_i)
-                              dateMoins15 = tacDeadLine - 15
-                              if @dateDuJour.strftime("%Y%m%d").to_i > tacDeadLine.strftime("%Y%m%d").to_i
-                                  tache.tacStatut[0] = "2"
-                                  proSuiviTac[2] = 1
+
+          
+          ## TRAITEMENT DES PROJETS **************************
+          if @paramun.projets.length != 0          
+              ## Examen des Projets ----------------------------------------------
+              @paramun.projets.each do |projet|
+                  @archivageOK = 0
+                  @majProjet = 0
+                  ## MAJ des Suivi des Statuts **TACHE** et Incidence sur le Projet ---------------
+                  if projet.taches.length != 0
+                      proSuiviTac = [0,0,0,0]
+                      projet.taches.each do |tache|
+                          if tache.typetacNat.to_s == "FA"
+                              if tache.tacStatut.slice(0,1) == "3"
+                                  proSuiviTac[3] = 1
                               else
-                                  if @dateDuJour.strftime("%Y%m%d").to_i >= dateMoins15.strftime("%Y%m%d").to_i
-                                      tache.tacStatut[0] = "1"
-                                      proSuiviTac[1] = 1
+                                  tacDeadLine = DateTime.new(tache.tacDeadLine.slice(6,4).to_i, tache.tacDeadLine.slice(3,2).to_i, tache.tacDeadLine.slice(0,2).to_i)
+                                  dateMoins15 = tacDeadLine - 15
+                                  if @dateDuJour.strftime("%Y%m%d").to_i > tacDeadLine.strftime("%Y%m%d").to_i
+                                      tache.tacStatut[0] = "2"
+                                      proSuiviTac[2] = 1
                                   else
-                                      tache.tacStatut[0] = "0"
-                                      proSuiviTac[0] = 1
+                                      if @dateDuJour.strftime("%Y%m%d").to_i >= dateMoins15.strftime("%Y%m%d").to_i
+                                          tache.tacStatut[0] = "1"
+                                          proSuiviTac[1] = 1
+                                      else
+                                          tache.tacStatut[0] = "0"
+                                          proSuiviTac[0] = 1
+                                      end
                                   end
+                                  tache.save
                               end
-                              tache.save
-                          end
-                          projet.proSuiviTac = proSuiviTac.join(',')
-                          @majProjet = 1
-                      end
-                  end
-              end
-              ## MAJ des Suivi des Statuts **FACTURE** et Incidence sur le Projet -----------------
-              if projet.factures.length != 0
-                  @cptFacture = 0 # décompte des factures en dépassement de franchise
-                  proSuiviFac = [0,0,0,0]
-                  projet.factures.each do |facture|
-                      @majFacture = 0
-                      if facture.facStatut.slice(0,1) == "3"
-                          proSuiviFac[3] = 1
-                      else
-                          if facture.facStatut.to_s != "3Annulé"
-                              facDateLimite = DateTime.new(facture.facDateLimite.slice(6,4).to_i, facture.facDateLimite.slice(3,2).to_i, facture.facDateLimite.slice(0,2).to_i)
-                              dateMoins15 = facDateLimite - 15
-                              if @dateDuJour.strftime("%Y%m%d").to_i > facDateLimite.strftime("%Y%m%d").to_i
-                                  facture.facStatut[0] = "2"
-                                  proSuiviFac[2] = 1
-                              else
-                                  if @dateDuJour.strftime("%Y%m%d").to_i >= dateMoins15.strftime("%Y%m%d").to_i
-                                      facture.facStatut[0] = "1"
-                                      proSuiviFac[1] = 1
-                                  else
-                                      facture.facStatut[0] = "0"
-                                      proSuiviFac[0] = 1
-                                  end
-                              end
-                              @majFacture = 1
-                              projet.proSuiviFac = proSuiviFac.join(',')
+                              projet.proSuiviTac = proSuiviTac.join(',')
                               @majProjet = 1
                           end
                       end
-                      # Situation de la Facture au regard du Dépassement du Seuil de la Franchise -------
-                      if @depassOK == 1
-                          if ['20', '40', '41', '50', '51'].include?(facture.typeImpr.to_s)
-                              if facture.facStatut != '3Annulé'
-                                  if facture.facDateEmis.slice(3,7) == @parDepassArray[0].to_s
-                                      if facture.facmontTva.to_i == 0
-                                          facture.facDepass = '1'
-                                          @cptFacture += 1
+                  end # FIN de l'examen des occurrences de Tache du Projet
+                  ## MAJ des Suivi des Statuts **FACTURE** et Incidence sur le Projet -----------------
+                  if projet.factures.length != 0
+                      @cptFacture = 0 # décompte des factures en dépassement de franchise
+                      proSuiviFac = [0,0,0,0]
+                      projet.factures.each do |facture|
+                          @majFacture = 0
+                          if facture.facStatut.slice(0,1) == "3"
+                              proSuiviFac[3] = 1
+                          else
+                              if facture.facStatut.to_s != "3Annulé"
+                                  facDateLimite = DateTime.new(facture.facDateLimite.slice(6,4).to_i, facture.facDateLimite.slice(3,2).to_i, facture.facDateLimite.slice(0,2).to_i)
+                                  dateMoins15 = facDateLimite - 15
+                                  if @dateDuJour.strftime("%Y%m%d").to_i > facDateLimite.strftime("%Y%m%d").to_i
+                                      facture.facStatut[0] = "2"
+                                      proSuiviFac[2] = 1
+                                  else
+                                      if @dateDuJour.strftime("%Y%m%d").to_i >= dateMoins15.strftime("%Y%m%d").to_i
+                                          facture.facStatut[0] = "1"
+                                          proSuiviFac[1] = 1
+                                      else
+                                          facture.facStatut[0] = "0"
+                                          proSuiviFac[0] = 1
+                                      end
+                                  end
+                                  @majFacture = 1
+                                  projet.proSuiviFac = proSuiviFac.join(',')
+                                  @majProjet = 1
+                              end
+                          end
+                          # Situation de la Facture au regard du Dépassement du Seuil de la Franchise -------
+                          if @depassOK == 1
+                              if ['20', '40', '41', '50', '51'].include?(facture.typeImpr.to_s)
+                                  if facture.facStatut.to_s != '3Annulé'
+                                      if facture.facDateEmis.slice(3,7) == @parDepassArray[0].to_s
+                                          if facture.facMontTva.to_i == 0
+                                              facture.facDepass = '1'
+                                              facture.save
+                                              @cptFacture += 1
+                                          else
+                                              facture.facDepass = '0'
+                                              facture.save
+                                          end
                                       else
                                           facture.facDepass = '0'
+                                          facture.save
                                       end
                                   else
                                       facture.facDepass = '0'
+                                      facture.save
                                   end
-                              else
-                                  facture.facDepass = '0'
                               end
-                              @majFacture = 1
                           end
-                      end
-                      # Maj de la facture
-                      if @majFacture == 1
-                          facture.save
-                      end
-                  end
-              end
-              # Situation du Projet au regard du Dépassement du Seuil de la Franchise ---------------------------
-              if @depassOK == 1
-                  if @cptFacture > 0
-                      projet.proDepass = '1'
-                      @cptProjet += 1
-                  else
-                      projet.proDepass = '0'
-                  end
-                  @majProjet = 1
-              end
-              ## MAJ éventuelle de l'occurrence de Projet -----------------------
-              if @majProjet == 1
-                  begin
-                      projet.save
-                  rescue => e  # erreur Save Projet
-                      @erreur = Erreur.new
-                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = "rails - ProjetsController - index"
-                      @erreur.origine = "erreur Save Projet - projet.id=" + projet.id.to_s
-                      @erreur.numLigne = '89'
-                      @erreur.message = e.message
-                      @erreur.parametreId = params[:id].to_s
-                      @erreur.save
-                      @erreurSaveProjet = 1
-                  end
-              end
-              ## Examen des Conditions d'Archivage du Projet --------------------------
-              @archivageOK = 0
-              if projet.taches.length != 0
-                  regle = 1
-                  cpt = 0
-                  projet.taches.each do |tache|
-                      if tache.typetacNat.to_s == "FA"
-                          cpt += 1
-                          if tache.tacStatut != '3Réglé'
-                              regle = 0
-                              break
+                          # Maj de la facture
+                          if @majFacture == 1
+                              facture.save
                           end
+                      end               
+                  end # FIN de l'examen des occurrences de facture du Projet
+                  # Situation du Projet au regard du Dépassement du Seuil de la Franchise ---------------------------
+                  if @depassOK == 1
+                      if @cptFacture > 0
+                          projet.proDepass = '1'
+                          @cptProjet += 1
+                      else
+                          projet.proDepass = '0'
                       end
+                      @majProjet = 1
                   end
-                  if cpt > 0 && regle == 1
-                      projet.proSituation = '22' # Clos -----
-                      @archivageOK = 1
-                      @nbreProjetArchiver += 1
-                  end
-              end
-              if @archivageOK == 0 # Si 'Inactifs depuis +6mois' ----
-                  t = Time.now
-                  dateJour = t.strftime("%d") + '/' + t.strftime("%m") + '/' + t.strftime("%Y")
-                  @dateDuJour = Date.parse(dateJour)
-                  majDate = Date.parse(projet.majDate.to_s)
-                  dureeJ = @dateDuJour - majDate
-                  if dureeJ.to_i  > 180
-                      @archivageOK = 1
-                      @nbreProjetArchiver += 1
-                  end
-              end
-              if @archivageOK == 1
-                  if @nbreProjetArchiver == 1
+                  ## MAJ éventuelle de l'occurrence de Projet -----------------------
+                  if @majProjet == 1
                       begin
-                          @paramunold = Paramunold.find(params[:id])
-                      rescue ActiveRecord::RecordNotFound
-                          @paramunold = Paramunold.new()
-                          @paramunold.id = @paramun.id
-                          @paramunold.save
-                      end
-                  end
-                  if projet.proDepass.to_s == '1'
-                       @cptProjet -= 1
-                  end
-                  # Archivage du Projet --------------------------
-                  @projetold = Projetold.new()
-                  @projetold.id = projet.id
-                  @projetold.proLib = projet.proLib
-                  @projetold.proDateDeb = projet.proDateDeb
-                  @projetold.proDeadLine = projet.proDeadLine
-                  @projetold.proSuiviTac = projet.proSuiviTac
-                  @projetold.proSuiviFac = projet.proSuiviFac
-                  @projetold.proNumRang = projet.proNumRang
-                  @projetold.proCliRaisonFacture = projet.proCliRaisonFacture
-                  @projetold.proCliRaisonProjet = projet.proCliRaisonProjet
-                  @projetold.proDureeBdc = projet.proDureeBdc
-                  @projetold.proDureeExec = projet.proDureeExec
-                  @projetold.proPourExec = projet.proPourExec
-                  @projetold.proCaHt = projet.proCaHt
-                  @projetold.proFacHt = projet.proFacHt
-                  @projetold.proReglMont = projet.proReglMont
-                  @projetold.proReport = projet.proReport
-                  @projetold.proCout = projet.proCout
-                  @projetold.proMarge = projet.proMarge
-                  @projetold.proSituation = projet.proSituation
-                  @projetold.proCliString = projet.proCliString
-                  @projetold.proDepass = projet.proDepass
-                  @projetold.majDate = projet.majDate
-                  @projetold.clienteleFactureId = projet.clienteleFactureId
-                  @projetold.clienteleProjetId = projet.clienteleProjetId
-                  @projetold.parametreoldId = projet.parametreId
-                  begin
-                      @projetold.save
-                  rescue => e # erreur Projetold Create
-                      @erreur = Erreur.new
-                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = 'rails - ParamunsController - destroy'
-                      @erreur.origine = 'Incident Save Projetold - projet.id=' + projet.id.to_s
-                      @erreur.numLigne = '145'
-                      @erreur.message = e.message
-                      @erreur.parametreId = params[:id].to_s
-                      @erreur.save
-                      @erreurArchivage = 1
-                      break
-                  end
-                  # Archivage des tachesold du Projetold
-                  if @erreurArchivage == 0
-                      if projet.taches.length != 0
-                          projet.taches.each do |tache|
-                              @tacheold = Tacheold.new
-                              @tacheold.id = tache.id
-                              @tacheold.famtacNum = tache.famtacNum
-                              @tacheold.typetacLib = tache.typetacLib
-                              @tacheold.tacCategorie = tache.tacCategorie
-                              @tacheold.tacLibCourt = tache.tacLibCourt
-                              @tacheold.tacLibPeriode = tache.tacLibPeriode
-                              @tacheold.tacLibDetail = tache.tacLibDetail
-                              @tacheold.typetacNat = tache.typetacNat
-                              @tacheold.tacModeFac = tache.tacModeFac
-                              @tacheold.tacProLib = tache.tacProLib
-                              @tacheold.tacStatut = tache.tacStatut
-                              @tacheold.tacStNomPre = tache.tacStNomPre
-                              @tacheold.tacCoutHeure = tache.tacCoutHeure
-                              @tacheold.tacDateDeb = tache.tacDateDeb
-                              @tacheold.tacDeadLine = tache.tacDeadLine
-                              @tacheold.tacAchevement = tache.tacAchevement
-                              @tacheold.tacStringTravail = tache.tacStringTravail
-                              @tacheold.typetacUnite = tache.typetacUnite
-                              @tacheold.typetacTarifUnite = tache.typetacTarifUnite
-                              @tacheold.typetacET = tache.typetacET
-                              @tacheold.tacQuantUnitaire = tache.tacQuantUnitaire
-                              @tacheold.tacPeriodeNbre = tache.tacPeriodeNbre
-                              @tacheold.tacQuantTotal = tache.tacQuantTotal
-                              @tacheold.tacMont = tache.tacMont
-                              @tacheold.tacRemiseTaux = tache.tacRemiseTaux
-                              @tacheold.tacBdcHt = tache.tacBdcHt
-                              @tacheold.tacDureeBdc = tache.tacDureeBdc
-                              @tacheold.tacFacHt = tache.tacFacHt
-                              @tacheold.tacDureeExec = tache.tacDureeExec
-                              @tacheold.tacPourExec = tache.tacPourExec
-                              @tacheold.tacCout = tache.tacCout
-                              @tacheold.tacMarge = tache.tacMarge
-                              @tacheold.tacFacString = tache.tacFacString
-                              @tacheold.projetoldId = tache.projetId
-                              @tacheold.typetacheId = tache.typetacheId
-                              @tacheold.parametreoldId = tache.parametreId
-                              begin
-                                  @tacheold.save
-                              rescue => e # erreur Tacheold Save
-                                  @erreur = Erreur.new
-                                  @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                                  @erreur.appli = 'rails - ParamunsController - destroy'
-                                  @erreur.origine = 'Incident Save Tacheold - tache.id=' + tache.id.to_s
-                                  @erreur.numLigne = '145'
-                                  @erreur.message = e.message
-                                  @erreur.parametreId = params[:id].to_s
-                                  @erreur.save
-                                  @erreurArchivage = 1
-                                  break
-                              end
-                          end
-                      end
-                  end
-                  # Archivage des facturesold du Projetold
-                  if @erreurArchivage == 0
-                      if projet.factures.length != 0
-                          projet.factures.each do |facture|
-                              @factureold = Factureold.new
-                              @factureold.id = facture.id
-                              @factureold.typeImpr = facture.typeImpr
-                              @factureold.facStatut = facture.facStatut
-                              @factureold.facDateEmis = facture.facDateEmis
-                              @factureold.facDelai = facture.facDelai
-                              @factureold.facDelaiMax = facture.facDelaiMax
-                              @factureold.facDateLimite = facture.facDateLimite
-                              @factureold.facDateReception = facture.facDateReception
-                              @factureold.facRef = facture.facRef
-                              @factureold.facBdC = facture.facBdC
-                              @factureold.facRefPre = facture.facRefPre
-                              @factureold.facProCom = facture.facProCom
-                              @factureold.facBdcSigne = facture.facBdcSigne
-                              @factureold.facMention = facture.facMention
-                              @factureold.facMontHt = facture.facMontHt
-                              @factureold.facMontTva = facture.facMontTva
-                              @factureold.facMontTtc = facture.facMontTtc
-                              @factureold.facAcomTaux = facture.facAcomTaux
-                              @factureold.facAcomMont = facture.facAcomMont
-                              @factureold.facImput = facture.facImput
-                              @factureold.facDifference = facture.facDifference
-                              @factureold.facTotalDu = facture.facTotalDu
-                              @factureold.modePaieLib = facture.modePaieLib
-                              @factureold.facReglMont = facture.facReglMont
-                              @factureold.facStringLigne = facture.facStringLigne
-                              @factureold.majTache = facture.majTache
-                              @factureold.facDepass = facture.facDepass
-                              @factureold.projetoldId = facture.projetId
-                              @factureold.parametreoldId = facture.parametreId
-                              begin
-                                  @factureold.save
-                              rescue => e # erreur Factureold Create
-                                  @erreur = Erreur.new
-                                  @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                                  @erreur.appli = 'rails - ParamunsController - destroy'
-                                  @erreur.origine = 'Incident Save Factureold - facture.id=' + facture.id.to_s
-                                  @erreur.numLigne = '145'
-                                  @erreur.message = e.message
-                                  @erreur.parametreId = params[:id].to_s
-                                  @erreur.save
-                                  @erreurArchivage = 1
-                                  break
-                              end
-                          end
-                      end
-                  end
-                  # Suppression des Tache du Projet ---
-                  if @erreurArchivage == 0
-                      if projet.taches.length != 0
-                          projet.taches.each do |tache|
-                               begin
-                                  tache.destroy
-                              rescue => e  # Incident destroy Tache
-                                  @erreur = Erreur.new
-                                  @erreurdateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                                  @erreur.appli = 'rails - ParamunsController - destroy'
-                                  @erreur.origine = "erreur destroy Tache - tache.id =" + tache.id.to_s
-                                  @erreur.numLigne = '216'
-                                  @erreur.message = e.message
-                                  @erreur.parametreId = params[:id].to_s
-                                  @erreur.save
-                                  @erreurArchivage = 1
-                              end
-                          end
-                      end
-                  end
-                  # Suppression des Facture du Projet ---
-                  if @erreurArchivage == 0
-                      if projet.factures.length != 0
-                          projet.factures.each do |facture|
-                              begin
-                                  facture.destroy
-                              rescue => e  # Incident destroy Facture
-                                  @erreur = Erreur.new
-                                  @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                                  @erreur.appli = 'rails - ParamunsController - destroy'
-                                  @erreur.origine = "erreur destroy Facture - facture.id =" + facture.id.to_s
-                                  @erreur.numLigne = '236'
-                                  @erreur.message = e.message
-                                  @erreur.parametreId = params[:id].to_s
-                                  @erreur.save
-                                  @erreurArchivage = 1
-                              end
-                          end
-                      end
-                  end
-                  # Suppression du Projet ---
-                  if @erreurArchivage == 0
-                      begin
-                          projet.destroy
-                      rescue => e  # Incident destroy Projet
+                          projet.save
+                      rescue => e  # erreur Save Projet
                           @erreur = Erreur.new
                           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                          @erreur.appli = 'rails - ParamunsController - destroy'
-                          @erreur.origine = "erreur destroy Projet - projet.id =" + projet.id.to_s
-                          @erreur.numLigne = '254'
+                          @erreur.appli = "rails - ProjetsController - index"
+                          @erreur.origine = "erreur Save Projet - projet.id=" + projet.id.to_s
+                          @erreur.numLigne = '89'
                           @erreur.message = e.message
                           @erreur.parametreId = params[:id].to_s
                           @erreur.save
+                          @erreurSaveProjet = 1
                       end
                   end
-              end # --- Fin de l'examen d'une occurrence de Projet ---
-          end ### FIN de L'examen de toutes les occurrences de Projet ----------------------------
-          # Si Archivage des Projets -------------
-          if @nbreProjetArchiver > 0
-              nbreDevisInactif = 0
-              nbreProjetInactif = 0
-              nbreProjetClos = 0
-              @paramunold.projetolds.each do |projetold|
-                  case projetold.proSituation.to_s
-                      when '20'
-                          nbreDevisInactif += 1
-                      when '21'
-                          nbreProjetInactif += 1
-                      when '22'
-                          nbreProjetClos += 1
+                  ## Examen des Conditions d'Archivage du Projet --------------------------
+                  @archivageOK = 0
+                  if projet.proDepass.to_s == '0'
+                      if projet.taches.length != 0
+                          regle = 1
+                          cpt = 0
+                          projet.taches.each do |tache|
+                              if tache.typetacNat.to_s == "FA"
+                                  cpt += 1
+                                  if tache.tacStatut != '3Réglé'
+                                      regle = 0
+                                      break
+                                  end
+                              end
+                          end
+                          if cpt > 0 && regle == 1
+                              projet.proSituation = '22' # Clos -----
+                              @archivageOK = 1
+                              @nbreProjetArchiver += 1
+                          end
+                      end
+                      if @archivageOK == 0 # Si 'Inactifs depuis +6mois' ----
+                          t = Time.now
+                          dateJour = t.strftime("%d") + '/' + t.strftime("%m") + '/' + t.strftime("%Y")
+                          @dateDuJour = Date.parse(dateJour)
+                          majDate = Date.parse(projet.majDate.to_s)
+                          dureeJ = @dateDuJour - majDate
+                          if dureeJ.to_i  > 180
+                              @archivageOK = 1
+                              @nbreProjetArchiver += 1
+                          end
+                      end
                   end
+                  ## Si Archivage OK -------------------
+                  if @archivageOK == 1
+                      if @nbreProjetArchiver == 1
+                          begin
+                              @paramunold = Paramunold.find(params[:id])
+                          rescue ActiveRecord::RecordNotFound
+                              @paramunold = Paramunold.new()
+                              @paramunold.id = @paramun.id
+                              @paramunold.save
+                          end
+                      end
+                      if projet.proDepass.to_s == '1'
+                           @cptProjet -= 1
+                      end
+                      # Archivage du Projet --------------------------
+                      @projetold = Projetold.new()
+                      @projetold.id = projet.id
+                      @projetold.proLib = projet.proLib
+                      @projetold.proDateDeb = projet.proDateDeb
+                      @projetold.proDeadLine = projet.proDeadLine
+                      @projetold.proSuiviTac = projet.proSuiviTac
+                      @projetold.proSuiviFac = projet.proSuiviFac
+                      @projetold.proNumRang = projet.proNumRang
+                      @projetold.proCliRaisonFacture = projet.proCliRaisonFacture
+                      @projetold.proCliRaisonProjet = projet.proCliRaisonProjet
+                      @projetold.proDureeBdc = projet.proDureeBdc
+                      @projetold.proDureeExec = projet.proDureeExec
+                      @projetold.proPourExec = projet.proPourExec
+                      @projetold.proCaHt = projet.proCaHt
+                      @projetold.proFacHt = projet.proFacHt
+                      @projetold.proReglMont = projet.proReglMont
+                      @projetold.proReport = projet.proReport
+                      @projetold.proCout = projet.proCout
+                      @projetold.proMarge = projet.proMarge
+                      @projetold.proSituation = projet.proSituation
+                      @projetold.proCliString = projet.proCliString
+                      @projetold.proDepass = projet.proDepass
+                      @projetold.majDate = projet.majDate
+                      @projetold.clienteleFactureId = projet.clienteleFactureId
+                      @projetold.clienteleProjetId = projet.clienteleProjetId
+                      @projetold.parametreoldId = projet.parametreId
+                      begin
+                          @projetold.save
+                      rescue => e # erreur Projetold Create
+                          @erreur = Erreur.new
+                          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                          @erreur.appli = 'rails - ParamunsController - destroy'
+                          @erreur.origine = 'Incident Save Projetold - projet.id=' + projet.id.to_s
+                          @erreur.numLigne = '145'
+                          @erreur.message = e.message
+                          @erreur.parametreId = params[:id].to_s
+                          @erreur.save
+                          @erreurArchivage = 1
+                          break
+                      end
+                      # Archivage des tachesold du Projetold
+                      if @erreurArchivage == 0
+                          if projet.taches.length != 0
+                              projet.taches.each do |tache|
+                                  @tacheold = Tacheold.new
+                                  @tacheold.id = tache.id
+                                  @tacheold.famtacNum = tache.famtacNum
+                                  @tacheold.typetacLib = tache.typetacLib
+                                  @tacheold.tacCategorie = tache.tacCategorie
+                                  @tacheold.tacLibCourt = tache.tacLibCourt
+                                  @tacheold.tacLibPeriode = tache.tacLibPeriode
+                                  @tacheold.tacLibDetail = tache.tacLibDetail
+                                  @tacheold.typetacNat = tache.typetacNat
+                                  @tacheold.tacModeFac = tache.tacModeFac
+                                  @tacheold.tacProLib = tache.tacProLib
+                                  @tacheold.tacStatut = tache.tacStatut
+                                  @tacheold.tacStNomPre = tache.tacStNomPre
+                                  @tacheold.tacCoutHeure = tache.tacCoutHeure
+                                  @tacheold.tacDateDeb = tache.tacDateDeb
+                                  @tacheold.tacDeadLine = tache.tacDeadLine
+                                  @tacheold.tacAchevement = tache.tacAchevement
+                                  @tacheold.tacStringTravail = tache.tacStringTravail
+                                  @tacheold.typetacUnite = tache.typetacUnite
+                                  @tacheold.typetacTarifUnite = tache.typetacTarifUnite
+                                  @tacheold.typetacET = tache.typetacET
+                                  @tacheold.tacQuantUnitaire = tache.tacQuantUnitaire
+                                  @tacheold.tacPeriodeNbre = tache.tacPeriodeNbre
+                                  @tacheold.tacQuantTotal = tache.tacQuantTotal
+                                  @tacheold.tacMont = tache.tacMont
+                                  @tacheold.tacRemiseTaux = tache.tacRemiseTaux
+                                  @tacheold.tacBdcHt = tache.tacBdcHt
+                                  @tacheold.tacDureeBdc = tache.tacDureeBdc
+                                  @tacheold.tacFacHt = tache.tacFacHt
+                                  @tacheold.tacDureeExec = tache.tacDureeExec
+                                  @tacheold.tacPourExec = tache.tacPourExec
+                                  @tacheold.tacCout = tache.tacCout
+                                  @tacheold.tacMarge = tache.tacMarge
+                                  @tacheold.tacFacString = tache.tacFacString
+                                  @tacheold.projetoldId = tache.projetId
+                                  @tacheold.typetacheId = tache.typetacheId
+                                  @tacheold.parametreoldId = tache.parametreId
+                                  begin
+                                      @tacheold.save
+                                  rescue => e # erreur Tacheold Save
+                                      @erreur = Erreur.new
+                                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                                      @erreur.appli = 'rails - ParamunsController - destroy'
+                                      @erreur.origine = 'Incident Save Tacheold - tache.id=' + tache.id.to_s
+                                      @erreur.numLigne = '145'
+                                      @erreur.message = e.message
+                                      @erreur.parametreId = params[:id].to_s
+                                      @erreur.save
+                                      @erreurArchivage = 1
+                                      break
+                                  end
+                              end
+                          end
+                      end
+                      # Archivage des facturesold du Projetold
+                      if @erreurArchivage == 0
+                          if projet.factures.length != 0
+                              projet.factures.each do |facture|
+                                  @factureold = Factureold.new
+                                  @factureold.id = facture.id
+                                  @factureold.typeImpr = facture.typeImpr
+                                  @factureold.facStatut = facture.facStatut
+                                  @factureold.facDateEmis = facture.facDateEmis
+                                  @factureold.facDelai = facture.facDelai
+                                  @factureold.facDelaiMax = facture.facDelaiMax
+                                  @factureold.facDateLimite = facture.facDateLimite
+                                  @factureold.facDateReception = facture.facDateReception
+                                  @factureold.facRef = facture.facRef
+                                  @factureold.facBdC = facture.facBdC
+                                  @factureold.facRefPre = facture.facRefPre
+                                  @factureold.facProCom = facture.facProCom
+                                  @factureold.facBdcSigne = facture.facBdcSigne
+                                  @factureold.facMention = facture.facMention
+                                  @factureold.facMontHt = facture.facMontHt
+                                  @factureold.facMontTva = facture.facMontTva
+                                  @factureold.facMontTtc = facture.facMontTtc
+                                  @factureold.facAcomTaux = facture.facAcomTaux
+                                  @factureold.facAcomMont = facture.facAcomMont
+                                  @factureold.facImput = facture.facImput
+                                  @factureold.facDifference = facture.facDifference
+                                  @factureold.facTotalDu = facture.facTotalDu
+                                  @factureold.modePaieLib = facture.modePaieLib
+                                  @factureold.facReglMont = facture.facReglMont
+                                  @factureold.facStringLigne = facture.facStringLigne
+                                  @factureold.majTache = facture.majTache
+                                  @factureold.facDepass = facture.facDepass
+                                  @factureold.projetoldId = facture.projetId
+                                  @factureold.parametreoldId = facture.parametreId
+                                  begin
+                                      @factureold.save
+                                  rescue => e # erreur Factureold Create
+                                      @erreur = Erreur.new
+                                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                                      @erreur.appli = 'rails - ParamunsController - destroy'
+                                      @erreur.origine = 'Incident Save Factureold - facture.id=' + facture.id.to_s
+                                      @erreur.numLigne = '145'
+                                      @erreur.message = e.message
+                                      @erreur.parametreId = params[:id].to_s
+                                      @erreur.save
+                                      @erreurArchivage = 1
+                                      break
+                                  end
+                              end
+                          end
+                      end
+                      # Suppression des Tache du Projet ---
+                      if @erreurArchivage == 0
+                          if projet.taches.length != 0
+                              projet.taches.each do |tache|
+                                   begin
+                                      tache.destroy
+                                  rescue => e  # Incident destroy Tache
+                                      @erreur = Erreur.new
+                                      @erreurdateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                                      @erreur.appli = 'rails - ParamunsController - destroy'
+                                      @erreur.origine = "erreur destroy Tache - tache.id =" + tache.id.to_s
+                                      @erreur.numLigne = '216'
+                                      @erreur.message = e.message
+                                      @erreur.parametreId = params[:id].to_s
+                                      @erreur.save
+                                      @erreurArchivage = 1
+                                  end
+                              end
+                          end
+                      end
+                      # Suppression des Facture du Projet ---
+                      if @erreurArchivage == 0
+                          if projet.factures.length != 0
+                              projet.factures.each do |facture|
+                                  begin
+                                      facture.destroy
+                                  rescue => e  # Incident destroy Facture
+                                      @erreur = Erreur.new
+                                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                                      @erreur.appli = 'rails - ParamunsController - destroy'
+                                      @erreur.origine = "erreur destroy Facture - facture.id =" + facture.id.to_s
+                                      @erreur.numLigne = '236'
+                                      @erreur.message = e.message
+                                      @erreur.parametreId = params[:id].to_s
+                                      @erreur.save
+                                      @erreurArchivage = 1
+                                  end
+                              end
+                          end
+                      end
+                      # Suppression du Projet ---
+                      if @erreurArchivage == 0
+                          begin
+                              projet.destroy
+                          rescue => e  # Incident destroy Projet
+                              @erreur = Erreur.new
+                              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                              @erreur.appli = 'rails - ParamunsController - destroy'
+                              @erreur.origine = "erreur destroy Projet - projet.id =" + projet.id.to_s
+                              @erreur.numLigne = '254'
+                              @erreur.message = e.message
+                              @erreur.parametreId = params[:id].to_s
+                              @erreur.save
+                          end
+                      end
+                  end # --- Fin de l'examen d'une occurrence de Projet ---
+              end ### FIN de l'examen de toutes les occurrences de Projet ----------------------------
+    
+              # Si Archivage des Projets -------------
+              if @nbreProjetArchiver > 0
+                  nbreDevisInactif = 0
+                  nbreProjetInactif = 0
+                  nbreProjetClos = 0
+                  @paramunold.projetolds.each do |projetold|
+                      case projetold.proSituation.to_s
+                          when '20'
+                              nbreDevisInactif += 1
+                          when '21'
+                              nbreProjetInactif += 1
+                          when '22'
+                              nbreProjetClos += 1
+                      end
+                  end
+                  @paramun.nbreDevisInactif = nbreDevisInactif.to_s
+                  @paramun.nbreProjetInactif = nbreProjetInactif.to_s
+                  @paramun.nbreProjetClos = nbreProjetClos.to_s
+                  @majParamun = 1
+              end 
+    
+              # Situation de Paramun au regard du Dépassement du Seuil de la Franchise
+              if @depassOK == 1
+                  if @cptProjet == 0
+                      @paramun.parDepass = "neant,v"
+                  else
+                      depass = @parDepassArray[0].to_s + ',' + @cptProjet.to_s
+                      @paramun.parDepass = depass
+                  end
+                  @majParamun = 1
               end
-              @paramun.nbreDevisInactif = nbreDevisInactif.to_s
-              @paramun.nbreProjetInactif = nbreProjetInactif.to_s
-              @paramun.nbreProjetClos = nbreProjetClos.to_s
-              @majParamun = 1
-          end 
-          # Situation de Paramun au regard du Dépassement du Seuil de la Franchise
-          if @depassOK == 1
-              if @cptProjet == 0
-                  @paramun.parDepass = "neant,v"
-              else
-                  depass = @parDepassArray[0].to_s + ',' + @cptProjet.to_s
-                  @paramun.parDepass = depass
+              if @majParamun == 1
+                  @paramun.save
               end
-              @majParamun = 1
-          end
-          if @majParamun == 1
-              @paramun.save
-          end
+          end ## FIN du Traitement des Projets ------
+
 
           ## Examen des Types de Tache ------------------------------
           @typetacheArray = params[:parametre][:typetacheString].split(",")
-          if @typetacheArray.length != 0 ## si au moins une Typetache à actualiser
+          if @typetacheArray.length != 0 ## si au moins un Typetache à actualiser
               @typetacheArray.uniq! #Unification des id de même valeur en un seul id
               for t in @typetacheArray
                   begin
