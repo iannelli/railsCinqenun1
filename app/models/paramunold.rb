@@ -7,7 +7,8 @@ class Paramunold < ApplicationRecord
     has_many :depenseolds, :foreign_key => 'parametreoldId'
 
     has_many :recetteolds, :foreign_key => 'parametreoldId'
-  
+    
     has_many :tvaimpotolds, :foreign_key => 'parametreoldId'
-
+  
+  
 end
