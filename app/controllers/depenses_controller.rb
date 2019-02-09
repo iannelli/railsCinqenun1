@@ -29,6 +29,7 @@ class DepensesController < ApplicationController
   end
 
 
+
   # POST /depenses ********* CREATE ******************
   # POST /depenses.xml
   def create
@@ -52,7 +53,7 @@ class DepensesController < ApplicationController
       if @CreateOK == 0
           @nbreDepenseArray = @paramun.nbreDepense.split(",")
           anReglement = @depense.dateRegl.slice(6,4) #jj/mm/aaaa
-          if anReglement.to_i == current_year.to_i          
+          if anReglement.to_i == current_year.to_i
               nbre = @nbreDepenseArray[0].to_i + 1
               @nbreDepenseArray[0] = nbre.to_s
           end
@@ -75,6 +76,13 @@ class DepensesController < ApplicationController
               @CreateOK = 2
           end
       end
+      if @CreateOK == 0
+          if @paramun.parRegimeTva.to_i > 0 ## Régime de la Franchise TVA[Perte exonération] ou Option Taxation TVA
+              if @depense.typeDecla.to_s != 'E'  ## Ligne à remplir pour les Déclarations autre que de type 'E'
+                  ligneTva  # Incidence de la dépense créée sur la Déclaration de TVA
+              end
+          end
+      end
       respond_to do |format|
           case @CreateOK
               when 0
@@ -86,6 +94,48 @@ class DepensesController < ApplicationController
           end
       end
   end
+
+## Méthode dédiée à CREATE ********************************************************************
+## Création/Maj des lignes de la Déclaration de TVA à la suite de la création de l'occurrence de Depense
+  def ligneTva
+      @arrayDepenseId = []
+      @ligneArrayDepense = params[:ligne][:ligneStringDepense].split("|")
+      i = 0
+      while i < @ligneArrayDepense.length
+          decla = @ligneArrayDepense[i]
+          i += 1
+          periode = @ligneArrayDepense[i]
+          i += 1
+          codeLigne = @ligneArrayDepense[i]
+          i += 1
+          baseHt = @ligneArrayDepense[i].to_i
+          i += 1
+          tva = @ligneArrayDepense[i].to_i
+          i += 1
+          @lignetva = Lignetva.where("parametreId = ? AND tvaDecla = ? AND tvaPeriode = ? AND tvaCodeLigne = ?", @paramun.id, decla, periode, codeLigne).first
+          if @lignetva.nil?
+              @lignetva = Lignetva.new
+              @lignetva.tvaDecla = decla
+              @lignetva.tvaPeriode = periode
+              @lignetva.tvaCodeLigne = codeLigne
+              @lignetva.tvaBase = baseHt.to_s
+              @lignetva.tvaMontant = tva.to_s
+              @lignetva.listeDepenseId = @depense.id
+              @lignetva.parametreId = @paramun.id
+          else
+              calTemp = @lignetva.tvaBase.to_i + baseHt
+              @lignetva.tvaBase = calTemp.to_s
+              calTemp = @lignetva.tvaMontant.to_i + tva
+              @lignetva.tvaMontant = calTemp.to_s 
+              @arrayDepenseId = @lignetva.listeDepenseId.split(',')
+              @arrayDepenseId << @depense.id
+              @lignetva.listeDepenseId = @arrayDepenseId.join(',')
+          end
+          @lignetva.save
+      end
+  end
+## FIN des Méthodes dédiées à CREATE ********************************************************************
+
 
 
   # PUT /depenses/1 ********* MISE A JOUR ******************
@@ -149,6 +199,8 @@ class DepensesController < ApplicationController
   end
 
 
+
+
   # DELETE /depenses/1 ********* SUPPRESSION ******************
   # DELETE /depenses/1.xml
   def destroy
@@ -184,7 +236,7 @@ class DepensesController < ApplicationController
       end
       if @destroyOK == 0
           @nbreDepenseArray = @paramun.nbreDepense.split(",")
-          nbre = @nbreDepenseArray[0].to_i + -
+          nbre = @nbreDepenseArray[0].to_i - 1
           @nbreDepenseArray[0] = nbre.to_s
           @paramun.nbreDepense = @nbreDepenseArray.join(',')
           begin

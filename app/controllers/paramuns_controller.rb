@@ -65,8 +65,12 @@ class ParamunsController < ApplicationController
                           @recetteold.facRef = recette.facRef
                           @recetteold.cliRaison = recette.cliRaison
                           @recetteold.proLib = recette.proLib
+                          @recetteold.montantHt = recette.montantHt
+                          @recetteold.montantTva = recette.montantTva
                           @recetteold.facReglMont = recette.facReglMont
                           @recetteold.modePaieLib = recette.modePaieLib
+                          @recetteold.tvaDecla = recette.tvaDecla
+                          @recetteold.tvaPeriode = recette.tvaPeriode
                           @recetteold.factureId = recette.factureId
                           @recetteold.parametreoldId = recette.parametreId
                           @recetteold.save
@@ -83,9 +87,16 @@ class ParamunsController < ApplicationController
                           @depenseold.dateRegl = depense.dateRegl
                           @depenseold.refFacture = depense.refFacture
                           @depenseold.fournisseur = depense.fournisseur
+                          @depenseold.pays = depense.pays
+                          @depenseold.libelle = depense.libelle
                           @depenseold.nature = depense.nature
-                          @depenseold.montant = depense.montant
+                          @depenseold.montantHt = depense.montantHt
+                          @depenseold.montantTva = depense.montantTva
+                          @depenseold.montantTtc = depense.montantTtc
                           @depenseold.modeRegl = depense.modeRegl
+                          @depenseold.typeDecla = depense.typeDecla
+                          @depenseold.tvaDecla = depense.tvaDecla
+                          @depenseold.tvaPeriode = depense.tvaPeriode
                           @depenseold.parametreoldId = depense.parametreId
                           @depenseold.save
                           depense.destroy
@@ -550,6 +561,7 @@ class ParamunsController < ApplicationController
                                   @factureold.facStringLigne = facture.facStringLigne
                                   @factureold.majTache = facture.majTache
                                   @factureold.facDepass = facture.facDepass
+                                  @factureold.facTypeDecla = facture.facTypeDecla
                                   @factureold.projetoldId = facture.projetId
                                   @factureold.parametreoldId = facture.parametreId
                                   begin

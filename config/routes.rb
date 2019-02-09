@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  resources :declaratvaolds
-  resources :declaratvas
+  resources :lignetvaolds
+  resources :lignetvas
   resources :paramunolds
   resources :paramuns
   resources :factureolds
