@@ -32,6 +32,7 @@ class RecettesController < ApplicationController
   # POST /recettes.xml
   def create
       @CreateOK = 0
+      @typeMaj = ""
       @recette = Recette.new(recette_params)
       @current_time = DateTime.now
       @current_year = DateTime.now.year
@@ -69,16 +70,44 @@ class RecettesController < ApplicationController
           end
           @paramun.nbreRecette = @nbreRecetteArray.join(',')
           @paramun.parRecette = @parRecetteArray.join(',')
+          @paramun.save
 
-          ## Régime de la Franchise TVA : exonération ou perteExonération
-          if @paramun.parRegimeTva.to_i < 2
-              franchiseTva  # Incidence de la recette créée sur la Franchise TVA
-          end
-
-          ## Régime de la Franchise TVA[Perte exonération] ou Option Taxation TVA
-          if @paramun.parRegimeTva.to_i > 0
-              if params[:ligne][:ligneStringRecette].to_s != 'neant'
-                  ligneTva  # Incidence de la recette créée sur la Déclaration de TVA
+          # Création/Maj des lignes de la Déclaration de TVA à la suite de la création de l'occurrence de Recette          
+          if @paramun.parRegimeTva.to_i > 0 # Si Franchise TVA[Perte exonération] ou Régime RSI
+              @arrayRecetteId = []
+              @ligneArrayRecette = @recette.lignesTva.split("|")
+              i = 0
+              while i < @ligneArrayRecette.length
+                  decla = @ligneArrayRecette[i]
+                  i += 1
+                  periode = @ligneArrayRecette[i]
+                  i += 1
+                  codeLigne = @ligneArrayRecette[i]
+                  i += 1
+                  baseHt = @ligneArrayRecette[i].to_i
+                  i += 1
+                  tva = @ligneArrayRecette[i].to_i
+                  i += 1
+                  @lignetva = Lignetva.where("parametreId = ? AND tvaDecla = ? AND tvaPeriode = ? AND tvaCodeLigne = ?", @paramun.id, decla, periode, codeLigne).first
+                  if @lignetva.nil?
+                      @lignetva = Lignetva.new
+                      @lignetva.tvaDecla = decla
+                      @lignetva.tvaPeriode = periode
+                      @lignetva.tvaCodeLigne = codeLigne
+                      @lignetva.tvaBase = baseHt.to_s
+                      @lignetva.tvaMontant = tva.to_s
+                      @lignetva.listeRecetteId = @recette.id
+                      @lignetva.parametreId = @paramun.id
+                  else
+                      calTemp = @lignetva.tvaBase.to_i + baseHt
+                      @lignetva.tvaBase = calTemp.to_s
+                      calTemp = @lignetva.tvaMontant.to_i + tva
+                      @lignetva.tvaMontant = calTemp.to_s
+                      @arrayRecetteId = @lignetva.listeRecetteId.split(',')
+                      @arrayRecetteId << @recette.id
+                      @lignetva.listeRecetteId = @arrayRecetteId.join(',')
+                  end
+                  @lignetva.save
               end
           end
       end
@@ -95,101 +124,6 @@ class RecettesController < ApplicationController
           end
       end
   end
-## ------ END CREATE **************************************************************************
-
-## Méthodes dédiées à CREATE ********************************************************************
-  # Incidence de la création de la recette sur la Franchise TVA
-  def franchiseTva
-      # Condition d'Application de la Franchise ----
-      depass = 0
-      case params[:parametre][:parNbreAnActivite].to_i
-          when 0 # 1ère année d'activité
-              if @parRecetteArray[0].to_i > params[:parametre][:parSeuilMajo].to_i
-                  depass = 1 # Mémorisation du mmaaaa du dépassement
-              end
-          when 1 # 2ème année d'activité
-              if @parRecetteArray[1].to_i <= params[:parametre][:parSeuilBase].to_i
-                  if @parRecetteArray[0].to_i > params[:parametre][:parSeuilMajo].to_i
-                      depass = 1 # Mémorisation du mmaaaa du dépassement
-                  end
-              else
-                  depass = 2 # Imposition TVA sur toute l'année N
-              end
-          else # au moins 3 années d'activité
-              if @parRecetteArray[2].to_i <= params[:parametre][:parSeuilBase].to_i
-                  if @parRecetteArray[1].to_i <= params[:parametre][:parSeuilMajo].to_i
-                      if @parRecetteArray[0].to_i > params[:parametre][:parSeuilMajo].to_i
-                          depass = 1 # Mémorisation du mmaaaa du dépassement
-                      end
-                  else
-                      depass = 2 # Imposition TVA sur toute l'année N
-                  end
-              else
-                  depass = 2 # Imposition TVA sur toute l'année N
-              end
-      end
-      if depass == 0
-          @paramun.parDepass = "neant,v"
-      else
-          @paramun.parRegimeTva = 1
-          @paramun.parChoixTauxTva = 0
-          @paramun.parDepass = @current_time.strftime("%m") + "/" + @anReception.to_s + ",v"
-      end
-      begin
-          @paramun.save
-      rescue => e # Incident save Parametre
-          @erreur = Erreur.new
-          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - RecettesController - create"
-          @erreur.origine = "erreur save Parametre"
-          @erreur.numLigne = '134'
-          @erreur.message = e.message
-          @erreur.parametreId = params[:parametre][:id].to_s
-          @erreur.save
-          @CreateOK = 2
-      end
-  end
-
-  # Création/Maj des lignes de la Déclaration de TVA à la suite de la création de l'occurrence de Recette
-  def ligneTva
-      @arrayRecetteId = []
-      @ligneArrayRecette = params[:ligne][:ligneStringRecette].split("|")
-      i = 0
-      while i < @ligneArrayRecette.length
-          decla = @ligneArrayRecette[i]
-          i += 1
-          periode = @ligneArrayRecette[i]
-          i += 1
-          codeLigne = @ligneArrayRecette[i]
-          i += 1
-          baseHt = @ligneArrayRecette[i].to_i
-          i += 1
-          tva = @ligneArrayRecette[i].to_i
-          i += 1
-          @lignetva = Lignetva.where("parametreId = ? AND tvaDecla = ? AND tvaPeriode = ? AND tvaCodeLigne = ?", @paramun.id, decla, periode, codeLigne).first
-          if @lignetva.nil?
-              @lignetva = Lignetva.new
-              @lignetva.tvaDecla = decla
-              @lignetva.tvaPeriode = periode
-              @lignetva.tvaCodeLigne = codeLigne
-              @lignetva.tvaBase = baseHt.to_s
-              @lignetva.tvaMontant = tva.to_s
-              @lignetva.listeRecetteId = @recette.id
-              @lignetva.parametreId = @paramun.id
-          else
-              calTemp = @lignetva.tvaBase.to_i + baseHt
-              @lignetva.tvaBase = calTemp.to_s
-              calTemp = @lignetva.tvaMontant.to_i + tva
-              @lignetva.tvaMontant = calTemp.to_s
-              @arrayRecetteId = @lignetva.listeRecetteId.split(',')
-              @arrayRecetteId << @recette.id
-              @lignetva.listeRecetteId = @arrayRecetteId.join(',')
-          end
-          @lignetva.save
-      end
-  end
-  ## FIN des Méthodes dédiées à CREATE ********************************************************************
-
 
 
   # PUT /recettes/1 ********* MISE A JOUR **********************************************************

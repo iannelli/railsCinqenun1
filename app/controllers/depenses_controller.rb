@@ -140,12 +140,25 @@ class DepensesController < ApplicationController
 
   # PUT /depenses/1 ********* MISE A JOUR ******************
   # PUT /depenses/1.xml
+  ## Maj SANS conséquence sur la TVA ---
   def update
       @current_time = DateTime.now
+      @current_year = DateTime.now.year
       @updateOK = 0
-      @changeExercice = 0
       begin
           @depense = Depense.find(params[:id])
+      rescue => e # erreur Find Depense
+          @erreur = Erreur.new
+          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+          @erreur.appli = "rails - DepensesController - update"
+          @erreur.origine = "erreur Find Depense - depense.id=" + params[:id].to_s
+          @erreur.numLigne = '147'
+          @erreur.message = e.message
+          @erreur.parametreId = params[:parametre][:id].to_s
+          @erreur.save
+          @updateOK = 1
+      end
+      if @updateOK == 0
           begin
               @depense.update(depense_params)
           rescue => e # Incident lors de la Maj de Depense
@@ -157,18 +170,8 @@ class DepensesController < ApplicationController
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
-              @updateOK = 1
+              @updateOK = 2
           end
-      rescue => e # erreur Find Depense
-          @erreur = Erreur.new
-          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - DepensesController - update"
-          @erreur.origine = "erreur Find Depense - depense.id=" + params[:id].to_s
-          @erreur.numLigne = '89'
-          @erreur.message = e.message
-          @erreur.parametreId = params[:parametre][:id].to_s
-          @erreur.save
-          @updateOK = 1
       end
       if @updateOK == 0
           if params[:parametre][:changeAnRegl].to_s != '0'
@@ -190,14 +193,16 @@ class DepensesController < ApplicationController
           end
       end
       respond_to do |format|
-          if @updateOK == 0
-              format.xml { render request.format.to_sym => "ddepenseOK" }
-          else
-              format.xml { render request.format.to_sym => "ddepErreurU" }
+          case @updateOK
+              when 0
+                  format.xml { render request.format.to_sym => "ddepenseOK0" }
+              when 1
+                  format.xml { render request.format.to_sym => "ddepErreurU1" }
+              when 2
+                  format.xml { render request.format.to_sym => "ddepErreurU2" }
           end
       end
   end
-
 
 
 
@@ -213,7 +218,7 @@ class DepensesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = 'rails - DepensesController - destroy'
           @erreur.origine = "erreur Find Depense - Depense.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '130'
+          @erreur.numLigne = '310'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -227,7 +232,7 @@ class DepensesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = 'rails - DepensesController - destroy'
               @erreur.origine = "erreur Delete Depense - depense.id=" + params[:id].to_s
-              @erreur.numLigne = '144'
+              @erreur.numLigne = '324'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -246,7 +251,7 @@ class DepensesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - DepensesController - create"
               @erreur.origine = "erreur save Parametre"
-              @erreur.numLigne = '163'
+              @erreur.numLigne = '343'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
