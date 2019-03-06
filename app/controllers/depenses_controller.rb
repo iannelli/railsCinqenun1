@@ -77,7 +77,7 @@ class DepensesController < ApplicationController
           end
       end
       if @CreateOK == 0
-          if @paramun.parRegimeTva.to_i > 0 ## Régime de la Franchise TVA[Perte exonération] ou Option Taxation TVA
+          if @paramun.parRegimeTva.to_i > 0 ## Régime de la Franchise TVA[Perte exonération] ou Régime RSI
               if @depense.typeDecla.to_s != 'E'  ## Ligne à remplir pour les Déclarations autre que de type 'E'
                   ligneTva  # Incidence de la dépense créée sur la Déclaration de TVA
               end
@@ -99,7 +99,7 @@ class DepensesController < ApplicationController
 ## Création/Maj des lignes de la Déclaration de TVA à la suite de la création de l'occurrence de Depense
   def ligneTva
       @arrayDepenseId = []
-      @ligneArrayDepense = params[:ligne][:ligneStringDepense].split("|")
+      @ligneArrayDepense = @depense.lignesTva.split("|")
       i = 0
       while i < @ligneArrayDepense.length
           decla = @ligneArrayDepense[i]

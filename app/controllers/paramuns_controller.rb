@@ -386,9 +386,9 @@ class ParamunsController < ApplicationController
                           if @depassOK == 1
                               if ['20', '40', '41', '50', '51'].include?(facture.typeImpr.to_s)
                                   if facture.facStatut.to_s != '3Annulé'
-                                      anMois = facture.facDateEmis.slice(6,4) + facture.facDateEmis.slice(3,2)
-                                      if anMois.to_i >= @parDepassArray[0].to_i
-                                          if facture.facMontTva.to_i == 0
+                                      anMoisEmission = facture.facDateEmis.slice(6,4) + facture.facDateEmis.slice(3,2)
+                                      if anMoisEmission.to_i >= @parDepassArray[0].to_i
+                                          if facture.facMontTva.to_i > 0
                                               facture.facDepass = '1'
                                               facture.save
                                               @cptFacture += 1
@@ -718,7 +718,10 @@ class ParamunsController < ApplicationController
               # Situation de Paramun au regard du Dépassement du Seuil de la Franchise
               if @depassOK == 1
                   if @cptProjet == 0
-                      @paramun.parDepass = "neant,v"
+                      anMoisCourant = @current_time.strftime "%Y%m"
+                      if anMoisCourant.to_i > @parDepassArray[0].to_i
+                          @paramun.parDepass = "neant,v"
+                      end
                   else
                       depass = @parDepassArray[0].to_s + ',' + @cptProjet.to_s
                       @paramun.parDepass = depass

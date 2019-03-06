@@ -11,7 +11,7 @@ class Paramun < ApplicationRecord
 
     has_many :recettes, :foreign_key => 'parametreId'
     
-    has_many :lignetvas, :foreign_key => 'parametreId'
+    has_many :lignetvas, :class_name => 'Lignetva', :foreign_key => 'parametreId'
 
     has_many :soustraitants, :foreign_key => 'parametreId'
 
