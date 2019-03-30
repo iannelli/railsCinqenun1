@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :immobolds
+  resources :immobs
   resources :lignetvaolds
   resources :lignetvas
   resources :paramunolds

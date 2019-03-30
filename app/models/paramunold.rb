@@ -5,6 +5,8 @@ class Paramunold < ApplicationRecord
     has_many :projetolds, :foreign_key => 'parametreoldId'
 
     has_many :depenseolds, :foreign_key => 'parametreoldId'
+    
+    has_many :immobolds, :foreign_key => 'parametreoldId'
 
     has_many :recetteolds, :foreign_key => 'parametreoldId'
     

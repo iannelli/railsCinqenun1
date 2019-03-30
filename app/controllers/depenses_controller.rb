@@ -94,7 +94,6 @@ class DepensesController < ApplicationController
   end
 
 
-
   # PUT /depenses/1 ********* MISE A JOUR ******************
   # PUT /depenses/1.xml
   def update
@@ -114,7 +113,7 @@ class DepensesController < ApplicationController
           @erreur.save
           @updateOK = 1
       end
-      if @updateOK == 0 ## Modification des LigneTva ---- (si problème Find : @updateOK = 2)
+      if @updateOK == 0 ## Modification des LigneTva ---- (si problème Find => @updateOK = 2)
           if params[:parametre][:maj].to_s == 'U2' || params[:parametre][:maj].to_s == 'U3'
               @updateOK = modificationLigneTva ## Cf. fin du Controller
           end
@@ -123,14 +122,14 @@ class DepensesController < ApplicationController
           if params[:parametre][:maj].to_s == 'U0' || params[:parametre][:maj].to_s == 'U2' || params[:parametre][:maj].to_s == 'U3'
               @nbreDepenseArray = @paramun.nbreDepense.split(",")
               majOK = 0
-              if @depense.dateRegl.slice(6,4).to_i > params[:depense][:dateRegl].slice(6,4).to_i #2018 2017
+              if @depense.dateRegl.slice(6,4).to_i > params[:depense][:dateRegl].slice(6,4).to_i # année N / N-1
                   nbre = @nbreDepenseArray[0].to_i - 1
                   @nbreDepenseArray[0] = nbre.to_s
                   nbre = @nbreDepenseArray[1].to_i + 1
                   @nbreDepenseArray[1] = nbre.to_s
                   majOK = 1
               end
-              if @depense.dateRegl.slice(6,4).to_i < params[:depense][:dateRegl].slice(6,4).to_i #2017 2018
+              if @depense.dateRegl.slice(6,4).to_i < params[:depense][:dateRegl].slice(6,4).to_i # année N-1 / N
                   nbre = @nbreDepenseArray[0].to_i + 1
                   @nbreDepenseArray[0] = nbre.to_s
                   nbre = @nbreDepenseArray[1].to_i - 1
@@ -198,7 +197,7 @@ class DepensesController < ApplicationController
           @erreur.save
           @destroyOK = 1
       end
-      if @destroyOK == 0 ## Modification des LigneTva ---- (si problème Find : @destroyOK = 2)
+      if @destroyOK == 0 ## Modification des LigneTva ---- (si problème Find => @destroyOK = 2)
           if @depense.lignesTva.to_s != 'neant'
               @destroyOK = modificationLigneTva ## Cf. fin du Controller
           end
@@ -241,7 +240,7 @@ class DepensesController < ApplicationController
               when 2
                   format.xml { render request.format.to_sym => "ddepErreurD2" }
               when 3
-                  format.xml { render request.format.to_sym => "ddepErreurD3" }    
+                  format.xml { render request.format.to_sym => "ddepErreurD3" }
           end
       end
   end
@@ -280,6 +279,7 @@ class DepensesController < ApplicationController
               @lignetva.tvaMontant = calTemp.to_s 
               @arrayDepenseId = @lignetva.listeDepenseId.split(',')
               @arrayDepenseId << @depense.id
+              @arrayDepenseId.uniq! #Unification des id de même valeur en un seul id
               @lignetva.listeDepenseId = @arrayDepenseId.join(',')
           end
           @lignetva.save
@@ -310,7 +310,7 @@ class DepensesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - DepensesController - update"
               @erreur.origine = "erreur Find LigneTva - depense.id=" + params[:id].to_s
-              @erreur.numLigne = '227'
+              @erreur.numLigne = '306'
               @erreur.message = "@depense.lignesTva = " + @depense.lignesTva.to_s
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -322,7 +322,7 @@ class DepensesController < ApplicationController
               calTemp = @lignetva.tvaMontant.to_i - tva
               @lignetva.tvaMontant = calTemp.to_s
               @lignetva.save
-          end                    
+          end
       end
       return @resultat
   end

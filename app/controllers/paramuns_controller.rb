@@ -25,13 +25,13 @@ class ParamunsController < ApplicationController
           anCourant = Time.new.year
           moisCourant = Time.new.month
           anMoins2 = anCourant - 2
-          # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses
+          # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs
           if anCourant > @paramun.parDateConnex.slice(0,4).to_i
               # parMaj
               @majNewAn = '1'
               # parDepass ----
               @paramun.parDepass = "neant,v"
-              # parRecette ----
+              # parRecette ----------------------------------------
               @parRecetteNewArray = [0,0,0,0,0,0,0]
               @parRecetteOldArray = @paramun.parRecette.split(',')
               @parRecetteNewArray[1] = @parRecetteOldArray[0]
@@ -51,7 +51,7 @@ class ParamunsController < ApplicationController
               @nbreRecetteNewArray[5] = @nbreRecetteOldArray[4]
               @nbreRecetteNewArray[6] = @nbreRecetteOldArray[5]
               @paramun.nbreRecette = @nbreRecetteNewArray.join(',')
-              # parDepense ----
+              # parDepense ---------------------------------------
               @parDepenseNewArray = [0,0,0,0,0,0,0]
               @parDepenseOldArray = @paramun.parDepense.split(',')
               @parDepenseNewArray[1] = @parDepenseOldArray[0]
@@ -71,6 +71,16 @@ class ParamunsController < ApplicationController
               @nbreDepenseNewArray[5] = @nbreDepenseOldArray[4]
               @nbreDepenseNewArray[6] = @nbreDepenseOldArray[5]
               @paramun.nbreDepense = @nbreDepenseNewArray.join(',')
+              # parImmob ---------------------------------------
+              @parImmobNewArray = [0,0,0,0,0,0,0]
+              @parImmobOldArray = @paramun.parImmob.split(',')
+              @parImmobNewArray[1] = @parImmobOldArray[0]
+              @parImmobNewArray[2] = @parImmobOldArray[1]
+              @parImmobNewArray[3] = @parImmobOldArray[2]
+              @parImmobNewArray[4] = @parImmobOldArray[3]
+              @parImmobNewArray[5] = @parImmobOldArray[4]
+              @parImmobNewArray[6] = @parImmobOldArray[5]
+              @paramun.parImmob = @parImmobNewArray.join(',')
               # nbreImmob -----
               @nbreImmobNewArray = [0,0,0,0,0,0,0]
               @nbreImmobOldArray = @paramun.nbreImmob.split(',')
@@ -133,6 +143,47 @@ class ParamunsController < ApplicationController
                       end
                   end
               end
+              # Archivage des Immobilisations de l'année N-2 ----------------
+              if @paramun.immobs.length != 0
+                  @paramun.immobs.each do |immob|
+                      if immob.dateRegl.slice(6,4) == anMoins2.to_s
+                          @immobold = Immobold.new()
+                          @immobold.id = immob.id
+                          @immobold.dateRegl = immob.dateRegl
+                          @immobold.refFacture = immob.refFacture
+                          @immobold.libelle = immob.libelle
+                          @immobold.categorie = immob.categorie
+                          @immobold.fournisseur = immob.fournisseur
+                          @immobold.pays = immob.pays
+                          @immobold.montantHt = immob.montantHt
+                          @immobold.usagePro = immob.usagePro
+                          @immobold.baseAmort = immob.baseAmort
+                          @immobold.tauxTva = immob.tauxTva
+                          @immobold.tauxTvaAutre = immob.tauxTvaAutre
+                          @immobold.montantTva = immob.montantTva
+                          @immobold.montantTtc = immob.montantTtc
+                          @immobold.modeRegl = immob.modeRegl 
+                          @immobold.typeDecla = immob.typeDecla
+                          @immobold.tvaDecla = immob.tvaDecla
+                          @immobold.tvaPeriode = immob.tvaPeriode
+                          @immobold.lignesTva = immob.lignesTva
+                          @immobold.imMode = immob.imMode
+                          @immobold.imDuree = immob.imDuree
+                          @immobold.imCoeff = immob.imCoeff
+                          @immobold.imTaux = immob.imTaux
+                          @immobold.imAmorString = immob.imAmorString
+                          @immobold.imATP = immob.imATP
+                          @immobold.imVR = immob.imVR
+                          @immobold.dateCession = immob.dateCession
+                          @immobold.prixCession = immob.prixCession
+                          @immobold.plusMoinsValue = immob.plusMoinsValue
+                          @immobold.parametreoldId = immob.parametreId
+                          @immobold.save
+                          immob.destroy
+                      end
+                  end
+              end
+
               # Maj de parAnFac et parNumFact -----------
               @paramun.parAnFact = anCourant.to_s
               @paramun.parNumFact = '00000'

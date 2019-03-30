@@ -4,6 +4,8 @@ class Paramun < ApplicationRecord
     has_many :clienteles, :foreign_key => 'parametreId'
 
     has_many :depenses, :foreign_key => 'parametreId'
+    
+    has_many :immobs, :foreign_key => 'parametreId'
 
     has_many :familletaches, class_name: 'Familletache', :foreign_key => 'parametreId'
 
