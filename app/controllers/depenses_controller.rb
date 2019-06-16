@@ -35,6 +35,7 @@ class DepensesController < ApplicationController
   def create
       @current_time = DateTime.now
       current_year = DateTime.now.year
+      @montantDepense = 0
       @depense = Depense.new(depense_params)
       @CreateOK = 0
       begin
@@ -50,18 +51,30 @@ class DepensesController < ApplicationController
           @erreur.save
           @CreateOK = 1
       end
-      if @CreateOK == 0  ## Maj du Nombre de Depense --------------------------
-          @nbreDepenseArray = @paramun.nbreDepense.split(",")
+      if @CreateOK == 0  ## Maj de @paramun.nbreDepense et de @paramun.parDepense ------
+          if @paramun.parRegimeTva.to_i == 0
+              @montantDepense = @depense.montantTtc.to_i
+          else   
+              @montantDepense = @depense.montantHt.to_i
+          end
+          @nbreDepenseArray = @paramun.nbreDepense.split(',')
+          @parDepenseArray = @paramun.parDepense.split(',')
           anReglement = @depense.dateRegl.slice(6,4) #jj/mm/aaaa
           if anReglement.to_i == current_year.to_i
               nbre = @nbreDepenseArray[0].to_i + 1
               @nbreDepenseArray[0] = nbre.to_s
+              dep = @parDepenseArray[0].to_i + @montantDepense
+              @parDepenseArray[0] = dep.to_s
           end
           if anReglement.to_i == current_year.to_i-1
               nbre = @nbreDepenseArray[1].to_i + 1
               @nbreDepenseArray[1] = nbre.to_s
+              @nbreDepenseArray[1] = nbre.to_s
+              dep = @parDepenseArray[1].to_i + @montantDepense
+              @parDepenseArray[1] = dep.to_s
           end
           @paramun.nbreDepense = @nbreDepenseArray.join(',')
+          @paramun.parDepense = @parDepenseArray.join(',')
           begin
               @paramun.save
           rescue => e # Incident save Parametre
@@ -77,8 +90,10 @@ class DepensesController < ApplicationController
           end
       end
       if @CreateOK == 0  ## Incidence de la dépense créée sur la Déclaration de TVA ----------------
-          if @depense.lignesTva.to_s != 'neant'
-              creationLigneTva  
+          if @paramun.parRegimeTva.to_i != 0
+              if @depense.lignesTva.to_s != 'neant'
+                  creationLigneTva  
+              end
           end
       end
       respond_to do |format|
@@ -99,9 +114,16 @@ class DepensesController < ApplicationController
   def update
       @current_time = DateTime.now
       @current_year = DateTime.now.year
+      @montantDepenseOld = 0
       @updateOK = 0
+      @majParamOk = 0
       begin
           @depense = Depense.find(params[:id])
+          if @paramun.parRegimeTva.to_i == 0
+              @montantDepenseOld = @depense.montantTtc.to_i
+          else   
+              @montantDepenseOld = @depense.montantHt.to_i
+          end
       rescue => e # erreur Find Depense
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
@@ -114,32 +136,42 @@ class DepensesController < ApplicationController
           @updateOK = 1
       end
       if @updateOK == 0 ## Modification des LigneTva ---- (si problème Find => @updateOK = 2)
-          if params[:parametre][:maj].to_s == 'U2' || params[:parametre][:maj].to_s == 'U3'
-              @updateOK = modificationLigneTva ## Cf. fin du Controller
+          if @paramun.parRegimeTva.to_i != 0
+              if params[:parametre][:maj].to_s != 'U1'
+                  if @depense.lignesTva.to_s != 'neant'
+                      @updateOK = modificationLigneTva ## Cf. fin du Controller
+                  end
+              end
           end
       end
-      if @updateOK == 0 # Changement de l'année du Règlement ------
-          if params[:parametre][:maj].to_s == 'U0' || params[:parametre][:maj].to_s == 'U2' || params[:parametre][:maj].to_s == 'U3'
-              @nbreDepenseArray = @paramun.nbreDepense.split(",")
-              majOK = 0
-              if @depense.dateRegl.slice(6,4).to_i > params[:depense][:dateRegl].slice(6,4).to_i # année N / N-1
+      if @updateOK == 0 # ## Maj de @paramun.nbreDepense et de @paramun.parDepense ------
+          @nbreDepenseArray = @paramun.nbreDepense.split(',')
+          @parDepenseArray = @paramun.parDepense.split(',')
+          # Changement de l'année du Règlement ------ 
+          if params[:depense][:dateRegl].slice(6,4).to_i != @depense.dateRegl.slice(6,4).to_i           
+              if params[:depense][:dateRegl].slice(6,4).to_i == @current_year.to_i
+                  nbre = @nbreDepenseArray[0].to_i + 1
+                  @nbreDepenseArray[0] = nbre.to_s
+                  nbre = @nbreDepenseArray[1].to_i - 1
+                  @nbreDepenseArray[1] = nbre.to_s                  
+                  dep = @parDepenseArray[0].to_i + @montantDepenseOld
+                  @parDepenseArray[0] = dep.to_s
+                  dep = @parDepenseArray[1].to_i - @montantDepenseOld
+                  @parDepenseArray[1] = dep.to_s
+              end
+              if params[:depense][:dateRegl].slice(6,4).to_i == @current_year.to_i - 1
                   nbre = @nbreDepenseArray[0].to_i - 1
                   @nbreDepenseArray[0] = nbre.to_s
                   nbre = @nbreDepenseArray[1].to_i + 1
                   @nbreDepenseArray[1] = nbre.to_s
-                  majOK = 1
+                  dep = @parDepenseArray[0].to_i - @montantDepenseOld
+                  @parDepenseArray[0] = dep.to_s
+                  dep = @parDepenseArray[1].to_i + @montantDepenseOld
+                  @parDepenseArray[1] = dep.to_s
               end
-              if @depense.dateRegl.slice(6,4).to_i < params[:depense][:dateRegl].slice(6,4).to_i # année N-1 / N
-                  nbre = @nbreDepenseArray[0].to_i + 1
-                  @nbreDepenseArray[0] = nbre.to_s
-                  nbre = @nbreDepenseArray[1].to_i - 1
-                  @nbreDepenseArray[1] = nbre.to_s
-                  majOK = 1
-              end
-              if majOK == 1
-                  @paramun.nbreDepense = @nbreDepenseArray.join(',')
-                  @paramun.save
-              end
+              @paramun.nbreDepense = @nbreDepenseArray.join(',')
+              @paramun.parDepense = @parDepenseArray.join(',')
+              @majParamOk = 1
           end
       end
       if @updateOK == 0
@@ -158,8 +190,34 @@ class DepensesController < ApplicationController
           end
       end
       if @updateOK == 0  ## Création des Lignetva -----------
-          if params[:parametre][:maj].to_s == 'U2' || params[:parametre][:maj].to_s == 'U3'
-              creationLigneTva ## Cf. fin du Controller
+          if @paramun.parRegimeTva.to_i != 0
+              if params[:parametre][:maj].to_s != 'U1'
+                  creationLigneTva ## Cf. fin du Controller
+              end
+          end
+      end
+      if @updateOK == 0  ## Maj parDepense -----------
+          if @paramun.parRegimeTva.to_i == 0
+              @montantDepense = @depense.montantTtc.to_i
+          else   
+              @montantDepense = @depense.montantHt.to_i
+          end
+          if params[:parametre][:maj].to_s != 'U1'
+              if @montantHtOld.to_i != @depense.montantHt.to_i
+                  if @depense.dateRegl.slice(6,4).to_i == @current_year.to_i
+                      dep = @parDepenseArray[0].to_i + @montantDepense - @montantDepenseOld
+                      @parDepenseArray[0] = dep.to_s
+                  end
+                  if @depense.dateRegl.slice(6,4).to_i == @current_year.to_i-1
+                      dep = @parDepenseArray[1].to_i + @montantDepense - @montantDepenseOld
+                      @parDepenseArray[1] = dep.to_s
+                  end
+                  @paramun.parDepense = @parDepenseArray.join(',')
+                  @majParamOk = 1
+              end
+          end
+          if @majParamOk == 1
+              @paramun.save
           end
       end
       ## FIN du Traitement ------
@@ -198,21 +256,34 @@ class DepensesController < ApplicationController
           @destroyOK = 1
       end
       if @destroyOK == 0 ## Modification des LigneTva ---- (si problème Find => @destroyOK = 2)
-          if @depense.lignesTva.to_s != 'neant'
-              @destroyOK = modificationLigneTva ## Cf. fin du Controller
+          if @paramun.parRegimeTva.to_i != 0
+              if @depense.lignesTva.to_s != 'neant'
+                  @destroyOK = modificationLigneTva ## Cf. fin du Controller
+              end
           end
       end
-      if @destroyOK == 0 ## Mise à jour du Nombre de Depense
-          @nbreDepenseArray = @paramun.nbreDepense.split(",")
+      if @destroyOK == 0 ## Maj de @paramun.nbreDepense et de @paramun.parDepense ------
+          if @paramun.parRegimeTva.to_i == 0
+              @montantDepense = @depense.montantTtc.to_i
+          else   
+              @montantDepense = @depense.montantHt.to_i
+          end
+          @nbreDepenseArray = @paramun.nbreDepense.split(',')
+          @parDepenseArray = @paramun.parDepense.split(',')
           if @depense.dateRegl.slice(6,4).to_i == @current_year.to_i
               nbre = @nbreDepenseArray[0].to_i - 1
               @nbreDepenseArray[0] = nbre.to_s
+              dep = @parDepenseArray[0].to_i - @montantDepense.to_i
+              @parDepenseArray[0] = dep.to_s
           end
           if @depense.dateRegl.slice(6,4).to_i == @current_year.to_i - 1
               nbre = @nbreDepenseArray[1].to_i - 1
               @nbreDepenseArray[1] = nbre.to_s
+              dep = @parDepenseArray[1].to_i - @montantDepense.to_i
+              @parDepenseArray[1] = dep.to_s
           end
           @paramun.nbreDepense = @nbreDepenseArray.join(',')
+          @paramun.parDepense = @parDepenseArray.join(',')
           @paramun.save
       end
       if @destroyOK == 0
@@ -278,7 +349,7 @@ class DepensesController < ApplicationController
               calTemp = @lignetva.tvaMontant.to_i + tva
               @lignetva.tvaMontant = calTemp.to_s 
               @arrayDepenseId = @lignetva.listeDepenseId.split(',')
-              @arrayDepenseId << @depense.id
+              @arrayDepenseId << @depense.id.to_s
               @arrayDepenseId.uniq! #Unification des id de même valeur en un seul id
               @lignetva.listeDepenseId = @arrayDepenseId.join(',')
           end

@@ -9,7 +9,7 @@ class ImmoboldsController < ApplicationController
       # Find Parametreold ---
       begin
           @paramunold = Paramunold.find(params[:parametre][:id].to_i)
-       rescue => e    
+       rescue => e
           @erreur = Erreur.new
           @current_time = DateTime.now
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"

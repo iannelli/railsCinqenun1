@@ -115,7 +115,7 @@ class RecettesController < ApplicationController
                                       lignetva.tvaBase = mont.to_s
                                       mont = lignetva.tvaMontant.to_i + @recette.montantTva.to_i
                                       lignetva.tvaMontant = mont.to_s
-                                      @arrayRecetteId << @recette.id
+                                      @arrayRecetteId << @recette.id.to_s
                                       @arrayRecetteId.uniq! #Unification des id de même valeur en un seul id
                                       lignetva.listeRecetteId = @arrayRecetteId.join(',')
                                       lignetva.save
@@ -155,7 +155,7 @@ class RecettesController < ApplicationController
                               calTemp = @lignetva.tvaMontant.to_i + tva
                               @lignetva.tvaMontant = calTemp.to_s
                               @arrayRecetteId = @lignetva.listeRecetteId.split(',')
-                              @arrayRecetteId << @recette.id
+                              @arrayRecetteId << @recette.id.to_s
                               @arrayRecetteId.uniq! #Unification des id de même valeur en un seul id
                               @lignetva.listeRecetteId = @arrayRecetteId.join(',')
                           end

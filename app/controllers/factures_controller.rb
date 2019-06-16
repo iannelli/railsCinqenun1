@@ -183,6 +183,15 @@ class FacturesController < ApplicationController
                                       @factAnnul = Facture.find(params[:factannul][:id])
                                       @factAnnul.facStatut = "3Annulé"
                                       @factAnnul.facMention = "**** Facture Annulée ****"
+                                      # Si la dernière facture est une facture Solde, elle devient intermédiaire
+                                      case @facture.typeImpr.to_s
+                                          when '50'
+                                              @fatureLast.typeImpr = '40'
+                                              @fatureLast.save
+                                          when '51'
+                                              @fatureLast.typeImpr = '41'
+                                              @fatureLast.save
+                                      end
                                       begin
                                           @factAnnul.save
                                       rescue => e  # Incident Save Facture annulée
@@ -190,7 +199,7 @@ class FacturesController < ApplicationController
                                           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                                           @erreur.appli = "rails - FacturesController - create"
                                           @erreur.origine = "erreur Save Facture annulée - params[:factannul][:id]=" + params[:factannul][:id].to_s
-                                          @erreur.numLigne = '174'
+                                          @erreur.numLigne = '196'
                                           @erreur.message = e.message
                                           @erreur.parametreId = params[:parametre][:id].to_s
                                           @erreur.save
@@ -201,7 +210,7 @@ class FacturesController < ApplicationController
                                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                                       @erreur.appli = "rails - FacturesController - create"
                                       @erreur.origine = "erreur Find Facture annulée - params[:factannul][:id]=" + params[:factannul][:id].to_s
-                                      @erreur.numLigne = '170'
+                                      @erreur.numLigne = '183'
                                       @erreur.message = e.message
                                       @erreur.parametreId = params[:parametre][:id].to_s
                                       @erreur.save
@@ -220,7 +229,7 @@ class FacturesController < ApplicationController
                               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                               @erreur.appli = "rails - FacturesController - create"
                               @erreur.origine = "erreur Maj Facture @facture.id=" + @facture.id.to_s
-                              @erreur.numLigne = '217'
+                              @erreur.numLigne = '226'
                               @erreur.message = e.message
                               @erreur.parametreId = params[:parametre][:id].to_s
                               @erreur.save
@@ -284,7 +293,7 @@ class FacturesController < ApplicationController
               @erreurUpdate = 1
           end
           @erreur.origine = "erreur Maj Parametre - def updateParametreNumFact"
-          @erreur.numLigne = '275'
+          @erreur.numLigne = '282'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -314,13 +323,18 @@ class FacturesController < ApplicationController
                      tacFacElementArray[e+2] = 'R'
                   end
               end
+              if params[:operation][:maj] == 'RImp'
+                  if (tacFacElementArray[e+2].to_s == 'F' && tacFacElementArray[e+4].to_i == @facture.id)
+                     tacFacElementArray[e+2] = 'I'
+                  end
+              end
               e += 5
           end
           begin
               @tache = Tache.find(tacFacElementArray[0].to_i)
               totalTacheHt = 0
               nbrePeriodeFacturee = 0 # Nombre de période au Statut "Facturé"
-              nbrePeriodeReglee = 0 # Nombre de période au Statut "Réglé"
+              nbrePeriodeReglee = 0 # Nombre de période au Statut "Réglé" ou "Imputé"              
               e = 0
               while (e < tacFacElementArray.length)
                   if tacFacElementArray[e+3] != "." ## montHt
@@ -329,7 +343,7 @@ class FacturesController < ApplicationController
                   if tacFacElementArray[e+2] == "F"
                       nbrePeriodeFacturee += 1
                   end
-                  if tacFacElementArray[e+2] == "R"
+                  if tacFacElementArray[e+2] == "R" || tacFacElementArray[e+2] == "I"
                       nbrePeriodeReglee += 1
                   end
                   e += 5
@@ -374,7 +388,7 @@ class FacturesController < ApplicationController
                       @erreurUpdate = 1
                   end
                   @erreur.origine = "erreur Save Tache - @tache.id=" + @tache.id.to_s
-                  @erreur.numLigne = '354'
+                  @erreur.numLigne = '368'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -392,7 +406,7 @@ class FacturesController < ApplicationController
                   @erreurUpdate = 1
               end
               @erreur.origine = "erreur Find Tache - tacFacElementArray[0]=" + tacFacElementArray[0].to_s
-              @erreur.numLigne = '320'
+              @erreur.numLigne = '334'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -420,26 +434,34 @@ class FacturesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = "rails - FacturesController - update"
           @erreur.origine = "erreur Find Facture - Facture.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '414'
+          @erreur.numLigne = '428'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
           @erreurUpdate = 1
       end
       if @erreurUpdate == 0
-          begin
-              @facture.update(facture_params) ## Mise à jour du BdC/Facture
+          begin ## Mise à jour du BdC/Facture
+              @facture.update(facture_params)
+              
+              ## Traitement spécifique d'un Règlement d'une facture ---------------------
               if params[:operation][:maj] == 'R'
-                  if @facture.typeImpr.slice(0,1) != '1' ## Complément si Règlement du BdC/facture
-                      @majTache = @facture.majTache.split(',')
-                      e = 0
-                      while (e < @majTache.length)
-                          @tacFacArray.push(@majTache[e+1])
-                          e += 4
+                  if @facture.typeImpr.slice(0,1) != '1'
+                      if @facture.typeImpr.slice(0,1) != '7'
+                          @majTache = @facture.majTache.split(',')
+                          e = 0
+                          while (e < @majTache.length)
+                              @tacFacArray.push(@majTache[e+1])
+                              e += 4
+                          end
+                          updateTacFacString  ## MAJ Tache (Statut et tacFacString)
                       end
-                      updateTacFacString  ## MAJ Tache (Statut et tacFacString)
                       if @erreurUpdate == 0
-                          @facture.majTache = @majTache.join(',')
+                          if @facture.typeImpr.slice(0,1) == '7'
+                              @facture.majTache = ''
+                          else
+                              @facture.majTache = @majTache.join(',')
+                          end
                           begin
                               @facture.save
                           rescue => e  # Incident Save Facture
@@ -447,7 +469,7 @@ class FacturesController < ApplicationController
                               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                               @erreur.appli = "rails - FacturesController - update"
                               @erreur.origine = "erreur Save Facture - @facture.id=" + @facture.id.to_s
-                              @erreur.numLigne = '444'
+                              @erreur.numLigne = '466'
                               @erreur.message = e.message
                               @erreur.parametreId = params[:parametre][:id].to_s
                               @erreur.save
@@ -455,7 +477,50 @@ class FacturesController < ApplicationController
                           end
                       end
                   end
-                  if @erreurUpdate == 0
+                  ## Traitement si Règlement Partiel de la dernière facture ('solde') - Création éventuelle d'un 'Reste en Attente'
+                  if  @facture.typeImpr.slice(0,1) == '5'
+                      @projet = Projet.find(params[:projet][:id])
+                      @fatureLast = @projet.factures.last
+                      if @fatureLast.id.to_i == @facture.id.to_i
+                          if params[:projet][:proReport].to_i != 0 #Création 'Facture/Reste en Attente'
+                              @factureReA = Facture.new
+                              @factureReA.typeImpr = '7' + @facture.typeImpr.slice(1,1)
+                              @factureReA.facStatut = '3nonRéglé'
+                              @factureReA.facDateEmis = @current_time.strftime "%d/%m/%Y" # date du jour
+                              @factureReA.facDelai = '0'
+                              @factureReA.facDelaiMax = '0'
+                              @factureReA.facDateLimite = @facture.facDateReception #date du Paiement partiel
+                              temp = @current_time.strftime "%H%M%d%m%y"
+                              @factureReA.facRef = 'REA' + temp
+                              @factureReA.facBdC = @facture.facBdC
+                              @factureReA.facRefPre = @facture.facRefPre #Ref Facture en 'Reste Du' ou 'Trop percu'
+                              # facMention = montant réglé (Facture Solde) ET 'Montant Du Ttc' (Facture Solde)
+                              @factureReA.facMention = @facture.facReglMont.to_s + "," + @facture.facMontTtc.to_s
+                              if @paramun.parRegimeTva.to_i == 0
+                                  @factureReA.facMontHt = params[:projet][:proReport].to_s
+                                  @factureReA.facMontTva = '000'
+                                  @factureReA.facMontTtc =  params[:projet][:proReport].to_s
+                              else                             
+                                  temp1 = params[:projet][:proReport].to_i / 1.2
+                                  temp2 = temp1.round
+                                  @factureReA.facMontHt = temp2.to_s
+                                  temp1 = params[:projet][:proReport].to_i - temp2
+                                  @factureReA.facMontTva = temp1.to_s
+                                  @factureReA.facMontTtc =  params[:projet][:proReport].to_s # 'Reste Du' ou 'Trop percu'
+                              end
+                              @factureReA.facAcomMont = "000"
+                              @factureReA.facTotalDu = params[:projet][:proReport].to_s
+                              @factureReA.majTache = @facture.majTache
+                              @factureReA.facCourrier = '0,0'
+                              @factureReA.projetId = @facture.projetId
+                              @factureReA.parametreId = @facture.parametreId
+                              @factureReA.save
+                              @erreurUpdate = 2
+                          end
+                      end
+                  end
+                  ## FIN Traitement si Règlement Partiel de la dernière facture ('solde')
+                  if @erreurUpdate != 1
                       if params[:parametre][:facSituationImpositionTva].to_s == 'C1' 
                           @paramun.parRegimeTva = params[:parametre][:parRegimeTva].to_s
                           @paramun.parChoixTauxTva = params[:parametre][:parChoixTauxTva].to_s
@@ -467,7 +532,7 @@ class FacturesController < ApplicationController
                               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                               @erreur.appli = "rails - FacturesController - update"
                               @erreur.origine = "erreur Save Paramun - @paramun.id=" + @paramun.id.to_s
-                              @erreur.numLigne = '464'
+                              @erreur.numLigne = '529'
                               @erreur.message = e.message
                               @erreur.parametreId = params[:parametre][:id].to_s
                               @erreur.save
@@ -476,40 +541,83 @@ class FacturesController < ApplicationController
                       end
                   end
               end
-              if @erreurUpdate == 0
-                  begin
-                      @projet = Projet.find(params[:projet][:id])
-                      @projet.proCliString = params[:projet][:proCliString]
-                      if params[:projet][:proFacHt].to_s != "neant"
-                          @projet.proSuiviFac = params[:projet][:proSuiviFac]
-                          @projet.proSituation = params[:projet][:proSituation]
-                          @projet.proReglMont = params[:projet][:proReglMont]
-                          @projet.proReport = params[:projet][:proReport]
-                          @projet.majDate = params[:projet][:majDate]
+              ## FIN Traitement d'un Règlement ---------------------
+              ## Traitement d'une Imputation sur le Compte du Client ---------------
+              if params[:operation][:maj] == 'RImp'
+                  ## Maj des Taches de la facture Imputée (seulement pour une facture Solde)
+                  if @facture.typeImpr.slice(0,1) == '5'                  
+                      @majTache = @facture.majTache.split(',')
+                      e = 0
+                      while (e < @majTache.length)
+                          @tacFacArray.push(@majTache[e+1])
+                          e += 4
                       end
+                      updateTacFacString  ## MAJ Tache (Statut et tacFacString)
+                      @facture.majTache = @majTache.join(',')
                       begin
-                          @projet.save
-                      rescue => e  # Incident Save Projet
+                          @facture.save
+                      rescue => e  # Incident Save Facture
                           @erreur = Erreur.new
                           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                           @erreur.appli = "rails - FacturesController - update"
-                          @erreur.origine = "erreur Save Projet - params[:projet][:id]=" + params[:projet][:id].to_s
-                          @erreur.numLigne = '491'
+                          @erreur.origine = "erreur Save Facture - @facture.id=" + @facture.id.to_s
+                          @erreur.numLigne = '558'
                           @erreur.message = e.message
                           @erreur.parametreId = params[:parametre][:id].to_s
                           @erreur.save
                           @erreurUpdate = 1
                       end
-                  rescue => e  # Incident Find Projet
-                      @erreur = Erreur.new
-                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = "rails - FacturesController - update"
-                      @erreur.origine = "erreur Find Projet - params[:projet][:id]=" + params[:projet][:id].to_s
-                      @erreur.numLigne = '481'
-                      @erreur.message = e.message
-                      @erreur.parametreId = params[:parametre][:id].to_s
-                      @erreur.save
-                      @erreurUpdate = 1
+                  end
+                  ## Maj du Compte du Client
+                  @clientele = Clientele.find(params[:projet][:clienteleFactureId])
+                  @clientele.cliCompte = params[:clientele][:cliCompte].to_s
+                  @clientele.save
+              end
+              ## FIN du Traitement d'Imputation sur le Compte du Client
+              if @erreurUpdate != 1
+                  if params[:operation][:maj] != 'ULet'
+                      begin
+                          @projet = Projet.find(params[:projet][:id])
+                          @projet.proCliString = params[:projet][:proCliString]                         
+                          if params[:operation][:maj] == 'R'
+                              @projet.proSituation = params[:projet][:proSituation]
+                              if params[:projet][:proFacHt].to_s != "neant"
+                                  @projet.proSuiviFac = params[:projet][:proSuiviFac]                                  
+                                  @projet.proReglMont = params[:projet][:proReglMont]
+                                  @projet.proReport = params[:projet][:proReport]
+                                  @projet.majDate = params[:projet][:majDate]
+                              end
+                          end
+                          if params[:operation][:maj] == 'RImp'
+                              @projet.proSuiviFac = params[:projet][:proSuiviFac]
+                              @projet.proReport = params[:projet][:proReport]
+                              @projet.proSituation = params[:projet][:proSituation]
+                              @projet.majDate = params[:projet][:majDate]
+                          end
+                          begin
+                              @projet.save
+                          rescue => e  # Incident Save Projet
+                              @erreur = Erreur.new
+                              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                              @erreur.appli = "rails - FacturesController - update"
+                              @erreur.origine = "erreur Save Projet - params[:projet][:id]=" + params[:projet][:id].to_s
+                              @erreur.numLigne = '598'
+                              @erreur.message = e.message
+                              @erreur.parametreId = params[:parametre][:id].to_s
+                              @erreur.save
+                              @erreurUpdate = 1
+                          end
+                      rescue => e  # Incident Find Projet
+                          @erreur = Erreur.new
+                          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                          @erreur.appli = "rails - FacturesController - update"
+                          @erreur.origine = "erreur Find Projet - params[:projet][:id]=" + params[:projet][:id].to_s
+                          @erreur.numLigne = '580'
+                          @erreur.message = e.message
+                          @erreur.parametreId = params[:parametre][:id].to_s
+                          @erreur.save
+                          @erreurUpdate = 1
+                      end
                   end
               end
           rescue => e  # Incident Update Facture
@@ -517,7 +625,7 @@ class FacturesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - FacturesController - update"
               @erreur.origine = "erreur Update Facture - Facture.find(params[:id])=" + params[:id].to_s
-              @erreur.numLigne = '431'
+              @erreur.numLigne = '445'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -525,11 +633,14 @@ class FacturesController < ApplicationController
           end
       end
       respond_to do |format|
-          if @erreurUpdate == 0
-              fact = "ffactureOK" + @facture.majTache.to_s
-              format.xml { render request.format.to_sym => fact }
-          else
-              format.xml { render request.format.to_sym => "ffacErreurU" }
+          case @erreurUpdate
+              when 0
+                  fact = "ffactureOK" + @facture.majTache.to_s
+                  format.xml { render request.format.to_sym => fact }
+              when 1
+                  format.xml { render request.format.to_sym => "ffacErreurU" }
+              when 2
+                  format.xml { render xml: @factureReA }
           end
       end ## End respond_to
   end ## ------ END UPDATE --------
@@ -561,7 +672,7 @@ class FacturesController < ApplicationController
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                       @erreur.appli = 'rails - FacturesController - destroy'
                       @erreur.origine = "erreur Save projet - @projet.id=" + @projet.id.to_s
-                      @erreur.numLigne = '558'
+                      @erreur.numLigne = '669'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:parametre][:id].to_s
                       @erreur.save
@@ -572,7 +683,7 @@ class FacturesController < ApplicationController
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                   @erreur.appli = 'rails - FacturesController - destroy'
                   @erreur.origine = "erreur Find Projet - Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
-                  @erreur.numLigne = '550'
+                  @erreur.numLigne = '661'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -583,7 +694,7 @@ class FacturesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = 'rails - FacturesController - destroy'
               @erreur.origine = "erreur Delete Facture - Facture.id=" + params[:id].to_s
-              @erreur.numLigne = '548'
+              @erreur.numLigne = '659'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -594,7 +705,7 @@ class FacturesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = 'rails - FacturesController - destroy'
           @erreur.origine = "erreur Find Facture - Facture.id=" + params[:id].to_s
-          @erreur.numLigne = '546'
+          @erreur.numLigne = '657'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save

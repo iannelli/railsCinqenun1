@@ -192,6 +192,10 @@ class ProjetoldsController < ApplicationController
                   @factureold.facReglMont = facture.facReglMont
                   @factureold.facStringLigne = facture.facStringLigne
                   @factureold.majTache = facture.majTache
+                  @factureold.facDepass = facture.facDepass
+                  @factureold.facTypeDecla = facture.facTypeDecla
+                  @factureold.facCourrier = facture.facCourrier
+                  @factureold.suiteDonnee = facture.suiteDonnee
                   @factureold.projetoldId = facture.projetId
                   @factureold.parametreoldId = facture.parametreId
                   begin

@@ -22,11 +22,11 @@ class ParamunsController < ApplicationController
       @majNewAn = '0'
       begin
           @paramun = Paramun.find(params[:parametre][:id])
-          anCourant = Time.new.year
+          @anCourant = Time.new.year
           moisCourant = Time.new.month
-          anMoins2 = anCourant - 2
+          anMoins2 = @anCourant - 2
           # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs
-          if anCourant > @paramun.parDateConnex.slice(0,4).to_i
+          if @anCourant > @paramun.parDateConnex.slice(0,4).to_i
               # parMaj
               @majNewAn = '1'
               # parDepass ----
@@ -74,6 +74,21 @@ class ParamunsController < ApplicationController
               # parImmob ---------------------------------------
               @parImmobNewArray = [0,0,0,0,0,0,0]
               @parImmobOldArray = @paramun.parImmob.split(',')
+              if @paramun.immobs.length != 0
+                  @paramun.immobs.each do |immob|
+                      @imAmorArray = immob.imAmorString.split("|")
+                      i = 0
+                      while i < @imAmorArray.length
+                          exerImmob = @imAmorArray[i+1].to_i
+                          if exerImmob == @anCourant-1
+                              parImmob = @parImmobOldArray[0].to_i + @imAmorArray[i+2].to_i
+                              @parImmobOldArray[0] = parImmob.to_s
+                              break
+                          end
+                          i += 5
+                      end
+                  end
+              end
               @parImmobNewArray[1] = @parImmobOldArray[0]
               @parImmobNewArray[2] = @parImmobOldArray[1]
               @parImmobNewArray[3] = @parImmobOldArray[2]
@@ -81,16 +96,6 @@ class ParamunsController < ApplicationController
               @parImmobNewArray[5] = @parImmobOldArray[4]
               @parImmobNewArray[6] = @parImmobOldArray[5]
               @paramun.parImmob = @parImmobNewArray.join(',')
-              # nbreImmob -----
-              @nbreImmobNewArray = [0,0,0,0,0,0,0]
-              @nbreImmobOldArray = @paramun.nbreImmob.split(',')
-              @nbreImmobNewArray[1] = @nbreImmobOldArray[0]
-              @nbreImmobNewArray[2] = @nbreImmobOldArray[1]
-              @nbreImmobNewArray[3] = @nbreImmobOldArray[2]
-              @nbreImmobNewArray[4] = @nbreImmobOldArray[3]
-              @nbreImmobNewArray[5] = @nbreImmobOldArray[4]
-              @nbreImmobNewArray[6] = @nbreImmobOldArray[5]
-              @paramun.nbreImmob = @nbreImmobNewArray.join(',')
               # Archivage des Recettes de l'année N-2 ------------
               if @paramun.recettes.length != 0
                   @paramun.recettes.each do |recette|
@@ -128,10 +133,13 @@ class ParamunsController < ApplicationController
                           @depenseold.nature = depense.nature
                           @depenseold.fournisseur = depense.fournisseur
                           @depenseold.pays = depense.pays
+                          @depenseold.montantFactHt = depense.montantFactHt
+                          @depenseold.usagePro = depense.usagePro
                           @depenseold.montantHt = depense.montantHt
                           @depenseold.montantTva = depense.montantTva
                           @depenseold.montantTtc = depense.montantTtc
                           @depenseold.tauxTva = depense.tauxTva
+                          @depenseold.tauxTvaAutre = depense.tauxTvaAutre
                           @depenseold.modeRegl = depense.modeRegl
                           @depenseold.typeDecla = depense.typeDecla
                           @depenseold.tvaDecla = depense.tvaDecla
@@ -143,47 +151,6 @@ class ParamunsController < ApplicationController
                       end
                   end
               end
-              # Archivage des Immobilisations de l'année N-2 ----------------
-              if @paramun.immobs.length != 0
-                  @paramun.immobs.each do |immob|
-                      if immob.dateRegl.slice(6,4) == anMoins2.to_s
-                          @immobold = Immobold.new()
-                          @immobold.id = immob.id
-                          @immobold.dateRegl = immob.dateRegl
-                          @immobold.refFacture = immob.refFacture
-                          @immobold.libelle = immob.libelle
-                          @immobold.categorie = immob.categorie
-                          @immobold.fournisseur = immob.fournisseur
-                          @immobold.pays = immob.pays
-                          @immobold.montantHt = immob.montantHt
-                          @immobold.usagePro = immob.usagePro
-                          @immobold.baseAmort = immob.baseAmort
-                          @immobold.tauxTva = immob.tauxTva
-                          @immobold.tauxTvaAutre = immob.tauxTvaAutre
-                          @immobold.montantTva = immob.montantTva
-                          @immobold.montantTtc = immob.montantTtc
-                          @immobold.modeRegl = immob.modeRegl 
-                          @immobold.typeDecla = immob.typeDecla
-                          @immobold.tvaDecla = immob.tvaDecla
-                          @immobold.tvaPeriode = immob.tvaPeriode
-                          @immobold.lignesTva = immob.lignesTva
-                          @immobold.imMode = immob.imMode
-                          @immobold.imDuree = immob.imDuree
-                          @immobold.imCoeff = immob.imCoeff
-                          @immobold.imTaux = immob.imTaux
-                          @immobold.imAmorString = immob.imAmorString
-                          @immobold.imATP = immob.imATP
-                          @immobold.imVR = immob.imVR
-                          @immobold.dateCession = immob.dateCession
-                          @immobold.prixCession = immob.prixCession
-                          @immobold.plusMoinsValue = immob.plusMoinsValue
-                          @immobold.parametreoldId = immob.parametreId
-                          @immobold.save
-                          immob.destroy
-                      end
-                  end
-              end
-
               # Maj de parAnFac et parNumFact -----------
               @paramun.parAnFact = anCourant.to_s
               @paramun.parNumFact = '00000'
@@ -199,7 +166,7 @@ class ParamunsController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = "rails - ParamunsController - index"
           @erreur.origine = "erreur Find Paramun - params[:parametre][:id]=" + params[:parametre][:id].to_s
-          @erreur.numLigne = '23'
+          @erreur.numLigne = '24'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_i
           @erreur.save
@@ -214,7 +181,6 @@ class ParamunsController < ApplicationController
           end
       end
   end
-
 
 
 
@@ -234,7 +200,7 @@ class ParamunsController < ApplicationController
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                   @erreur.appli = "rails - ParamunsController - update"
                   @erreur.origine = "erreur update Paramun - @paramun.id=" + params[:id].to_s
-                  @erreur.numLigne = '179'
+                  @erreur.numLigne = '193'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:id].to_s
                   @erreur.save
@@ -255,7 +221,7 @@ class ParamunsController < ApplicationController
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                       @erreur.appli = "rails - ParamunsController - update"
                       @erreur.origine = "erreur update Abonne - @abonne.id=" + params[:id].to_s
-                      @erreur.numLigne = '200'
+                      @erreur.numLigne = '214'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:id].to_s.to_s
                       @erreur.save
@@ -285,7 +251,7 @@ class ParamunsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - ParamunsController - update"
               @erreur.origine = "erreur update Paramun - @paramun.id=" + params[:id].to_s
-              @erreur.numLigne = '231'
+              @erreur.numLigne = '245'
               @erreur.message = e.message
               @erreur.parametreId = params[:id].to_s
               @erreur.save
@@ -302,7 +268,7 @@ class ParamunsController < ApplicationController
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                   @erreur.appli = "rails - ParamunsController - update"
                   @erreur.origine = "erreur update Abonne - @abonne.id=" + params[:id].to_s
-                  @erreur.numLigne = '248'
+                  @erreur.numLigne = '262'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:id].to_s.to_s
                   @erreur.save
@@ -327,7 +293,7 @@ class ParamunsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - ParamunsController - update"
               @erreur.origine = "erreur update Paramun - @paramun.id=" + params[:id].to_s
-              @erreur.numLigne = '273'
+              @erreur.numLigne = '287'
               @erreur.message = e.message
               @erreur.parametreId = params[:id].to_s
               @erreur.save
@@ -482,7 +448,7 @@ class ParamunsController < ApplicationController
                           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                           @erreur.appli = "rails - ProjetsController - index"
                           @erreur.origine = "erreur Save Projet - projet.id=" + projet.id.to_s
-                          @erreur.numLigne = '89'
+                          @erreur.numLigne = '442'
                           @erreur.message = e.message
                           @erreur.parametreId = params[:id].to_s
                           @erreur.save
@@ -492,22 +458,24 @@ class ParamunsController < ApplicationController
                   ## Examen des Conditions d'Archivage du Projet --------------------------
                   @archivageOK = 0
                   if projet.proDepass.to_s == '0'
-                      if projet.taches.length != 0
-                          regle = 1
-                          cpt = 0
-                          projet.taches.each do |tache|
-                              if tache.typetacNat.to_s == "FA"
-                                  cpt += 1
-                                  if tache.tacStatut != '3Réglé'
-                                      regle = 0
-                                      break
+                      if projet.proReport.to_i == 0
+                          if projet.taches.length != 0
+                              regle = 1
+                              cpt = 0
+                              projet.taches.each do |tache|
+                                  if tache.typetacNat.to_s == "FA"
+                                      cpt += 1
+                                      if tache.tacStatut != '3Réglé'
+                                          regle = 0
+                                          break
+                                      end
                                   end
                               end
-                          end
-                          if cpt > 0 && regle == 1
-                              projet.proSituation = '22' # Clos -----
-                              @archivageOK = 1
-                              @nbreProjetArchiver += 1
+                              if cpt > 0 && regle == 1
+                                  projet.proSituation = '22' # Clos -----
+                                  @archivageOK = 1
+                                  @nbreProjetArchiver += 1
+                              end
                           end
                       end
                       if @archivageOK == 0 # Si 'Inactifs depuis +6mois' ----
@@ -516,7 +484,9 @@ class ParamunsController < ApplicationController
                           @dateDuJour = Date.parse(dateJour)
                           majDate = Date.parse(projet.majDate.to_s)
                           dureeJ = @dateDuJour - majDate
-                          if dureeJ.to_i  > 180
+                          if dureeJ.to_i  > 180 
+                              situation = '2' + projet.proSituation.slice(1,1)
+                              projet.proSituation = situation # Devis EnAttente Inactif ou Projet enCour Inactif -----
                               @archivageOK = 1
                               @nbreProjetArchiver += 1
                           end
@@ -570,7 +540,7 @@ class ParamunsController < ApplicationController
                           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                           @erreur.appli = 'rails - ParamunsController - destroy'
                           @erreur.origine = 'Incident Save Projetold - projet.id=' + projet.id.to_s
-                          @erreur.numLigne = '145'
+                          @erreur.numLigne = '530'
                           @erreur.message = e.message
                           @erreur.parametreId = params[:id].to_s
                           @erreur.save
@@ -625,7 +595,7 @@ class ParamunsController < ApplicationController
                                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                                       @erreur.appli = 'rails - ParamunsController - destroy'
                                       @erreur.origine = 'Incident Save Tacheold - tache.id=' + tache.id.to_s
-                                      @erreur.numLigne = '145'
+                                      @erreur.numLigne = '585'
                                       @erreur.message = e.message
                                       @erreur.parametreId = params[:id].to_s
                                       @erreur.save
@@ -668,6 +638,8 @@ class ParamunsController < ApplicationController
                                   @factureold.majTache = facture.majTache
                                   @factureold.facDepass = facture.facDepass
                                   @factureold.facTypeDecla = facture.facTypeDecla
+                                  @factureold.facCourrier = facture.facCourrier
+                                  @factureold.suiteDonnee = facture.suiteDonnee
                                   @factureold.projetoldId = facture.projetId
                                   @factureold.parametreoldId = facture.parametreId
                                   begin
@@ -677,7 +649,7 @@ class ParamunsController < ApplicationController
                                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                                       @erreur.appli = 'rails - ParamunsController - destroy'
                                       @erreur.origine = 'Incident Save Factureold - facture.id=' + facture.id.to_s
-                                      @erreur.numLigne = '145'
+                                      @erreur.numLigne = '637'
                                       @erreur.message = e.message
                                       @erreur.parametreId = params[:id].to_s
                                       @erreur.save
@@ -698,7 +670,7 @@ class ParamunsController < ApplicationController
                                       @erreurdateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                                       @erreur.appli = 'rails - ParamunsController - destroy'
                                       @erreur.origine = "erreur destroy Tache - tache.id =" + tache.id.to_s
-                                      @erreur.numLigne = '216'
+                                      @erreur.numLigne = '658'
                                       @erreur.message = e.message
                                       @erreur.parametreId = params[:id].to_s
                                       @erreur.save
@@ -718,7 +690,7 @@ class ParamunsController < ApplicationController
                                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                                       @erreur.appli = 'rails - ParamunsController - destroy'
                                       @erreur.origine = "erreur destroy Facture - facture.id =" + facture.id.to_s
-                                      @erreur.numLigne = '236'
+                                      @erreur.numLigne = '678'
                                       @erreur.message = e.message
                                       @erreur.parametreId = params[:id].to_s
                                       @erreur.save
@@ -736,7 +708,7 @@ class ParamunsController < ApplicationController
                               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                               @erreur.appli = 'rails - ParamunsController - destroy'
                               @erreur.origine = "erreur destroy Projet - projet.id =" + projet.id.to_s
-                              @erreur.numLigne = '254'
+                              @erreur.numLigne = '696'
                               @erreur.message = e.message
                               @erreur.parametreId = params[:id].to_s
                               @erreur.save
@@ -823,7 +795,7 @@ class ParamunsController < ApplicationController
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                       @erreur.appli = 'rails - ParamunsController - destroy'
                       @erreur.origine = "erreur Find Typetache.id= " + t.to_s
-                      @erreur.numLigne = '86'
+                      @erreur.numLigne = '757'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:id].to_s
                       @erreur.save
