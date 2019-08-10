@@ -379,7 +379,7 @@ class ParamunsController < ApplicationController
                           if facture.facStatut.slice(0,1) == "3"
                               proSuiviFac[3] = 1
                           else
-                              if facture.facStatut.to_s != "3Annulé"
+                              if facture.facStatut.to_s != "3Annulé" && facture.facStatut.to_s != "3Imputé"
                                   facDateLimite = DateTime.new(facture.facDateLimite.slice(6,4).to_i, facture.facDateLimite.slice(3,2).to_i, facture.facDateLimite.slice(0,2).to_i)
                                   dateMoins15 = facDateLimite - 15
                                   if @dateDuJour.strftime("%Y%m%d").to_i > facDateLimite.strftime("%Y%m%d").to_i
@@ -472,21 +472,21 @@ class ParamunsController < ApplicationController
                                   end
                               end
                               if cpt > 0 && regle == 1
-                                  projet.proSituation = '22' # Clos -----
+                                  projet.proSituation = '22' ## Projet Clos *****
                                   @archivageOK = 1
                                   @nbreProjetArchiver += 1
                               end
                           end
                       end
-                      if @archivageOK == 0 # Si 'Inactifs depuis +6mois' ----
+                      if @archivageOK == 0 # Si Projet 'non Clos' ----------------
                           t = Time.now
                           dateJour = t.strftime("%d") + '/' + t.strftime("%m") + '/' + t.strftime("%Y")
                           @dateDuJour = Date.parse(dateJour)
                           majDate = Date.parse(projet.majDate.to_s)
                           dureeJ = @dateDuJour - majDate
-                          if dureeJ.to_i  > 180 
+                          if dureeJ.to_i  > 180 ## Si 'projet 'Inactif' depuis +6mois ----
                               situation = '2' + projet.proSituation.slice(1,1)
-                              projet.proSituation = situation # Devis EnAttente Inactif ou Projet enCour Inactif -----
+                              projet.proSituation = situation ## Devis EnAttente Inactif ou Projet enCours Inactif ****
                               @archivageOK = 1
                               @nbreProjetArchiver += 1
                           end
@@ -629,7 +629,8 @@ class ParamunsController < ApplicationController
                                   @factureold.facMontTtc = facture.facMontTtc
                                   @factureold.facAcomTaux = facture.facAcomTaux
                                   @factureold.facAcomMont = facture.facAcomMont
-                                  @factureold.facImput = facture.facImput
+                                  @factureold.facImputProjet = facture.facImputProjet
+                                  @factureold.facImputClient = facture.facImputClient
                                   @factureold.facDifference = facture.facDifference
                                   @factureold.facTotalDu = facture.facTotalDu
                                   @factureold.modePaieLib = facture.modePaieLib
@@ -639,7 +640,7 @@ class ParamunsController < ApplicationController
                                   @factureold.facDepass = facture.facDepass
                                   @factureold.facTypeDecla = facture.facTypeDecla
                                   @factureold.facCourrier = facture.facCourrier
-                                  @factureold.suiteDonnee = facture.suiteDonnee
+                                  @factureold.facReA = facture.facReA
                                   @factureold.projetoldId = facture.projetId
                                   @factureold.parametreoldId = facture.parametreId
                                   begin
@@ -784,9 +785,13 @@ class ParamunsController < ApplicationController
                                   @nbreMN += @tempsArray[1].to_i
                               end
                               @totDuree = @nbreHH + (@nbreMN / 60)
-                              @margeMoy1 = @margeCumul / @totDuree
-                              @margeMoy2 = (@typetache.typetacMarge.to_i + @margeMoy1) / 2
-                              @typetache.typetacMarge = @margeMoy2.round.to_s
+                              if @totDuree > 0
+                                  @margeMoy1 = @margeCumul / @totDuree
+                                  @margeMoy2 = (@typetache.typetacMarge.to_i + @margeMoy1) / 2
+                                  @typetache.typetacMarge = @margeMoy2.round.to_s
+                              else
+                                  @typetache.typetacMarge = '000'
+                              end
                               @typetache.save
                           end
                       end

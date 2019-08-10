@@ -19,47 +19,27 @@ class SuivisController < ApplicationController
   def index
       @suiviArray = []
       @suiviString = ""
-      time = Time.new
-      @annee = time.year
-      # Traitement de Collecte des facture de Projet ---------------------------------------
+      # Traitement de Collecte des factures des Projets 'enCours' ---------------------------------------
       if @paramun.projets.length > 0
           @paramun.projets.each do |projet|
               if projet.factures.length != 0
                   projet.factures.each do |facture|
                       @selectFactureOK = 0
-                      if (facture.typeImpr.to_s == '10' && facture.facAcomTaux.to_i > 0)
-                          if ( (facture.facStatut == '3Signé/Réglé' || facture.facStatut == '0nonSigné/Réglé' ||
-                              facture.facStatut == '1nonSigné/Réglé' || facture.facStatut == '2nonSigné/Réglé') &&
-                              facture.facDateReception.slice(6,4) == @annee.to_s )
-                              @selectFactureOK = 1
-                          end
-                          if (facture.facStatut == '0nonSigné/nonRéglé' || facture.facStatut == '0Signé/nonRéglé' ||
-                              facture.facStatut == '1nonSigné/nonRéglé' || facture.facStatut == '1Signé/nonRéglé' ||
-                              facture.facStatut == '2nonSigné/nonRéglé' || facture.facStatut == '2Signé/nonRéglé')
-                              @selectFactureOK = 1
-                          end
-                      end
-                      if ( (facture.typeImpr.to_s == '10' || facture.typeImpr.to_s == '11')  && facture.facAcomTaux.to_i == 0)
-                          if (facture.facStatut == '0nonSigné' || facture.facStatut == '1nonSigné' || facture.facStatut == '2nonSigné')
-                              @selectFactureOK = 1
-                          end
-                      end
-                      if (facture.typeImpr.to_s == '40' || facture.typeImpr.to_s == '41' ||
-                          facture.typeImpr.to_s == '50' || facture.typeImpr.to_s == '51')
-                          if (facture.facStatut == '3Réglé' && facture.facDateReception.slice(6,4) == @annee.to_s)
-                              @selectFactureOK = 1
-                          end
-                          if (facture.facStatut == '0nonRéglé' || facture.facStatut == '1nonRéglé' || facture.facStatut == '2nonRéglé')
-                              @selectFactureOK = 1
-                          end
-                      end
-                      if (facture.typeImpr.to_s == '60' || facture.typeImpr.to_s == '61')
-                          if (facture.facStatut == '3Validé' && facture.facDateReception.slice(6,4) == @annee.to_s)
-                              @selectFactureOK = 1
-                          end
-                          if (facture.facStatut == '0enAttente' || facture.facStatut == '1enAttente' || facture.facStatut == '2enAttente')
-                              @selectFactureOK = 1
-                          end
+                      case facture.typeImpr.to_s
+                           ## Bon de Commande en Attente -----------------
+                          when '10'
+                              if (facture.facStatut.to_s != '3Signé/Réglé' && facture.facStatut.to_s != '3Signé')
+                                  @selectFactureOK = 1
+                              end
+                          when '11'
+                              if (facture.facStatut.to_s != '3Signé')
+                                  @selectFactureOK = 1
+                              end
+                          ## facture impayée -----------------------
+                          when '40', '41', '50', '51'
+                              if (facture.facStatut.to_s != '3Réglé' && facture.facStatut.to_s != '3Annulé')
+                                  @selectFactureOK = 1
+                              end
                       end
                       if @selectFactureOK == 1
                           @suiviArray << facture.id.to_s
@@ -82,67 +62,51 @@ class SuivisController < ApplicationController
                       end
                   end
               end
-          end         
+          end
       end
-      # Traitement de Collecte des factureold de Projetold ---------------------------------------
+      # Traitement de Collecte des factureold de Projetold (Projets Archivés à l'Exception des projets 'Clos') ---------------------------------------
       @paramunold = Paramunold.find(params[:parametre][:id].to_i)
       if @paramunold.projetolds.length > 0
           @paramunold.projetolds.each do |projetold|
-              if projetold.factureolds.length != 0
-                  projetold.factureolds.each do |factureold|
-                      @selectFactureoldOK = 0
-                      if (factureold.typeImpr.to_s == '10' && factureold.facAcomTaux.to_i > 0)
-                          if ( (factureold.facStatut == '3Signé/Réglé' || factureold.facStatut == '0nonSigné/Réglé' ||
-                              factureold.facStatut == '1nonSigné/Réglé' || factureold.facStatut == '2nonSigné/Réglé') &&
-                              factureold.facDateReception.slice(6,4) == @annee.to_s )
-                              @selectFactureoldOK = 1
+              if projetold.proSituation.to_s != '22'
+                  if projetold.factureolds.length != 0
+                      projetold.factureolds.each do |factureold|
+                          @selectFactureoldOK = 0
+                          case factureold.typeImpr.to_s
+                               ## Bon de Commande en Attente -----------------
+                              when '10'
+                                  if (factureold.facStatut.to_s != '3Signé/Réglé' && factureold.facStatut.to_s != '3Signé')
+                                     @selectFactureoldOK = 1
+                                  end
+                              when '11'
+                                  if (factureold.facStatut.to_s != '3Signé')
+                                      @selectFactureoldOK = 1
+                                  end
+                              ## facture impayée -----------------------
+                              when '40', '41', '50', '51'
+                                  if (factureold.facStatut.to_s != '3Réglé' && factureold.facStatut.to_s != '3Annulé')
+                                      @selectFactureoldOK = 1
+                                  end
                           end
-                          if (factureold.facStatut == '0nonSigné/nonRéglé' || factureold.facStatut == '0Signé/nonRéglé' ||
-                              factureold.facStatut == '1nonSigné/nonRéglé' || factureold.facStatut == '1Signé/nonRéglé' ||
-                              factureold.facStatut == '2nonSigné/nonRéglé' || factureold.facStatut == '2Signé/nonRéglé')
-                              @selectFactureoldOK = 1
+                          if @selectFactureoldOK == 1
+                              @suiviArray << factureold.id.to_s
+                              @suiviArray << factureold.typeImpr.to_s
+                              @suiviArray << factureold.facRef.to_s
+                              @suiviArray << factureold.facDateEmis.to_s
+                              @suiviArray << factureold.facDateReception.to_s
+                              @suiviArray << factureold.facStatut.to_s
+                              @suiviArray << factureold.facDateLimite.to_s
+                              @suiviArray << factureold.facMontHt.to_s
+                              @suiviArray << factureold.facMontTva.to_s
+                              @suiviArray << factureold.facMontTtc.to_s
+                              @suiviArray << factureold.facAcomMont.to_s
+                              @suiviArray << factureold.facTotalDu.to_s
+                              @suiviArray << factureold.facReglMont.to_s
+                              @suiviArray << projetold.id.to_s
+                              @suiviArray << projetold.proSituation.to_s
+                              @suiviArray << projetold.proLib.to_s
+                              @suiviArray << projetold.proCliRaisonFacture.to_s
                           end
-                      end
-                      if ( (factureold.typeImpr.to_s == '10' || factureold.typeImpr.to_s == '11')  && factureold.facAcomTaux.to_i == 0)
-                          if (factureold.facStatut == '0nonSigné' || factureold.facStatut == '1nonSigné' || factureold.facStatut == '2nonSigné')
-                              @selectFactureoldOK = 1
-                          end
-                      end
-                      if (factureold.typeImpr.to_s == '40' || factureold.typeImpr.to_s == '41' ||
-                          factureold.typeImpr.to_s == '50' || factureold.typeImpr.to_s == '51')
-                          if (factureold.facStatut == '3Réglé' && factureold.facDateReception.slice(6,4) == @annee.to_s)
-                              @selectFactureoldOK = 1
-                          end
-                          if (factureold.facStatut == '0nonRéglé' || factureold.facStatut == '1nonRéglé' || factureold.facStatut == '2nonRéglé')
-                              @selectFactureoldOK = 1
-                          end
-                      end
-                      if (factureold.typeImpr.to_s == '60' || factureold.typeImpr.to_s == '61')
-                          if (factureold.facStatut == '3Validé' && factureold.facDateReception.slice(6,4) == @annee.to_s)
-                              @selectFactureOK = 1
-                          end
-                          if (factureold.facStatut == '0enAttente' || factureold.facStatut == '1enAttente' || factureold.facStatut == '2enAttente')
-                              @selectFactureoldOK = 1
-                          end
-                      end
-                      if @selectFactureoldOK == 1
-                          @suiviArray << factureold.id.to_s
-                          @suiviArray << factureold.typeImpr.to_s
-                          @suiviArray << factureold.facRef.to_s
-                          @suiviArray << factureold.facDateEmis.to_s
-                          @suiviArray << factureold.facDateReception.to_s
-                          @suiviArray << factureold.facStatut.to_s
-                          @suiviArray << factureold.facDateLimite.to_s
-                          @suiviArray << factureold.facMontHt.to_s
-                          @suiviArray << factureold.facMontTva.to_s
-                          @suiviArray << factureold.facMontTtc.to_s
-                          @suiviArray << factureold.facAcomMont.to_s
-                          @suiviArray << factureold.facTotalDu.to_s
-                          @suiviArray << factureold.facReglMont.to_s
-                          @suiviArray << projetold.id.to_s
-                          @suiviArray << projetold.proSituation.to_s
-                          @suiviArray << projetold.proLib.to_s
-                          @suiviArray << projetold.proCliRaisonFacture.to_s
                       end
                   end
               end

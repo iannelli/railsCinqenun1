@@ -185,7 +185,8 @@ class ProjetoldsController < ApplicationController
                   @factureold.facMontTtc = facture.facMontTtc
                   @factureold.facAcomTaux = facture.facAcomTaux
                   @factureold.facAcomMont = facture.facAcomMont
-                  @factureold.facImput = facture.facImput
+                  @factureold.facImputProjet = facture.facImputProjet
+                  @factureold.facImputClient = facture.facImputClient
                   @factureold.facDifference = facture.facDifference
                   @factureold.facTotalDu = facture.facTotalDu
                   @factureold.modePaieLib = facture.modePaieLib
@@ -195,7 +196,7 @@ class ProjetoldsController < ApplicationController
                   @factureold.facDepass = facture.facDepass
                   @factureold.facTypeDecla = facture.facTypeDecla
                   @factureold.facCourrier = facture.facCourrier
-                  @factureold.suiteDonnee = facture.suiteDonnee
+                  @factureold.facReA = facture.facReA
                   @factureold.projetoldId = facture.projetId
                   @factureold.parametreoldId = facture.parametreId
                   begin
@@ -427,13 +428,18 @@ class ProjetoldsController < ApplicationController
                   @facture.facMontTtc = factureold.facMontTtc
                   @facture.facAcomTaux = factureold.facAcomTaux
                   @facture.facAcomMont = factureold.facAcomMont
-                  @facture.facImput = factureold.facImput
+                  @facture.facImputProjet = factureold.facImputProjet
+                  @facture.facImputClient = factureold.facImputClient
                   @facture.facDifference = factureold.facDifference
                   @facture.facTotalDu = factureold.facTotalDu
                   @facture.modePaieLib = factureold.modePaieLib
                   @facture.facReglMont = factureold.facReglMont
                   @facture.facStringLigne = factureold.facStringLigne
                   @facture.majTache = factureold.majTache
+                  @facture.facDepass = factureold.facDepass
+                  @facture.facTypeDecla = factureold.facTypeDecla
+                  @facture.facCourrier = factureold.facCourrier
+                  @facture.facReA = factureold.facReA
                   @facture.projetId = factureold.projetoldId
                   @facture.parametreId = factureold.parametreoldId
                   begin
