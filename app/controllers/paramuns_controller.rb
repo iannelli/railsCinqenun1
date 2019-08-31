@@ -563,7 +563,6 @@ class ParamunsController < ApplicationController
                                   @tacheold.tacModeFac = tache.tacModeFac
                                   @tacheold.tacProLib = tache.tacProLib
                                   @tacheold.tacStatut = tache.tacStatut
-                                  @tacheold.tacStNomPre = tache.tacStNomPre
                                   @tacheold.tacCoutHeure = tache.tacCoutHeure
                                   @tacheold.tacDateDeb = tache.tacDateDeb
                                   @tacheold.tacDeadLine = tache.tacDeadLine

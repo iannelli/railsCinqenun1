@@ -100,7 +100,6 @@ class ProjetclonesController < ApplicationController
                       @tacheclone.tacLibPeriode = ""
                       @tacheclone.tacFacString = ".|A|.|.|."
                   end
-                  @tacheclone.tacStNomPre = tache.tacStNomPre
                   @tacheclone.tacCoutHeure = tache.tacCoutHeure
                   @tacheclone.tacDateDeb = @current_time.strftime "%d/%m/%Y"
                   dateDeb = DateTime.new(@tacheclone.tacDateDeb.slice(6,4).to_i, @tacheclone.tacDateDeb.slice(3,2).to_i, @tacheclone.tacDateDeb.slice(0,2).to_i)

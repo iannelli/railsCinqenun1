@@ -119,7 +119,6 @@ class ProjetoldsController < ApplicationController
                   @tacheold.tacModeFac = tache.tacModeFac
                   @tacheold.tacProLib = tache.tacProLib
                   @tacheold.tacStatut = tache.tacStatut
-                  @tacheold.tacStNomPre = tache.tacStNomPre
                   @tacheold.tacCoutHeure = tache.tacCoutHeure
                   @tacheold.tacDateDeb = tache.tacDateDeb
                   @tacheold.tacDeadLine = tache.tacDeadLine
@@ -362,7 +361,6 @@ class ProjetoldsController < ApplicationController
                   @tache.tacModeFac = tacheold.tacModeFac
                   @tache.tacProLib = tacheold.tacProLib
                   @tache.tacStatut = tacheold.tacStatut
-                  @tache.tacStNomPre = tacheold.tacStNomPre
                   @tache.tacCoutHeure = tacheold.tacCoutHeure
                   @tache.tacDateDeb = tacheold.tacDateDeb
                   @tache.tacDeadLine = tacheold.tacDeadLine
