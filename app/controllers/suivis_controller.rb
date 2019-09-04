@@ -19,7 +19,7 @@ class SuivisController < ApplicationController
   def index
       @suiviArray = []
       @suiviString = ""
-      # Traitement de Collecte des factures des Projets 'enCours' ---------------------------------------
+      # Collecte [sur projets] des 'BdC en Attente' et 'factures impayées' ---------------------------------------
       if @paramun.projets.length > 0
           @paramun.projets.each do |projet|
               if projet.factures.length != 0
@@ -64,7 +64,7 @@ class SuivisController < ApplicationController
               end
           end
       end
-      # Traitement de Collecte des factureold de Projetold (Projets Archivés à l'Exception des projets 'Clos') ---------------------------------------
+      # Collecte [sur projetolds, à l'Exception des projets 'Clos'] des 'BdC en Attente' et 'factures impayées' -----
       @paramunold = Paramunold.find(params[:parametre][:id].to_i)
       if @paramunold.projetolds.length > 0
           @paramunold.projetolds.each do |projetold|

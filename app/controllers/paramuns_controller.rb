@@ -808,6 +808,144 @@ class ParamunsController < ApplicationController
               end
           end ## FIN Examen des Types de Tache ------------------------------
 
+          ## Constitution des Statistiques de Suivi (pour l'Ecran d'Accueil) ############
+          statRecetteAccueilArray = []
+          statDepenseAccueilArray = []
+          statFactureAccueilArray = []
+          sixDernierMoisArray = []
+          if @dateDuJour.day < 15
+              @mm = @dateDuJour.month - 1
+              if @mm.to_i == 0
+                  @aaaa = @dateDuJour.year - 1
+                  @mm = '12'
+              else
+                  @aaaa = @dateDuJour.year
+              end
+          else
+              @aaaa = @dateDuJour.year
+              @mm = @dateDuJour.month
+          end
+          sixDernierMoisArray[0] = @aaaa.to_s + "%02d" % @mm.to_i
+          m=1
+          while m<6
+              @mm = @mm.to_i - 1
+              if @mm.to_i == 0
+                  @mm = 12
+                  @aaaa = @aaaa.to_i - 1
+              end
+              sixDernierMoisArray[m] = @aaaa.to_s + "%02d" % @mm.to_i
+              m += 1
+          end
+          ## Initialisation des 3 Arrays -----
+          m=0
+          rd=0
+          f=0
+          while m<6
+              statRecetteAccueilArray[rd] = sixDernierMoisArray[m]
+              statDepenseAccueilArray[rd] = sixDernierMoisArray[m]
+              statFactureAccueilArray[f] = sixDernierMoisArray[m]
+              rd += 1
+              f += 1
+              statRecetteAccueilArray[rd] = '0'
+              statDepenseAccueilArray[rd] = '0'
+              statFactureAccueilArray[f] = '0'
+              f += 1
+              statFactureAccueilArray[f] = '0'
+              rd += 1
+              f += 1
+              m += 1
+          end
+          statFactureAccueilArray[f] = 'antérieur'
+          statFactureAccueilArray[f+1] = '0'
+          statFactureAccueilArray[f+2] = '0'
+          ## Recette : Collecte des données pour implémentation dans les Array respectives -------------------
+          ## Examen des Recettes -------
+          if @paramun.recettes.length != 0
+              @paramun.recettes.each do |recette|
+                  aaaamm = recette.facDateReception.slice(6,4) + recette.facDateReception.slice(3,2)
+                  ind = statRecetteAccueilArray.find_index(aaaamm)
+                  if ind != nil
+                      ind +=1
+                      montant1 = statRecetteAccueilArray[ind].to_i
+                      montant2 = recette.montantHt.to_i / 100
+                      statRecetteAccueilArray[ind] = montant1 + montant2.to_i
+                  end
+              end
+          end
+          ## Examen des Dépenses -------
+          if @paramun.depenses.length != 0
+              @paramun.depenses.each do |depense|
+                  aaaamm = depense.dateRegl.slice(6,4) + recette.dateRegl.slice(3,2)
+                  ind = statDepenseAccueilArray.find_index(aaaamm)
+                  if ind != nil
+                      ind +=1
+                      montant1 = statDepenseAccueilArray[ind].to_i
+                      montant2 = recette.montantHt.to_i / 100
+                      statDepenseAccueilArray[ind] = montant1 + montant2.to_i 
+                  end
+              end
+          end
+          ## Examen des Factures impayées -------
+          if @paramun.projets.length != 0
+              ## Examen des Projets ------
+              @paramun.projets.each do |projet|
+                  if projet.factures.length != 0
+                      projet.factures.each do |facture|
+                          if (facture.typeImpr.to_s == '40' || facture.typeImpr.to_s == '41' || facture.typeImpr.to_s == '50' || facture.typeImpr.to_s == '51')
+                              if (facture.facStatut.to_s != '3Réglé' && facture.facStatut.to_s != '3Annulé')
+                                  aaaamm = facture.facDateEmis.slice(6,4) + facture.facDateEmis.slice(3,2)
+                                  ind = statFactureAccueilArray.find_index(aaaamm)
+                                  if ind == nil
+                                      ind = 18
+                                  end
+                                  ind +=1
+                                  montant1 = statFactureAccueilArray[ind].to_i
+                                  montant2 = facture.facMontHt.to_i / 100
+                                  statFactureAccueilArray[ind] = montant1 + montant2.to_i
+                                  ind +=1
+                                  nombre = statFactureAccueilArray[ind].to_i
+                                  statFactureAccueilArray[ind] = nombre + 1
+                              end
+                          end
+                      end
+                  end
+              end
+          end
+          ## Examen des Projetolds ------
+          @paramunold = Paramunold.find(@paramun.id)
+          if @paramunold.projetolds.length > 0
+              @paramunold.projetolds.each do |projetold|
+                  if projetold.proSituation.to_s != '22'
+                      if projetold.factureolds.length != 0
+                          projetold.factureolds.each do |factureold|
+                              if (factureold.typeImpr.to_s == '40' || factureold.typeImpr.to_s == '41' || factureold.typeImpr.to_s == '50' || factureold.typeImpr.to_s == '51')
+                                  if (factureold.facStatut.to_s != '3Réglé' && factureold.facStatut.to_s != '3Annulé')
+                                      aaaamm = factureold.facDateEmis.slice(6,4) + factureold.facDateEmis.slice(3,2)
+                                      ind = statFactureAccueilArray.find_index(aaaamm)
+                                      if ind == nil
+                                          ind = 18
+                                      end
+                                      ind +=1
+                                      montant1 = statFactureAccueilArray[ind].to_i
+                                      montant2 = factureold.facMontHt.to_i / 100
+                                      statFactureAccueilArray[ind] = montant1 + montant2.to_i
+                                      ind +=1
+                                      nombre = statFactureAccueilArray[ind].to_i
+                                      statFactureAccueilArray[ind] = nombre + 1
+                                  end
+                              end
+                          end
+                      end
+                  end
+              end
+          end
+          ## Enregistrement -----
+          @paramun.statRecetteAccueil = statRecetteAccueilArray.join('|')
+          @paramun.statDepenseAccueil = statDepenseAccueilArray.join('|')
+          @paramun.statFactureAccueil = statFactureAccueilArray.join('|')
+          @paramun.save
+          ## FIN Constitution des Statistiques de Suivi ###########################
+
           ## Fermeture de l'Application -----------------------------------
           head :no_content
 
