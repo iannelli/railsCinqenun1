@@ -465,9 +465,23 @@ class ParamunsController < ApplicationController
                               projet.taches.each do |tache|
                                   if tache.typetacNat.to_s == "FA"
                                       cpt += 1
-                                      if tache.tacStatut != '3Réglé'
-                                          regle = 0
-                                          break
+                                      if tache.tacStatut == '3miFacturé'
+                                          @tacFacArray = []
+                                          @tacFacArray = tache.tacFacString.split('|')
+                                          i = 2
+                                          while (i < @tacFacArray.length)
+                                              if @tacFacArray[i].to_s != 'R'
+                                                  regle = 0
+                                                  break
+                                              else
+                                                  i += 5
+                                              end
+                                          end                                         
+                                      else
+                                          if tache.tacStatut != '3Réglé'
+                                              regle = 0
+                                              break
+                                          end
                                       end
                                   end
                               end

@@ -28,7 +28,7 @@ class SuivisController < ApplicationController
                       case facture.typeImpr.to_s
                            ## Bon de Commande en Attente -----------------
                           when '10'
-                              if (facture.facStatut.to_s != '3Signé/Réglé' && facture.facStatut.to_s != '3Signé')
+                              if (facture.facStatut.to_s != '3Signé/Réglé' && facture.facStatut.to_s != '3Signé' && facture.facStatut.slice(1,14) != 'nonSigné/Réglé')
                                   @selectFactureOK = 1
                               end
                           when '11'
@@ -75,7 +75,7 @@ class SuivisController < ApplicationController
                           case factureold.typeImpr.to_s
                                ## Bon de Commande en Attente -----------------
                               when '10'
-                                  if (factureold.facStatut.to_s != '3Signé/Réglé' && factureold.facStatut.to_s != '3Signé')
+                                  if (factureold.facStatut.to_s != '3Signé/Réglé' && factureold.facStatut.to_s != '3Signé' && factureold.facStatut.slice(1,14) != 'nonSigné/Réglé')
                                      @selectFactureoldOK = 1
                                   end
                               when '11'
