@@ -69,8 +69,8 @@ class TypetachesController < ApplicationController
               @tacheArray = []
               @tacheString = ""
               @typetache.taches.each do |tache|
-                  if (tache.typetacUnite.to_s != params[:typetache][:typetacUnite].to_s ||
-                      tache.typetacET.to_s != params[:typetache][:typetacET].to_s)
+                  if ( (params[:typetache][:typetacUnite].length != 0 && tache.typetacUnite.to_s != params[:typetache][:typetacUnite].to_s) ||
+                       (params[:typetache][:typetacET].length != 0 && tache.typetacET.to_s != params[:typetache][:typetacET].to_s) )
                       @tacheArray << tache.tacLibCourt.to_s
                       @tacheArray << tache.tacProLib.to_s
                   end
