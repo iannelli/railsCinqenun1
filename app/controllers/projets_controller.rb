@@ -1,6 +1,6 @@
 class ProjetsController < ApplicationController
 
-  # TEST de Connexion *******************
+  # VERIFICATION de la Connexion *******************
   before_action :authenticate_rights
   def authenticate_rights
       dateConnex = params[:parametre][:parDateConnex]
@@ -20,7 +20,6 @@ class ProjetsController < ApplicationController
       @dateDuJour = Time.now
       @current_time = Time.now
       @indexOk = 0
-      @erreurSaveProjet = 0
 
       @projets = @paramun.projets
       if @projets.length == 0

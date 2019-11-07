@@ -1,5 +1,5 @@
 class ParamunsController < ApplicationController
-  # TEST de Connexion *******************
+  # VERIFICATION de la Connexion *******************
   before_action :authenticate_rights, :except => [:index, :create, :destroy]
 
   def authenticate_rights
@@ -330,8 +330,12 @@ class ParamunsController < ApplicationController
           @parDepassArray = @paramun.parDepass.split(",")
           @depassOK = 0
           if @parDepassArray[0].to_s != 'neant'
-              if @parDepassArray[1].to_s == 'v' || (@parDepassArray[1].to_s !~ /\D/ && @parDepassArray[1].to_i > 0)
+              if @parDepassArray[1].to_s == 'v'
                   @depassOK = 1
+              else 
+                  if @parDepassArray[1].to_i > 0
+                       @depassOK = 1
+                  end
               end
           end
 
@@ -403,15 +407,15 @@ class ParamunsController < ApplicationController
                           if @depassOK == 1
                               if ['20', '40', '41', '50', '51'].include?(facture.typeImpr.to_s)
                                   if facture.facStatut.to_s != '3Annulé'
-                                      anMoisEmission = facture.facDateEmis.slice(6,4) + facture.facDateEmis.slice(3,2)
+                                      anMoisEmission = facture.facDateEmis.slice(6,4).to_s + facture.facDateEmis.slice(3,2).to_s
                                       if anMoisEmission.to_i >= @parDepassArray[0].to_i
                                           if facture.facMontTva.to_i > 0
+                                              facture.facDepass = '0'
+                                              facture.save
+                                          else
                                               facture.facDepass = '1'
                                               facture.save
                                               @cptFacture += 1
-                                          else
-                                              facture.facDepass = '0'
-                                              facture.save
                                           end
                                       else
                                           facture.facDepass = '0'
@@ -476,7 +480,7 @@ class ParamunsController < ApplicationController
                                               else
                                                   i += 5
                                               end
-                                          end                                         
+                                          end
                                       else
                                           if tache.tacStatut != '3Réglé'
                                               regle = 0
