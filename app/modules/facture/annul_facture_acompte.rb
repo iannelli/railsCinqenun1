@@ -29,7 +29,7 @@ module AnnulFactureAcompte
         @factureAvoir.facReglMont = @factureAvoirArray[10].to_s
         @factureAvoir.facStringLigne = ''
         @factureAvoir.majTache = ''
-        @factureAvoir.facDepass = ''
+        @factureAvoir.facDepass = '0'
         @factureAvoir.facTypeDecla = @factureAvoirArray[11].to_s
         @factureAvoir.facCourrier = ''
         @factureAvoir.facReA = ''
