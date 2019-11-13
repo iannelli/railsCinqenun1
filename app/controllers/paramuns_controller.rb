@@ -197,14 +197,6 @@ class ParamunsController < ApplicationController
       @cptProjetold = 0 # décompte des projets InActifs en dépassement de franchise
       ## Si Déconnexion de l'Application ######################################
       if params[:parametre][:maj] == 'DA'
-          # Find de @paramunold (ou création si 1ère fois) ----
-          begin
-              @paramunold = Paramunold.find(params[:id])
-          rescue ActiveRecord::RecordNotFound
-              @paramunold = Paramunold.new()
-              @paramunold.id = @paramun.id
-              @paramunold.save
-          end
           @erreurArchivage = 0
           @archivageOK = 0
           @nbreProjetArchiver = 0
@@ -221,7 +213,13 @@ class ParamunsController < ApplicationController
                   end
               end
           end
-
+          # Find de @paramunold (ou création si 1ère fois) ----
+          @paramunold = Paramunold.where(["id = ?", params[:id].to_i]).first
+          if @paramunold.nil?          
+              @paramunold = Paramunold.new()
+              @paramunold.id = @paramun.id
+              @paramunold.save
+          end
           ## TRAITEMENT DES PROJETS ACTIFS **************************
           if @paramun.projets.length != 0
               ## Examen des Projets ----------
@@ -345,7 +343,6 @@ class ParamunsController < ApplicationController
                       end
                   end # --- Fin de l'examen d'une occurrence de Projet ---
               end ### FIN de l'examen de toutes les occurrences de Projet ----------------------------
-
               # Si Archivage des Projets -------------
               if @nbreProjetArchiver > 0
                   nbreDevisInactif = 0
