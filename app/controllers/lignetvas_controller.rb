@@ -1,11 +1,31 @@
 class LignetvasController < ApplicationController
-  before_action :set_lignetva, only: [:show, :edit, :update, :destroy]
+  
+  # TEST de Connexion *******************
+  before_action :authenticate_rights
+  def authenticate_rights
+      dateConnex = params[:parametre][:parDateConnex]
+      @paramun = Paramun.find(params[:parametre][:id].to_i)
 
-  # GET /lignetvas
-  # GET /lignetvas.json
-  def index
-    @lignetvas = Lignetva.all
+      if dateConnex.to_i > @paramun.parDateConnex.to_i
+          respond_to do |format|
+              format.xml { render request.format.to_sym => "lligErreurS" }
+          end
+      end
   end
+
+  # GET /lignetvas ****** CHARGEMENT ************************
+  # GET /lignetvas.xml
+  def index
+      @lignetvas = @paramun.lignetvas
+
+      respond_to do |format|
+          if @lignetvas.empty?
+               format.xml { render request.format.to_sym => "lligErreurA" } ## Aucune Lignetva
+          else
+               format.xml { render xml: @lignetvas }
+          end
+      end
+  end  
 
   # GET /lignetvas/1
   # GET /lignetvas/1.json

@@ -14,7 +14,7 @@ module StatSuiviFactureimpayee
                             end
                             ind +=1
                             montant1 = @statFactureAccueilArray[ind].to_i
-                            montant2 = facture.facMontHt.to_i / 100
+                            montant2 = facture.facMontBrutHt.to_i / 100
                             @statFactureAccueilArray[ind] = montant1 + montant2.to_i
                             ind +=1
                             nombre = @statFactureAccueilArray[ind].to_i
@@ -39,7 +39,7 @@ module StatSuiviFactureimpayee
                                     end
                                     ind +=1
                                     montant1 = @statFactureAccueilArray[ind].to_i
-                                    montant2 = factureold.facMontHt.to_i / 100
+                                    montant2 = factureold.facMontBrutHt.to_i / 100
                                     @statFactureAccueilArray[ind] = montant1 + montant2.to_i
                                     ind +=1
                                     nombre = @statFactureAccueilArray[ind].to_i

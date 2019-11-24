@@ -23,8 +23,7 @@ class ParamunsController < ApplicationController
       begin
           @paramun = Paramun.find(params[:parametre][:id])
           @anCourant = Time.new.year
-          moisCourant = Time.new.month
-          anMoins2 = @anCourant - 2
+          @anMoins2 = @anCourant - 2
           # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs
           if @anCourant > @paramun.parDateConnex.slice(0,4).to_i
               index_changement_annee_trait
@@ -408,12 +407,12 @@ class ParamunsController < ApplicationController
           ## Examen des Dépenses -------
           if @paramun.depenses.length != 0
               @paramun.depenses.each do |depense|
-                  aaaamm = depense.dateRegl.slice(6,4) + recette.dateRegl.slice(3,2)
+                  aaaamm = depense.dateRegl.slice(6,4) + depense.dateRegl.slice(3,2)
                   ind = @statDepenseAccueilArray.find_index(aaaamm)
                   if ind != nil
                       ind +=1
                       montant1 = @statDepenseAccueilArray[ind].to_i
-                      montant2 = recette.montantHt.to_i / 100
+                      montant2 = depense.montantHt.to_i / 100
                       @statDepenseAccueilArray[ind] = montant1 + montant2.to_i 
                   end
               end

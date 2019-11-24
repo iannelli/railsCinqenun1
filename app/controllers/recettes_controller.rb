@@ -43,7 +43,7 @@ class RecettesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = "rails - RecettesController - create"
           @erreur.origine = "erreur Création Recette"
-          @erreur.numLigne = '39'
+          @erreur.numLigne = '40'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -76,92 +76,7 @@ class RecettesController < ApplicationController
           # Si Franchise TVA[Perte exonération] ou Régime RSI
           if params[:parametre][:facSituationImpositionTva].to_s == 'A' || params[:parametre][:facSituationImpositionTva].to_s == 'B1'
               if @recette.modePaieLib.to_s != 'imputation crédit'
-                  if @recette.montantHt.to_i < 0
-                      if @recette.modePaieLib.to_s == 'annulation'
-                          if @recette.montantHt.to_i < 0
-                              positifMontantHt = @recette.montantHt.to_i * (-1)
-                          else
-                              positifMontantHt = @recette.montantHt.to_i
-                          end
-                      end
-                      @recetteInitiale = Recette.where("parametreId = ? AND factureId = ? AND montantHt = ?", @paramun.id, @recette.factureId, positifMontantHt).first
-                      if @recetteInitiale.nil?
-                          @erreur = Erreur.new
-                          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                          @erreur.appli = "rails - RecettesController - create"
-                          @erreur.origine = "erreur Find Recette Initiale à annuler"
-                          @erreur.numLigne = '79'
-                          #@erreur.message = e.message
-                          @erreur.parametreId = params[:parametre][:id].to_s
-                          @erreur.save
-                          @CreateOK = 1
-                      else
-                          if @paramun.lignetvas.length == 0
-                              @erreur = Erreur.new
-                              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                              @erreur.appli = "rails - RecettesController - create"
-                              @erreur.origine = "erreur Absence de lignetvas"
-                              @erreur.numLigne = '92'
-                              @erreur.message = @paramun.lignetvas.length.to_s
-                              @erreur.parametreId = params[:parametre][:id].to_s
-                              @erreur.save
-                              @CreateOK = 1
-                          else
-                              @paramun.lignetvas.each do |lignetva|
-                                  @arrayRecetteId = []
-                                  @arrayRecetteId = lignetva.listeRecetteId.split(",")
-                                  if @arrayRecetteId.include?(@recetteInitiale.id.to_s)
-                                      mont = lignetva.tvaBase.to_i + @recette.montantHt.to_i
-                                      lignetva.tvaBase = mont.to_s
-                                      mont = lignetva.tvaMontant.to_i + @recette.montantTva.to_i
-                                      lignetva.tvaMontant = mont.to_s
-                                      @arrayRecetteId << @recette.id.to_s
-                                      @arrayRecetteId.uniq! #Unification des id de même valeur en un seul id
-                                      lignetva.listeRecetteId = @arrayRecetteId.join(',')
-                                      lignetva.save
-                                  end
-                              end
-                          end
-                      end
-                  end
-                  if @recette.montantHt.to_i > 0
-                      @ligneArrayRecette = []
-                      @ligneArrayRecette = @recette.lignesTva.split("|")
-                      i = 0
-                      while i < @ligneArrayRecette.length
-                          decla = @ligneArrayRecette[i]
-                          i += 1
-                          periode = @ligneArrayRecette[i]
-                          i += 1
-                          codeLigne = @ligneArrayRecette[i]
-                          i += 1
-                          baseHt = @ligneArrayRecette[i].to_i
-                          i += 1
-                          tva = @ligneArrayRecette[i].to_i
-                          i += 1
-                          @lignetva = Lignetva.where("parametreId = ? AND tvaDecla = ? AND tvaPeriode = ? AND tvaCodeLigne = ?", @paramun.id, decla, periode, codeLigne).first
-                          if @lignetva.nil?
-                              @lignetva = Lignetva.new
-                              @lignetva.tvaDecla = decla
-                              @lignetva.tvaPeriode = periode
-                              @lignetva.tvaCodeLigne = codeLigne
-                              @lignetva.tvaBase = baseHt.to_s
-                              @lignetva.tvaMontant = tva.to_s
-                              @lignetva.listeRecetteId = @recette.id
-                              @lignetva.parametreId = @paramun.id
-                          else
-                              calTemp = @lignetva.tvaBase.to_i + baseHt
-                              @lignetva.tvaBase = calTemp.to_s
-                              calTemp = @lignetva.tvaMontant.to_i + tva
-                              @lignetva.tvaMontant = calTemp.to_s
-                              @arrayRecetteId = @lignetva.listeRecetteId.split(',')
-                              @arrayRecetteId << @recette.id.to_s
-                              @arrayRecetteId.uniq! #Unification des id de même valeur en un seul id
-                              @lignetva.listeRecetteId = @arrayRecetteId.join(',')
-                          end
-                          @lignetva.save
-                      end
-                  end
+                  lignetva_create_update_trait
               end
           end
       end
@@ -194,7 +109,7 @@ class RecettesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - RecettesController - update"
               @erreur.origine = "erreur Modification Recette.id=" + params[:id].to_s
-              @erreur.numLigne = '101'
+              @erreur.numLigne = '106'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -205,7 +120,7 @@ class RecettesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = "rails - RecettesController - update"
           @erreur.origine = "Incident Find Recette.id=" + params[:id].to_s
-          @erreur.numLigne = '99'
+          @erreur.numLigne = '104'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save

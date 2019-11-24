@@ -49,9 +49,9 @@ class SuivisController < ApplicationController
                           @suiviArray << facture.facDateReception.to_s
                           @suiviArray << facture.facStatut.to_s
                           @suiviArray << facture.facDateLimite.to_s
-                          @suiviArray << facture.facMontHt.to_s
+                          @suiviArray << facture.facMontBrutHt.to_s
                           @suiviArray << facture.facMontTva.to_s
-                          @suiviArray << facture.facMontTtc.to_s
+                          @suiviArray << facture.facMontNetHt.to_s
                           @suiviArray << facture.facAcomMont.to_s
                           @suiviArray << facture.facTotalDu.to_s
                           @suiviArray << facture.facReglMont.to_s
@@ -96,9 +96,9 @@ class SuivisController < ApplicationController
                               @suiviArray << factureold.facDateReception.to_s
                               @suiviArray << factureold.facStatut.to_s
                               @suiviArray << factureold.facDateLimite.to_s
-                              @suiviArray << factureold.facMontHt.to_s
+                              @suiviArray << factureold.facMontBrutHt.to_s
                               @suiviArray << factureold.facMontTva.to_s
-                              @suiviArray << factureold.facMontTtc.to_s
+                              @suiviArray << factureold.facMontNetHt.to_s
                               @suiviArray << factureold.facAcomMont.to_s
                               @suiviArray << factureold.facTotalDu.to_s
                               @suiviArray << factureold.facReglMont.to_s

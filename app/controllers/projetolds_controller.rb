@@ -179,9 +179,9 @@ class ProjetoldsController < ApplicationController
                   @factureold.facProCom = facture.facProCom
                   @factureold.facBdcSigne = facture.facBdcSigne
                   @factureold.facMention = facture.facMention
-                  @factureold.facMontHt = facture.facMontHt
+                  @factureold.facMontBrutHt = facture.facMontBrutHt
                   @factureold.facMontTva = facture.facMontTva
-                  @factureold.facMontTtc = facture.facMontTtc
+                  @factureold.facMontNetHt = facture.facMontNetHt
                   @factureold.facAcomTaux = facture.facAcomTaux
                   @factureold.facAcomMont = facture.facAcomMont
                   @factureold.facImputProjet = facture.facImputProjet
@@ -423,9 +423,9 @@ class ProjetoldsController < ApplicationController
                   @facture.facProCom = factureold.facProCom
                   @facture.facBdcSigne = factureold.facBdcSigne
                   @facture.facMention = factureold.facMention
-                  @facture.facMontHt = factureold.facMontHt
+                  @facture.facMontBrutHt = factureold.facMontBrutHt
                   @facture.facMontTva = factureold.facMontTva
-                  @facture.facMontTtc = factureold.facMontTtc
+                  @facture.facMontNetHt = factureold.facMontNetHt
                   @facture.facAcomTaux = factureold.facAcomTaux
                   @facture.facAcomMont = factureold.facAcomMont
                   @facture.facImputProjet = factureold.facImputProjet

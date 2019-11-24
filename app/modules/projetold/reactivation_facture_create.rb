@@ -17,9 +17,9 @@ module ReactivationFactureCreate
             @facture.facProCom = factureold.facProCom
             @facture.facBdcSigne = factureold.facBdcSigne
             @facture.facMention = factureold.facMention
-            @facture.facMontHt = factureold.facMontHt
+            @facture.facMontBrutHt = factureold.facMontBrutHt
             @facture.facMontTva = factureold.facMontTva
-            @facture.facMontTtc = factureold.facMontTtc
+            @facture.facMontNetHt = factureold.facMontNetHt
             @facture.facAcomTaux = factureold.facAcomTaux
             @facture.facAcomMont = factureold.facAcomMont
             @facture.facImputProjet = factureold.facImputProjet

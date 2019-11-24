@@ -17,9 +17,9 @@ module ArchivageFactureCreate
             @factureold.facProCom = facture.facProCom
             @factureold.facBdcSigne = facture.facBdcSigne
             @factureold.facMention = facture.facMention
-            @factureold.facMontHt = facture.facMontHt
+            @factureold.facMontBrutHt = facture.facMontBrutHt
             @factureold.facMontTva = facture.facMontTva
-            @factureold.facMontTtc = facture.facMontTtc
+            @factureold.facMontNetHt = facture.facMontNetHt
             @factureold.facAcomTaux = facture.facAcomTaux
             @factureold.facAcomMont = facture.facAcomMont
             @factureold.facImputProjet = facture.facImputProjet

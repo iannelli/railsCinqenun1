@@ -45,7 +45,7 @@ class DepensesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = "rails - DepensesController - create"
           @erreur.origine = "erreur Création Depense"
-          @erreur.numLigne = '41'
+          @erreur.numLigne = '42'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -82,7 +82,7 @@ class DepensesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - DepensesController - create"
               @erreur.origine = "erreur save Parametre"
-              @erreur.numLigne = '66'
+              @erreur.numLigne = '79'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -92,7 +92,7 @@ class DepensesController < ApplicationController
       if @CreateOK == 0  ## Incidence de la dépense créée sur la Déclaration de TVA ----------------
           if @paramun.parRegimeTva.to_i != 0
               if @depense.lignesTva.to_s != 'neant'
-                  creationLigneTva  
+                  depense_lignetva_create_trait
               end
           end
       end
@@ -129,7 +129,7 @@ class DepensesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = "rails - DepensesController - update"
           @erreur.origine = "erreur Find Depense - depense.id=" + params[:id].to_s
-          @erreur.numLigne = '105'
+          @erreur.numLigne = '121'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -139,7 +139,7 @@ class DepensesController < ApplicationController
           if @paramun.parRegimeTva.to_i != 0
               if params[:parametre][:maj].to_s != 'U1'
                   if @depense.lignesTva.to_s != 'neant'
-                      @updateOK = modificationLigneTva ## Cf. fin du Controller
+                      @updateOK = depense_ligneTva_update_trait
                   end
               end
           end
@@ -182,7 +182,7 @@ class DepensesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - DepensesController - update"
               @erreur.origine = "erreur Modification Depense - depense.id=" + params[:id].to_s
-              @erreur.numLigne = '148'
+              @erreur.numLigne = '179'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -192,7 +192,7 @@ class DepensesController < ApplicationController
       if @updateOK == 0  ## Création des Lignetva -----------
           if @paramun.parRegimeTva.to_i != 0
               if params[:parametre][:maj].to_s != 'U1'
-                  creationLigneTva ## Cf. fin du Controller
+                  depense_lignetva_create_trait
               end
           end
       end
@@ -249,7 +249,7 @@ class DepensesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = 'rails - DepensesController - destroy'
           @erreur.origine = "erreur Find Depense - Depense.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '192'
+          @erreur.numLigne = '246'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -258,7 +258,7 @@ class DepensesController < ApplicationController
       if @destroyOK == 0 ## Modification des LigneTva ---- (si problème Find => @destroyOK = 2)
           if @paramun.parRegimeTva.to_i != 0
               if @depense.lignesTva.to_s != 'neant'
-                  @destroyOK = modificationLigneTva ## Cf. fin du Controller
+                  @destroyOK = depense_ligneTva_update_trait
               end
           end
       end
@@ -294,7 +294,7 @@ class DepensesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = 'rails - DepensesController - destroy'
               @erreur.origine = "erreur Delete Depense - depense.id=" + params[:id].to_s
-              @erreur.numLigne = '227'
+              @erreur.numLigne = '291'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -315,89 +315,6 @@ class DepensesController < ApplicationController
           end
       end
   end
-
-
-## Création des lignes de la Déclaration de TVA ******************************
-  def creationLigneTva
-      @arrayDepenseId = []
-      @ligneArrayDepense = @depense.lignesTva.split("|")
-      i = 0
-      while i < @ligneArrayDepense.length
-          decla = @ligneArrayDepense[i]
-          i += 1
-          periode = @ligneArrayDepense[i]
-          i += 1
-          codeLigne = @ligneArrayDepense[i]
-          i += 1
-          baseHt = @ligneArrayDepense[i].to_i
-          i += 1
-          tva = @ligneArrayDepense[i].to_i
-          i += 1
-          @lignetva = Lignetva.where("parametreId = ? AND tvaDecla = ? AND tvaPeriode = ? AND tvaCodeLigne = ?", @paramun.id, decla, periode, codeLigne).first
-          if @lignetva.nil?
-              @lignetva = Lignetva.new
-              @lignetva.tvaDecla = decla
-              @lignetva.tvaPeriode = periode
-              @lignetva.tvaCodeLigne = codeLigne
-              @lignetva.tvaBase = baseHt.to_s
-              @lignetva.tvaMontant = tva.to_s
-              @lignetva.listeDepenseId = @depense.id
-              @lignetva.parametreId = @paramun.id
-          else
-              calTemp = @lignetva.tvaBase.to_i + baseHt
-              @lignetva.tvaBase = calTemp.to_s
-              calTemp = @lignetva.tvaMontant.to_i + tva
-              @lignetva.tvaMontant = calTemp.to_s 
-              @arrayDepenseId = @lignetva.listeDepenseId.split(',')
-              @arrayDepenseId << @depense.id.to_s
-              @arrayDepenseId.uniq! #Unification des id de même valeur en un seul id
-              @lignetva.listeDepenseId = @arrayDepenseId.join(',')
-          end
-          @lignetva.save
-      end
-  end
-## FIN Création des lignes de la Déclaration de TVA ****************************
-
-## Modification des lignes de la Déclaration de TVA ******************************
-  def modificationLigneTva
-      @arrayDepenseId = []
-      @ligneArrayDepense = @depense.lignesTva.split("|")
-      @resultat = 0
-      i = 0
-      while i < @ligneArrayDepense.length
-          decla = @ligneArrayDepense[i]
-          i += 1
-          periode = @ligneArrayDepense[i]
-          i += 1
-          codeLigne = @ligneArrayDepense[i]
-          i += 1
-          baseHt = @ligneArrayDepense[i].to_i
-          i += 1
-          tva = @ligneArrayDepense[i].to_i
-          i += 1
-          @lignetva = Lignetva.where("parametreId = ? AND tvaDecla = ? AND tvaPeriode = ? AND tvaCodeLigne = ?", @paramun.id, decla, periode, codeLigne).first
-          if @lignetva.nil?
-              @erreur = Erreur.new
-              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - DepensesController - update"
-              @erreur.origine = "erreur Find LigneTva - depense.id=" + params[:id].to_s
-              @erreur.numLigne = '306'
-              @erreur.message = "@depense.lignesTva = " + @depense.lignesTva.to_s
-              @erreur.parametreId = params[:parametre][:id].to_s
-              @erreur.save
-              @resultat = 2
-              break
-          else
-              calTemp = @lignetva.tvaBase.to_i - baseHt
-              @lignetva.tvaBase = calTemp.to_s
-              calTemp = @lignetva.tvaMontant.to_i - tva
-              @lignetva.tvaMontant = calTemp.to_s
-              @lignetva.save
-          end
-      end
-      return @resultat
-  end
-## FIN Création/Maj des lignes de la Déclaration de TVA ****************************
 
 
   private

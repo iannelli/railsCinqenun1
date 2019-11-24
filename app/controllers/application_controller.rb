@@ -27,5 +27,17 @@ class ApplicationController < ActionController::Base
     include ArchivageFactureCreate
     include ReactivationTacheCreate
     include ReactivationFactureCreate
+    
+    # recettes_controller ---
+    include LignetvaCreateUpdate
+    
+    # depenses_controller ---
+    include DepenseLignetvaCreate
+    include DepenseLignetvaUpdate
+    
+    # immobs_controller ---
+    include ImmobLignetvaCreate
+    include ImmobLignetvaUpdate
+    include ImmobIndiceMillesime
 
 end

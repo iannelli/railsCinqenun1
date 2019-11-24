@@ -62,7 +62,7 @@ class ImmobsController < ApplicationController
           i = 0
           while i < @imAmorArray.length
               exerImmob = @imAmorArray[i+1].to_i
-              indImAmor = returnIndice(exerImmob)
+              indImAmor = immob_indice_millesime_trait(exerImmob)
               if indImAmor >= 1 && indImAmor <= 6
                   parImmob = @parImmobArray[indImAmor].to_i + @imAmorArray[i+2].to_i
                   @parImmobArray[indImAmor] = parImmob.to_s
@@ -86,7 +86,7 @@ class ImmobsController < ApplicationController
       end
       if @CreateOK == 0  ## Incidence de l'Immobilisation créée sur la Déclaration de TVA ----------------
           if @immob.lignesTva != 'neant'
-              @CreateOK = creationLigneTva
+              @CreateOK = immob_ligneTva_create_trait
           end
       end
       respond_to do |format|
@@ -130,7 +130,7 @@ class ImmobsController < ApplicationController
               i = 0
               while i < @imAmorArray.length
                   exerImmob = @imAmorArray[i+1].to_i
-                  indImAmor = returnIndice(exerImmob)
+                  indImAmor = immob_indice_millesime_trait(exerImmob)
                   if indImAmor >= 1 && indImAmor <= 6
                       parImmob = @parImmobArray[indImAmor].to_i - @imAmorArray[i+2].to_i
                       @parImmobArray[indImAmor] = parImmob.to_s
@@ -142,7 +142,7 @@ class ImmobsController < ApplicationController
               i = 0
               while i < @imAmorArrayNew.length
                   exerImmob = @imAmorArrayNew[i+1].to_i
-                  indImAmor = returnIndice(exerImmob)
+                  indImAmor = immob_indice_millesime_trait(exerImmob)
                   if indImAmor >= 1 && indImAmor <= 6
                       parImmob = @parImmobArray[indImAmor].to_i + @imAmorArrayNew[i+2].to_i
                       @parImmobArray[indImAmor] = parImmob.to_s
@@ -155,11 +155,11 @@ class ImmobsController < ApplicationController
           if params[:parametre][:maj].slice(3,1) == '1'
               ## Cumul négatif -----
               if @immob.lignesTva != 'neant'
-                  @updateOK = modificationLigneTva ## Cf. fin du Controller - (si problème Find => @updateOK = 2)
+                  @updateOK = mmob_lignetva_update_trait  # (si problème Find => @updateOK = 2)
               end
               ## Cumul positif ----
               if params[:immob][:lignesTva].to_s != 'neant'
-                  @updateOK = creationLigneTva ## Cf. fin du Controller - (si problème Find => @updateOK = 2)
+                  @updateOK = immob_ligneTva_create_trait # (si problème Find => @updateOK = 2)
               end
           end
       end
@@ -190,7 +190,7 @@ class ImmobsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - ImmobsController - update"
               @erreur.origine = "erreur Modification Immob - immob.id=" + params[:id].to_s
-              @erreur.numLigne = '181'
+              @erreur.numLigne = '187'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -239,7 +239,7 @@ class ImmobsController < ApplicationController
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                   @erreur.appli = "rails - ImmobsController - update"
                   @erreur.origine = "erreur create Immobld - @immobold.id= " + @immob.id.to_s
-                  @erreur.numLigne = '230'
+                  @erreur.numLigne = '236'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -253,7 +253,7 @@ class ImmobsController < ApplicationController
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                       @erreur.appli = 'rails - ImmobsController - update'
                       @erreur.origine = "erreur Delete Immob - immob.id=" + @immob.id.to_s
-                      @erreur.numLigne = '244'
+                      @erreur.numLigne = '250'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:parametre][:id].to_s
                       @erreur.save
@@ -272,7 +272,7 @@ class ImmobsController < ApplicationController
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                   @erreur.appli = "rails - ImmobsController - update"
                   @erreur.origine = "erreur save Parametre"
-                  @erreur.numLigne = '263'
+                  @erreur.numLigne = '269'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -296,7 +296,6 @@ class ImmobsController < ApplicationController
   end
 
 
-
   # DELETE /immobs/1 ********* SUPPRESSION ******************
   # DELETE /immobs/1.xml
   def destroy
@@ -310,7 +309,7 @@ class ImmobsController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = 'rails - ImmobsController - destroy'
           @erreur.origine = "erreur Find Immob - Immob.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '301'
+          @erreur.numLigne = '306'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -318,7 +317,7 @@ class ImmobsController < ApplicationController
       end
       if @destroyOK == 0 ## Modification des LigneTva ---- (si problème Find => @destroyOK = 2)
           if @immob.lignesTva.to_s != 'neant'
-              @destroyOK = modificationLigneTva ## Cf. fin du Controller
+              @destroyOK = mmob_lignetva_update_trait
           end
       end
       if @destroyOK == 0 ## Mise à jour du Nombre de Immob
@@ -333,7 +332,7 @@ class ImmobsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - ImmobsController - destroy"
               @erreur.origine = "erreur save Parametre"
-              @erreur.numLigne = '324'
+              @erreur.numLigne = '329'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -348,7 +347,7 @@ class ImmobsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = 'rails - ImmobsController - destroy'
               @erreur.origine = "erreur Delete Immob - immob.id=" + params[:id].to_s
-              @erreur.numLigne = '339'
+              @erreur.numLigne = '344'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -369,126 +368,6 @@ class ImmobsController < ApplicationController
           end
       end
   end
-
-
-## Restitue l'indice correspondant à un Millésime ******************************
-  def returnIndice(millesime)
-      case millesime
-          when @current_year.to_i
-              return 0
-          when @current_year.to_i - 1
-              return 1    
-          when @current_year.to_i - 2
-              return 2
-          when @current_year.to_i - 3
-              return 3    
-          when @current_year.to_i - 4
-              return 4     
-          when @current_year.to_i - 5
-              return 5      
-          when @current_year.to_i - 6
-              return 6
-          else
-              return 9
-      end
-  end
-
-## Création des lignes de la Déclaration de TVA ******************************
-  def creationLigneTva
-      @arrayImmobId = []
-      @ligneArrayImmob = @immob.lignesTva.split("|")
-      @resultat = 0
-      i = 0
-      while i < @ligneArrayImmob.length
-          decla = @ligneArrayImmob[i]
-          i += 1
-          periode = @ligneArrayImmob[i]
-          i += 1
-          codeLigne = @ligneArrayImmob[i]
-          i += 1
-          baseHt = @ligneArrayImmob[i].to_i
-          i += 1
-          tva = @ligneArrayImmob[i].to_i
-          i += 1
-          @lignetva = Lignetva.where("parametreId = ? AND tvaDecla = ? AND tvaPeriode = ? AND tvaCodeLigne = ?", @paramun.id, decla, periode, codeLigne).first
-          if @lignetva.nil?
-              @lignetva = Lignetva.new
-              @lignetva.tvaDecla = decla
-              @lignetva.tvaPeriode = periode
-              @lignetva.tvaCodeLigne = codeLigne
-              @lignetva.tvaBase = baseHt.to_s
-              @lignetva.tvaMontant = tva.to_s
-              @lignetva.listeImmobId = @immob.id
-              @lignetva.parametreId = @paramun.id
-          else
-              calTemp = @lignetva.tvaBase.to_i + baseHt
-              @lignetva.tvaBase = calTemp.to_s
-              calTemp = @lignetva.tvaMontant.to_i + tva
-              @lignetva.tvaMontant = calTemp.to_s 
-              @arrayImmobId = @lignetva.listeImmobId.split(',')
-              @arrayImmobId << @immob.id.to_s
-              @arrayImmobId.uniq! #Unification des id de même valeur en un seul id
-              @lignetva.listeImmobId = @arrayImmobId.join(',')
-          end
-          begin
-              @lignetva.save
-          rescue => e # Incident create/update Lignetva
-              @erreur = Erreur.new
-              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - ImmobsController - creationLigneTva"
-              @erreur.origine = "erreur create/update Lignetva"
-              @erreur.numLigne = '406'
-              @erreur.message = e.message
-              @erreur.parametreId = params[:parametre][:id].to_s
-              @erreur.save
-              @resultat = 2
-          end
-          return @resultat
-      end
-  end
-## FIN Création des lignes de la Déclaration de TVA ****************************
-
-## Modification des lignes de la Déclaration de TVA ******************************
-  def modificationLigneTva
-      @arrayImmobId = []
-      @ligneArrayImmob = @immob.lignesTva.split("|")
-      @resultat = 0
-      i = 0
-      while i < @ligneArrayImmob.length
-          decla = @ligneArrayImmob[i]
-          i += 1
-          periode = @ligneArrayImmob[i]
-          i += 1
-          codeLigne = @ligneArrayImmob[i]
-          i += 1
-          baseHt = @ligneArrayImmob[i].to_i
-          i += 1
-          tva = @ligneArrayImmob[i].to_i
-          i += 1
-          @lignetva = Lignetva.where("parametreId = ? AND tvaDecla = ? AND tvaPeriode = ? AND tvaCodeLigne = ?", @paramun.id, decla, periode, codeLigne).first
-          if @lignetva.nil?
-              @erreur = Erreur.new
-              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - ImmobsController - update"
-              @erreur.origine = "erreur Find LigneTva - immob.id=" + params[:id].to_s
-              @erreur.numLigne = '462'
-              @erreur.message = "@immob.lignesTva = " + @immob.lignesTva.to_s
-              @erreur.parametreId = params[:parametre][:id].to_s
-              @erreur.save
-              @resultat = 2
-              break
-          else
-              calTemp = @lignetva.tvaBase.to_i - baseHt
-              @lignetva.tvaBase = calTemp.to_s
-              calTemp = @lignetva.tvaMontant.to_i - tva
-              @lignetva.tvaMontant = calTemp.to_s
-              @lignetva.save
-          end
-      end
-      return @resultat
-  end
-## FIN Création/Maj des lignes de la Déclaration de TVA ****************************
-
 
   private
     # Never trust parameters from the scary internet, only allow the white list through.

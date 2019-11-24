@@ -16,9 +16,9 @@ module AnnulFactureAcompte
         @factureAvoir.facProCom = 'false'
         @factureAvoir.facBdcSigne = 'false'
         @factureAvoir.facMention = ''
-        @factureAvoir.facMontHt = @factureAvoirArray[5].to_s
+        @factureAvoir.facMontBrutHt = @factureAvoirArray[5].to_s
         @factureAvoir.facMontTva = @factureAvoirArray[6].to_s
-        @factureAvoir.facMontTtc = @factureAvoirArray[7].to_s
+        @factureAvoir.facMontNetHt = @factureAvoirArray[7].to_s
         @factureAvoir.facAcomTaux = @factureAvoirArray[8].to_s
         @factureAvoir.facAcomMont = '000'
         @factureAvoir.facImputProjet = '000'

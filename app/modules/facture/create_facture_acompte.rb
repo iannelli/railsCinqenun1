@@ -16,15 +16,16 @@ module CreateFactureAcompte
         @factureAcompte.facProCom = ''
         @factureAcompte.facBdcSigne = ''
         @factureAcompte.facMention = ''
-        @factureAcompte.facMontTtc = @factureAcompteArray[5].to_s
-        @factureAcompte.facMontHt = @factureAcompteArray[6].to_s
-        @factureAcompte.facMontTva = @factureAcompteArray[7].to_s
+        @factureAcompte.facMontBrutHt = @factureAcompteArray[5].to_s
+        @factureAcompte.facMontNetHt = @factureAcompteArray[5].to_s
+        @factureAcompte.facMontTva = @factureAcompteArray[6].to_s
+        @factureAcompte.facTotalDu = @factureAcompteArray[7].to_s # Montant Ttc (si facTotalDu > 0)
         @factureAcompte.facAcomTaux = @factureAcompteArray[8].to_s
         @factureAcompte.facAcomMont = ''
         #@factureAcompte.facImputProjet = '000'
         #@factureAcompte.facImputClient = '000'
         #@factureAcompte.facDifference = '000'
-        @factureAcompte.facTotalDu = '000'
+        
         @factureAcompte.modePaieLib = @factureAcompteArray[9].to_s
         @factureAcompte.facReglMont = @factureAcompteArray[10].to_s
         @factureAcompte.facStringLigne = ''
