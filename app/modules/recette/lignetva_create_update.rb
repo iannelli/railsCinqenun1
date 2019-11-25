@@ -2,7 +2,7 @@ module LignetvaCreateUpdate
     # Création/Maj éventuelle des lignes de la Déclaration de TVA
     # Si Franchise TVA[Perte exonération] ou Régime RSI
     def lignetva_create_update_trait
-        if @recette.montantHt.to_i < 0 && @recette.montantTva.abs != 0
+        if @recette.montantHt.to_i < 0 && @recette.montantTva.to_i != 0
             @recetteInitiale = Recette.where("parametreId = ? AND facRef = ?", @paramun.id, @recette.facRef).first
             if @recetteInitiale.nil?
                 @erreur = Erreur.new

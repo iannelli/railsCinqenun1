@@ -155,6 +155,7 @@ class FacturesController < ApplicationController
                                       @factAnnul.facStatut = "3Annulé"
                                       @factAnnul.facMention = "**** Facture Annulée ****"
                                       @factAnnul.facDepass = '0'
+                                      @factAnnul.facReA = ''
                                       # Si la dernière facture est une facture Solde, elle devient intermédiaire
                                       case @facture.typeImpr.to_s
                                           when '50'

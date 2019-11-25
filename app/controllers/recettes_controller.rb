@@ -74,7 +74,7 @@ class RecettesController < ApplicationController
 
           # Création/Maj éventuelle des lignes de la Déclaration de TVA
           # Si Franchise TVA[Perte exonération] ou Régime RSI
-          if params[:parametre][:facSituationImpositionTva].to_s == 'A' || params[:parametre][:facSituationImpositionTva].to_s == 'B1'
+          if (params[:parametre][:facSituationImpositionTva].to_s == 'A' || params[:parametre][:facSituationImpositionTva].to_s == 'B1')
               if @recette.modePaieLib.to_s != 'imputation crédit'
                   lignetva_create_update_trait
               end
