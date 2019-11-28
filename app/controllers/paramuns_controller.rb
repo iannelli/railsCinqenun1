@@ -28,11 +28,10 @@ class ParamunsController < ApplicationController
           if @anCourant > @paramun.parDateConnex.slice(0,4).to_i
               index_changement_annee_trait
           end
+          # Maj parNouvelAn (changement d'Année) ----
+          @paramun.parNouvelAn = @majNewAn
           # Maj de parDateConnex -----------
-          @paramun.parDateConnex = (@current_time.strftime "%Y%m%d%H%M%S").to_s #Date-Heure Connexion 'aaaammjjhhmnss'
-          # Maj parMaj (changement d'Année) ----
-          majNewAnB = @majNewAn + @paramun.parMaj.slice(1,1).to_s
-          @paramun.parMaj = majNewAnB
+          @paramun.parDateConnex = (@current_time.strftime "%Y%m%d%H%M%S").to_s #Date-Heure Connexion 'aaaammjjhhmnss'          
           @paramun.save
       rescue => e # Incident Find de Paramun
           @erreur = Erreur.new
@@ -55,6 +54,52 @@ class ParamunsController < ApplicationController
       end
   end
 
+
+  # POST /paramuns ********* CREATE ***************************************
+  # POST /paramuns.xml
+  def create
+      @current_time = DateTime.now
+      @createOK = 0
+      @paramun = Paramun.new(paramun_params)
+      begin
+          @paramun.save
+      rescue => e
+          @erreur = Erreur.new
+          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+          @erreur.appli = 'rails - ParamunsController - create'
+          @erreur.origine = 'Erreur Create Paramun'
+          @erreur.numLigne = '67'
+          @erreur.message = e.message
+          @erreur.parametreId = params[:parametre][:id].to_s
+          @erreur.save
+          @createOK = 1
+      end
+      if @createOK == 0
+          begin
+              @abonne = Abonne.find(@paramun.abonneId.to_i)
+              @abonne.aboMaj = 'U'
+              @abonne.parametreId = @paramun.id    
+              @abonne.save
+          rescue => e # Incident Save Paramun
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = "rails - ParamunsController - create"
+              @erreur.origine = "erreur update Abonne - @abonne.id=" + @paramun.abonneId.to_s
+              @erreur.numLigne = '80'
+              @erreur.message = e.message
+              @erreur.parametreId = params[:id].to_s.to_s
+              @erreur.save
+              @createOK = 2
+          end
+      end
+      respond_to do |format|
+        if @createOK == 0
+          format.xml { render xml: @paramun }
+        else
+          format.xml { render request.format.to_sym => "pparErreurC" }
+        end
+      end
+  end
 
 
   # PATCH/PUT /paramuns/1

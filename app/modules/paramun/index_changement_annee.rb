@@ -1,7 +1,6 @@
 module IndexChangementAnnee
     # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs/Lignetvas
     def index_changement_annee_trait
-        # parMaj
         @majNewAn = '1'
         # parDepass ----
         @paramun.parDepass = "neant,v"

@@ -31,7 +31,9 @@ module ImmobLignetvaCreate
                 @lignetva.tvaBase = calTemp.to_s
                 calTemp = @lignetva.tvaMontant.to_i + tva
                 @lignetva.tvaMontant = calTemp.to_s 
-                @arrayImmobId = @lignetva.listeImmobId.split(',')
+                if @lignetva.listeImmobId.blank? == false
+                    @arrayImmobId = @lignetva.listeImmobId.split(',')
+                end
                 @arrayImmobId << @immob.id.to_s
                 @arrayImmobId.uniq! #Unification des id de même valeur en un seul id
                 @lignetva.listeImmobId = @arrayImmobId.join(',')

@@ -18,7 +18,9 @@ module LignetvaCreateUpdate
                 if @paramun.lignetvas.length != 0
                     @paramun.lignetvas.each do |lignetva|
                         @arrayRecetteId = []
-                        @arrayRecetteId = lignetva.listeRecetteId.split(",")
+                        if @lignetva.listeRecetteId.blank? == false
+                            @arrayRecetteId = @lignetva.listeRecetteId.split(",")
+                        end
                         if @arrayRecetteId.include?(@recetteInitiale.id.to_s)
                             mont = lignetva.tvaBase.to_i + @recette.montantHt.to_i
                             lignetva.tvaBase = mont.to_s
@@ -63,7 +65,9 @@ module LignetvaCreateUpdate
                     @lignetva.tvaBase = calTemp.to_s
                     calTemp = @lignetva.tvaMontant.to_i + tva
                     @lignetva.tvaMontant = calTemp.to_s
-                    @arrayRecetteId = @lignetva.listeRecetteId.split(',')
+                    if @lignetva.listeRecetteId.blank? == false
+                        @arrayRecetteId = @lignetva.listeRecetteId.split(',')
+                    end
                     @arrayRecetteId << @recette.id.to_s
                     @arrayRecetteId.uniq! #Unification des id de même valeur en un seul id
                     @lignetva.listeRecetteId = @arrayRecetteId.join(',')
