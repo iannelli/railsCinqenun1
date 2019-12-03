@@ -77,7 +77,7 @@ class ParamunsController < ApplicationController
       if @createOK == 0
           begin
               @abonne = Abonne.find(@paramun.abonneId.to_i)
-              @abonne.aboMaj = 'U'
+              @abonne.aboMajPar = 'U'
               @abonne.parametreId = @paramun.id    
               @abonne.save
           rescue => e # Incident Save Paramun
