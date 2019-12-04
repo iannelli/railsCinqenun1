@@ -420,7 +420,7 @@ class ParamunsController < ApplicationController
           if @depassOK == 1
               totalProjet = @cptProjet + @cptProjetold
               if totalProjet == 0
-                  @parDepassArray[1].to_s = '0'
+                  @parDepassArray[1] = '0'
               else
                   @parDepassArray[1] = totalProjet
               end
