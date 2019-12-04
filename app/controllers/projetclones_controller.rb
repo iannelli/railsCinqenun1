@@ -122,7 +122,7 @@ class ProjetclonesController < ApplicationController
                       @erreur = Erreur.new
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                       @erreur.appli = 'rails - ProjetclonesController - update'
-                      @erreur.origine = 'Create Clonetache - tache.id=' + t.to_s
+                      @erreur.origine = 'Create Clonetache - tache.id=' + tache.id.to_s
                       @erreur.numLigne = '110'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:parametre][:id].to_s

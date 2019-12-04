@@ -87,7 +87,7 @@ class ParamunsController < ApplicationController
               @erreur.origine = "erreur update Abonne - @abonne.id=" + @paramun.abonneId.to_s
               @erreur.numLigne = '80'
               @erreur.message = e.message
-              @erreur.parametreId = params[:id].to_s.to_s
+              @erreur.parametreId = params[:id].to_s
               @erreur.save
               @createOK = 2
           end
@@ -141,7 +141,7 @@ class ParamunsController < ApplicationController
                       @erreur.origine = "erreur update Abonne - @abonne.id=" + params[:id].to_s
                       @erreur.numLigne = '92'
                       @erreur.message = e.message
-                      @erreur.parametreId = params[:id].to_s.to_s
+                      @erreur.parametreId = params[:id].to_s
                       @erreur.save
                       @updateOK = 3
                   end
@@ -188,7 +188,7 @@ class ParamunsController < ApplicationController
                   @erreur.origine = "erreur update Abonne - @abonne.id=" + params[:id].to_s
                   @erreur.numLigne = '139'
                   @erreur.message = e.message
-                  @erreur.parametreId = params[:id].to_s.to_s
+                  @erreur.parametreId = params[:id].to_s
                   @erreur.save
                   @updateOK = 2
               end
