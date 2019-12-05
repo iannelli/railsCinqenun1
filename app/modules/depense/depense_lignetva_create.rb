@@ -30,7 +30,9 @@ module DepenseLignetvaCreate
                 @lignetva.tvaBase = calTemp.to_s
                 calTemp = @lignetva.tvaMontant.to_i + tva
                 @lignetva.tvaMontant = calTemp.to_s 
-                @arrayDepenseId = @lignetva.listeDepenseId.split(',')
+                if @lignetva.listeDepenseId.blank? == false
+                    @arrayDepenseId = @lignetva.listeDepenseId.split(',')
+                end
                 @arrayDepenseId << @depense.id.to_s
                 @arrayDepenseId.uniq! #Unification des id de même valeur en un seul id
                 @lignetva.listeDepenseId = @arrayDepenseId.join(',')

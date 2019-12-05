@@ -435,7 +435,7 @@ class ParamunsController < ApplicationController
           @sixDernierMoisArray = []
           # Initialisation des Array
           stat_suivi_init_trait         
-          ## Recette : Collecte des données pour implémentation dans les Array respectives -------------------
+          ## Collecte des données pour implémentation dans les Array respectives -------------------
           ## Examen des Recettes -------
           if @paramun.recettes.length != 0
               @paramun.recettes.each do |recette|
