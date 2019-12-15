@@ -14,7 +14,7 @@ class ClientelesController < ApplicationController
   end
 
 
- # GET /clienteles ****** CHARGEMENT ************************
+  # GET /clienteles ****** CHARGEMENT ************************
   # GET /clienteles.xml
   def index
       @clienteles = @paramun.clienteles
