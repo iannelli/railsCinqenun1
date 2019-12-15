@@ -1,6 +1,6 @@
 module ProjetInactifDepassSeuil
     ## TRAITEMENT DES PROJETS INACTIFS en Dépassement du Seuil de la Franchise
-    def projet_inactif_depass_seuil_trait        
+    def projet_inactif_depass_seuil_trait
         @paramunold.projetolds.each do |projetold|
             #if projetold.proSituation.to_s != '22'
                 @cptFacture = 0

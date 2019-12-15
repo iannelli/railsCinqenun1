@@ -239,6 +239,7 @@ class ParamunsController < ApplicationController
       @majParamun = 0
       @cptProjet = 0 # décompte des projets Actifs en dépassement de franchise
       @cptProjetold = 0 # décompte des projets InActifs en dépassement de franchise
+      @aaaammRecette = ''
       ## Si Déconnexion de l'Application ######################################
       if params[:parametre][:maj] == 'DA'
           @erreurArchivage = 0
@@ -439,8 +440,13 @@ class ParamunsController < ApplicationController
           ## Examen des Recettes -------
           if @paramun.recettes.length != 0
               @paramun.recettes.each do |recette|
-                  aaaamm = recette.facDateReception.slice(6,4) + recette.facDateReception.slice(3,2)
-                  ind = @statRecetteAccueilArray.find_index(aaaamm)
+                  if recette.montantHt.to_i >= 0
+                      @aaaammRecette = recette.facDateReception.slice(6,4) + recette.facDateReception.slice(3,2)
+                  else
+                      # Détermination (éventuelle) de @aaaammRecette à partir de recette.facDateEmis
+                      get_ecriture_initiale_positive_trait(recette)
+                  end
+                  ind = @statRecetteAccueilArray.find_index(@aaaammRecette)
                   if ind != nil
                       ind +=1
                       montant1 = @statRecetteAccueilArray[ind].to_i

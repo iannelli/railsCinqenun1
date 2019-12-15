@@ -12,6 +12,7 @@ class ApplicationController < ActionController::Base
     include ProjetInactifDepassSeuil
     include StatSuiviInit
     include StatSuiviFactureimpayee
+    include GetEcritureInitialePositive
     
     # factures_controller ---
     include VerifPresenceDoublon
