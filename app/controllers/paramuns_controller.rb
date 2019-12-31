@@ -127,7 +127,7 @@ class ParamunsController < ApplicationController
           end
           if @updateOK != 2
               if params[:typeMaj][:abo].to_s == '1'
-                  @abonne = Abonne.find(params[:id])
+                  @abonne = Abonne.find(@paramun.abonneId)
                   @abonne.aboIden = params[:abonne][:aboIden].to_s
                   @abonne.aboSeuilBase = params[:abonne][:seuilBase].to_s
                   @abonne.aboSeuilMajo = params[:abonne][:seuilMajo].to_s
@@ -176,7 +176,7 @@ class ParamunsController < ApplicationController
               @updateOK = 1
           end
           if @updateOK == 0
-              @abonne = Abonne.find(params[:id])
+              @abonne = Abonne.find(@paramun.abonneId.to_i)
               @abonne.aboSeuilBase = params[:abonne][:seuilBase].to_s
               @abonne.aboSeuilMajo = params[:abonne][:seuilMajo].to_s
               begin
