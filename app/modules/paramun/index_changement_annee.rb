@@ -147,7 +147,7 @@ module IndexChangementAnnee
         end
         
         # Maj de parAnFac et parNumFact -----------
-        @paramun.parAnFact = anCourant.to_s
+        @paramun.parAnFact = @anCourant.to_s
         @paramun.parNumFact = '00000'        
     end
 end
