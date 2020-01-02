@@ -30,7 +30,7 @@ development_sec:
 
 development_tro:
   adapter: mysql2
-  database: bddgescinqenun
+  database: bddabonnement
   username: root
   password: marina
   host: localhost

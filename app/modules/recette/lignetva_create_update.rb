@@ -18,8 +18,8 @@ module LignetvaCreateUpdate
                 if @paramun.lignetvas.length != 0
                     @paramun.lignetvas.each do |lignetva|
                         @arrayRecetteId = []
-                        if @lignetva.listeRecetteId.blank? == false
-                            @arrayRecetteId = @lignetva.listeRecetteId.split(",")
+                        if lignetva.listeRecetteId.blank? == false
+                            @arrayRecetteId = lignetva.listeRecetteId.split(",")
                         end
                         if @arrayRecetteId.include?(@recetteInitiale.id.to_s)
                             mont = lignetva.tvaBase.to_i + @recette.montantHt.to_i
