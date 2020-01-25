@@ -155,7 +155,7 @@ class ImmobsController < ApplicationController
           if params[:parametre][:maj].slice(3,1) == '1'
               ## Cumul négatif -----
               if @immob.lignesTva != 'neant'
-                  @updateOK = mmob_lignetva_update_trait  # (si problème Find => @updateOK = 2)
+                  @updateOK = immob_lignetva_update_trait  # (si problème Find => @updateOK = 2)
               end
               ## Cumul positif ----
               if params[:immob][:lignesTva].to_s != 'neant'
