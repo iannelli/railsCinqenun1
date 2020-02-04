@@ -155,7 +155,7 @@ class ImmobsController < ApplicationController
           if params[:parametre][:maj].slice(3,1) == '1'
               ## Cumul négatif -----
               if @immob.lignesTva != 'neant'
-                  @updateOK = immob_lignetva_update_trait  # (si problème Find => @updateOK = 2)
+                  @updateOK = mmob_lignetva_update_trait  # (si problème Find => @updateOK = 2)
               end
               ## Cumul positif ----
               if params[:immob][:lignesTva].to_s != 'neant'
@@ -178,7 +178,7 @@ class ImmobsController < ApplicationController
                   parImmob = @parImmobArray[0].to_i + params[:parametre][:annuiteAnCourantCession].to_i
                   @parImmobArray[0] = parImmob.to_s
                   @paramun.parImmob = @parImmobArray.join(',')
-              end             
+              end
           end
       end
       if @updateOK == 0

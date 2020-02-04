@@ -2,7 +2,12 @@ module DepenseLignetvaCreate
     ## Création des lignes de la Déclaration de TVA ******************************
     def depense_lignetva_create_trait
         @arrayDepenseId = []
-        @ligneArrayDepense = @depense.lignesTva.split("|")
+        if @typeCreationLigneTva == "new"
+            @ligneArrayDepense = @depense.lignesTva.split("|")
+        end
+        if @typeCreationLigneTva == "old"
+            @ligneArrayDepense = params[:parametre][:lignesTvaOld].split("|")
+        end
         i = 0
         while i < @ligneArrayDepense.length
             decla = @ligneArrayDepense[i]
