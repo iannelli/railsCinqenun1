@@ -35,8 +35,8 @@ module ProjetInactifDepassSeuil
                         projetold.proDepass = '0'
                     end
                     projetold.save
-                end              
-            #end                          
+                end
+            #end
         end
     end
 end

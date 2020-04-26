@@ -84,11 +84,6 @@ class ImmobsController < ApplicationController
               @CreateOK = 2
           end
       end
-      if @CreateOK == 0  ## Incidence de l'Immobilisation créée sur la Déclaration de TVA ----------------
-          if @immob.lignesTva != 'neant'
-              @CreateOK = immob_ligneTva_create_trait
-          end
-      end
       respond_to do |format|
           case @CreateOK
               when 0
@@ -150,17 +145,6 @@ class ImmobsController < ApplicationController
                   i += 5
               end
               @paramun.parImmob = @parImmobArray.join(',')
-          end
-          ## Si Modification données TVA --------------------------
-          if params[:parametre][:maj].slice(3,1) == '1'
-              ## Cumul négatif -----
-              if @immob.lignesTva != 'neant'
-                  @updateOK = mmob_lignetva_update_trait  # (si problème Find => @updateOK = 2)
-              end
-              ## Cumul positif ----
-              if params[:immob][:lignesTva].to_s != 'neant'
-                  @updateOK = immob_ligneTva_create_trait # (si problème Find => @updateOK = 2)
-              end
           end
       end
       if @updateOK == 0
@@ -314,11 +298,6 @@ class ImmobsController < ApplicationController
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
           @destroyOK = 1
-      end
-      if @destroyOK == 0 ## Modification des LigneTva ---- (si problème Find => @destroyOK = 2)
-          if @immob.lignesTva.to_s != 'neant'
-              @destroyOK = mmob_lignetva_update_trait
-          end
       end
       if @destroyOK == 0 ## Mise à jour du Nombre de Immob
           @nbreImmobArray = @paramun.nbreImmob.split(",")

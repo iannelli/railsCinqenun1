@@ -21,7 +21,8 @@ module ProjetArchivageProjet
         @projetold.proCaHt = projet.proCaHt
         @projetold.proFacHt = projet.proFacHt
         @projetold.proReglMont = projet.proReglMont
-        @projetold.proReport = projet.proReport
+        @projetold.proReportFacture = projet.proReportFacture
+        @projetold.proReportDebours = projet.proReportDebours
         @projetold.proCout = projet.proCout
         @projetold.proMarge = projet.proMarge
         @projetold.proSituation = projet.proSituation
@@ -43,6 +44,6 @@ module ProjetArchivageProjet
             @erreur.parametreId = params[:id].to_s
             @erreur.save
             @erreurArchivage = 1
-        end   
-    end    
+        end
+    end
 end

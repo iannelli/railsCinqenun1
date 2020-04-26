@@ -123,7 +123,7 @@ class ProjetoldsController < ApplicationController
                   @tacheold.tacDateDeb = tache.tacDateDeb
                   @tacheold.tacDeadLine = tache.tacDeadLine
                   @tacheold.tacAchevement = tache.tacAchevement
-                  @tacheold.tacStringTravail = tache.tacStringTravail
+                  @tacheold.tacTravail = tache.tacTravail
                   @tacheold.typetacUnite = tache.typetacUnite
                   @tacheold.typetacTarifUnite = tache.typetacTarifUnite
                   @tacheold.typetacET = tache.typetacET
@@ -139,7 +139,7 @@ class ProjetoldsController < ApplicationController
                   @tacheold.tacPourExec = tache.tacPourExec
                   @tacheold.tacCout = tache.tacCout
                   @tacheold.tacMarge = tache.tacMarge
-                  @tacheold.tacFacString = tache.tacFacString
+                  @tacheold.tacPeriode = tache.tacPeriode
                   @tacheold.projetoldId = tache.projetId
                   @tacheold.typetacheId = tache.typetacheId
                   @tacheold.parametreoldId = tache.parametreId
@@ -190,8 +190,7 @@ class ProjetoldsController < ApplicationController
                   @factureold.facTotalDu = facture.facTotalDu
                   @factureold.modePaieLib = facture.modePaieLib
                   @factureold.facReglMont = facture.facReglMont
-                  @factureold.facStringLigne = facture.facStringLigne
-                  @factureold.majTache = facture.majTache
+                  @factureold.facLignes = facture.facLignes
                   @factureold.facDepass = facture.facDepass
                   @factureold.facTypeDecla = facture.facTypeDecla
                   @factureold.facCourrier = facture.facCourrier
@@ -367,7 +366,7 @@ class ProjetoldsController < ApplicationController
                   @tache.tacDateDeb = tacheold.tacDateDeb
                   @tache.tacDeadLine = tacheold.tacDeadLine
                   @tache.tacAchevement = tacheold.tacAchevement
-                  @tache.tacStringTravail = tacheold.tacStringTravail
+                  @tache.tacTravail = tacheold.tacTravail
                   @tache.typetacUnite = tacheold.typetacUnite
                   @tache.typetacTarifUnite = tacheold.typetacTarifUnite
                   @tache.typetacET = tacheold.typetacET
@@ -383,7 +382,7 @@ class ProjetoldsController < ApplicationController
                   @tache.tacPourExec = tacheold.tacPourExec
                   @tache.tacCout = tacheold.tacCout
                   @tache.tacMarge = tacheold.tacMarge
-                  @tache.tacFacString = tacheold.tacFacString
+                  @tache.tacPeriode = tacheold.tacPeriode
                   @tache.projetId = tacheold.projetoldId
                   @tache.typetacheId = tacheold.typetacheId
                   @tache.parametreId = tacheold.parametreoldId
@@ -434,8 +433,7 @@ class ProjetoldsController < ApplicationController
                   @facture.facTotalDu = factureold.facTotalDu
                   @facture.modePaieLib = factureold.modePaieLib
                   @facture.facReglMont = factureold.facReglMont
-                  @facture.facStringLigne = factureold.facStringLigne
-                  @facture.majTache = factureold.majTache
+                  @facture.facLignes = factureold.facLignes
                   @facture.facDepass = factureold.facDepass
                   @facture.facTypeDecla = factureold.facTypeDecla
                   @facture.facCourrier = factureold.facCourrier

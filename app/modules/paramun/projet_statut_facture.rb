@@ -57,5 +57,5 @@ module ProjetStatutFacture
                 facture.save
             end
         end
-    end    
+    end
 end

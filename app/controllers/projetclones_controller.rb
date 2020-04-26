@@ -98,14 +98,14 @@ class ProjetclonesController < ApplicationController
                       @tacheclone.tacBdcHt = tache.tacBdcHt
                       @tacheclone.tacPeriodeNbre = "1"
                       @tacheclone.tacLibPeriode = ""
-                      @tacheclone.tacFacString = ".|A|.|.|."
+                      @tacheclone.tacPeriode = "A|.|.|."
                   end
                   @tacheclone.tacCoutHeure = tache.tacCoutHeure
                   @tacheclone.tacDateDeb = @current_time.strftime "%d/%m/%Y"
                   dateDeb = DateTime.new(@tacheclone.tacDateDeb.slice(6,4).to_i, @tacheclone.tacDateDeb.slice(3,2).to_i, @tacheclone.tacDateDeb.slice(0,2).to_i)
                   datePlus30 = dateDeb + 30
                   @tacheclone.tacDeadLine = datePlus30.strftime "%d/%m/%Y"
-                  @tacheclone.tacStringTravail = ""
+                  @tacheclone.tacTravail = ""
                   @tacheclone.tacQuantTotal = tache.tacQuantTotal
                   #tacDureeBdc` varchar(9) DEFAULT NULL,
                   @tacheclone.tacFacHt = "0"

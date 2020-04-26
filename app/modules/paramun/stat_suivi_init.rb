@@ -43,9 +43,9 @@ module StatSuiviInit
             f += 1
             m += 1
         end
-        
+
         @statFactureAccueilArray[f] = 'antérieur'
         @statFactureAccueilArray[f+1] = '0'
         @statFactureAccueilArray[f+2] = '0'
-    end     
+    end
 end

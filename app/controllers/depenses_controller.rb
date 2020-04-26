@@ -36,9 +36,9 @@ class DepensesController < ApplicationController
       @current_time = DateTime.now
       current_year = DateTime.now.year
       @montantDepense = 0
-      @typeCreationLigneTva = ""
       @depense = Depense.new(depense_params)
       @CreateOK = 0
+      @depense.dateEcriture = (@current_time.strftime "%Y-%m-%d-%H-%M").to_s #Date-Heure-Mn 'aaaa-mm-jj-hh-mn'
       begin
           @depense.save
       rescue => e # Incident création de Depense
@@ -90,14 +90,6 @@ class DepensesController < ApplicationController
               @CreateOK = 2
           end
       end
-      if @CreateOK == 0  ## Incidence de la dépense créée sur la Déclaration de TVA ----------------
-          if @paramun.parRegimeTva.to_i != 0
-              if @depense.lignesTva.to_s != 'neant'
-                  @typeCreationLigneTva = "new"
-                  depense_lignetva_create_trait()
-              end
-          end
-      end
       respond_to do |format|
           case @CreateOK
               when 0
@@ -116,12 +108,13 @@ class DepensesController < ApplicationController
   def update
       @current_time = DateTime.now
       @current_year = DateTime.now.year
-      @typeCreationLigneTva = ""
       @montantDepenseOld = 0
       @updateOK = 0
       @majParamOk = 0
       begin
           @depense = Depense.find(params[:id])
+          @depense.dateEcriture = (@current_time.strftime "%Y-%m-%d-%H-%M").to_s #Date-Heure-Mn 'aaaa-mm-jj-hh-mn'
+          @depense.save
           if @paramun.parRegimeTva.to_i == 0
               @montantDepenseOld = @depense.montantTtc.to_i
           else
@@ -132,13 +125,13 @@ class DepensesController < ApplicationController
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
           @erreur.appli = "rails - DepensesController - update"
           @erreur.origine = "erreur Find Depense - depense.id=" + params[:id].to_s
-          @erreur.numLigne = '121'
+          @erreur.numLigne = '115'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
           @updateOK = 1
       end
-      
+
       if @updateOK == 0 # ## Maj de @paramun.nbreDepense et de @paramun.parDepense ------
           @nbreDepenseArray = @paramun.nbreDepense.split(',')
           @parDepenseArray = @paramun.parDepense.split(',')
@@ -177,26 +170,13 @@ class DepensesController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "rails - DepensesController - update"
               @erreur.origine = "erreur Modification Depense - depense.id=" + params[:id].to_s
-              @erreur.numLigne = '179'
+              @erreur.numLigne = '167'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
               @updateOK = 3
           end
       end
-
-      if @updateOK == 0 ## Traitement des LigneTva ---- [par ligne négative(old) et/ou ligne positive(new)]
-          if @paramun.parRegimeTva.to_i != 0
-              if params[:parametre][:maj].to_s == 'U2' || params[:parametre][:maj].to_s == 'U3'
-                  if params[:parametre][:lignesTvaOld] != 'neant'
-                      @typeCreationLigneTva = "old"
-                      depense_lignetva_create_trait()
-                  end
-                  @typeCreationLigneTva = "new"
-                  depense_lignetva_create_trait()
-              end
-          end
-      end 
 
       if @updateOK == 0  ## Maj parDepense -----------
           if @paramun.parRegimeTva.to_i == 0
@@ -241,81 +221,7 @@ class DepensesController < ApplicationController
   # DELETE /depenses/1 ********* SUPPRESSION ******************
   # DELETE /depenses/1.xml
   def destroy
-      @current_time = DateTime.now
-      @current_year = DateTime.now.year
-      @destroyOK = 0
-      begin
-          @depense = Depense.find(params[:id])
-      rescue => e # Incident Find Depense
-          @erreur = Erreur.new
-          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - DepensesController - destroy'
-          @erreur.origine = "erreur Find Depense - Depense.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '246'
-          @erreur.message = e.message
-          @erreur.parametreId = params[:parametre][:id].to_s
-          @erreur.save
-          @destroyOK = 1
-      end
-      if @destroyOK == 0 ## Modification des LigneTva ---- (si problème Find => @destroyOK = 2)
-          if @paramun.parRegimeTva.to_i != 0
-              if @depense.lignesTva.to_s != 'neant'
-                  @destroyOK = depense_ligneTva_update_trait
-              end
-          end
-      end
-      if @destroyOK == 0 ## Maj de @paramun.nbreDepense et de @paramun.parDepense ------
-          if @paramun.parRegimeTva.to_i == 0
-              @montantDepense = @depense.montantTtc.to_i
-          else
-              @montantDepense = @depense.montantHt.to_i
-          end
-          @nbreDepenseArray = @paramun.nbreDepense.split(',')
-          @parDepenseArray = @paramun.parDepense.split(',')
-          if @depense.dateRegl.slice(6,4).to_i == @current_year.to_i
-              nbre = @nbreDepenseArray[0].to_i - 1
-              @nbreDepenseArray[0] = nbre.to_s
-              dep = @parDepenseArray[0].to_i - @montantDepense.to_i
-              @parDepenseArray[0] = dep.to_s
-          end
-          if @depense.dateRegl.slice(6,4).to_i == @current_year.to_i - 1
-              nbre = @nbreDepenseArray[1].to_i - 1
-              @nbreDepenseArray[1] = nbre.to_s
-              dep = @parDepenseArray[1].to_i - @montantDepense.to_i
-              @parDepenseArray[1] = dep.to_s
-          end
-          @paramun.nbreDepense = @nbreDepenseArray.join(',')
-          @paramun.parDepense = @parDepenseArray.join(',')
-          @paramun.save
-      end
-      if @destroyOK == 0
-          begin
-              @depense.destroy
-          rescue => e # Incident lors de la suppression de Depense
-              @erreur = Erreur.new
-              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - DepensesController - destroy'
-              @erreur.origine = "erreur Delete Depense - depense.id=" + params[:id].to_s
-              @erreur.numLigne = '291'
-              @erreur.message = e.message
-              @erreur.parametreId = params[:parametre][:id].to_s
-              @erreur.save
-              @destroyOK = 3
-          end
-      end
-      ## FIN du traitement
-      respond_to do |format|
-          case @destroyOK
-              when 0
-                  format.xml { render request.format.to_sym => "ddepenseOK" }
-              when 1
-                  format.xml { render request.format.to_sym => "ddepErreurD1" }
-              when 2
-                  format.xml { render request.format.to_sym => "ddepErreurD2" }
-              when 3
-                  format.xml { render request.format.to_sym => "ddepErreurD3" }
-          end
-      end
+      ## Non Utilisé pour des Raisons Comptables et Fisacles
   end
 
 

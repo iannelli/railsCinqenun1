@@ -18,7 +18,7 @@ module ProjetArchivageTache
             @tacheold.tacDateDeb = tache.tacDateDeb
             @tacheold.tacDeadLine = tache.tacDeadLine
             @tacheold.tacAchevement = tache.tacAchevement
-            @tacheold.tacStringTravail = tache.tacStringTravail
+            @tacheold.tacTravail = tache.tacTravail
             @tacheold.typetacUnite = tache.typetacUnite
             @tacheold.typetacTarifUnite = tache.typetacTarifUnite
             @tacheold.typetacET = tache.typetacET
@@ -34,7 +34,7 @@ module ProjetArchivageTache
             @tacheold.tacPourExec = tache.tacPourExec
             @tacheold.tacCout = tache.tacCout
             @tacheold.tacMarge = tache.tacMarge
-            @tacheold.tacFacString = tache.tacFacString
+            @tacheold.tacPeriode = tache.tacPeriode
             @tacheold.projetoldId = tache.projetId
             @tacheold.typetacheId = tache.typetacheId
             @tacheold.parametreoldId = tache.parametreId

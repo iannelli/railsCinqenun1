@@ -1,44 +1,36 @@
 class ApplicationController < ActionController::Base
     protect_from_forgery
     
-    # paramuns_controller ---
-    include IndexChangementAnnee
-    include ProjetStatutTache
-    include ProjetStatutFacture
-    include ProjetArchivageCondition
-    include ProjetArchivageProjet
-    include ProjetArchivageTache
-    include ProjetArchivageFacture
-    include ProjetInactifDepassSeuil
-    include StatSuiviInit
-    include StatSuiviFactureimpayee
-    include GetEcritureInitialePositive
-    
     # factures_controller ---
-    include VerifPresenceDoublon
-    include UpdateParametreNumfact
-    include UpdateTacfacString
-    include CreateFactureAcompte
     include AnnulFactureAcompte
-    include MajPeriodeTache
+    include CreateFactureAcompte
+    include UpdateFactureAcompte
     include MajNumrangProjet
-    
-    # projetolds_controller ---
-    include ArchivageTacheCreate
-    include ArchivageFactureCreate
-    include ReactivationTacheCreate
-    include ReactivationFactureCreate
-    
-    # recettes_controller ---
-    include LignetvaCreateUpdate
-    
-    # depenses_controller ---
-    include DepenseLignetvaCreate
-    include DepenseLignetvaUpdate
+    include UpdateParametreNumfact
+    include UpdateFactureTacperiode
+    include UpdateTacheTacperiode
+    include VerifPresenceDoublon
     
     # immobs_controller ---
-    include ImmobLignetvaCreate
-    include ImmobLignetvaUpdate
     include ImmobIndiceMillesime
+    
+    # paramuns_controller ---
+    include GetEcritureInitialePositive
+    include IndexChangementAnnee
+    include ProjetArchivageCondition
+    include ProjetArchivageFacture
+    include ProjetArchivageProjet
+    include ProjetArchivageTache
+    include ProjetInactifDepassSeuil
+    include ProjetStatutFacture
+    include ProjetStatutTache
+    include StatSuiviFactureimpayee
+    include StatSuiviInit
+
+    # projetolds_controller ---
+    include ArchivageFactureCreate
+    include ArchivageTacheCreate
+    include ReactivationFactureCreate
+    include ReactivationTacheCreate
 
 end

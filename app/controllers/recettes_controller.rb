@@ -31,11 +31,12 @@ class RecettesController < ApplicationController
   # POST /recettes ********* CREATE ****************************************************************
   # POST /recettes.xml
   def create
+      @current_time = DateTime.now
+      @current_year = DateTime.now.year
       @CreateOK = 0
       @typeMaj = ""
       @recette = Recette.new(recette_params)
-      @current_time = DateTime.now
-      @current_year = DateTime.now.year
+      @recette.dateEcriture = (@current_time.strftime "%Y-%m-%d-%H-%M").to_s #Date-Heure-Mn 'aaaa-mm-jj-hh-mn'
       begin
           @recette.save
       rescue => e # Incident création de Recette
@@ -71,14 +72,6 @@ class RecettesController < ApplicationController
           @paramun.nbreRecette = @nbreRecetteArray.join(',')
           @paramun.parRecette = @parRecetteArray.join(',')
           @paramun.save
-
-          # Création/Maj éventuelle des lignes de la Déclaration de TVA
-          # Si Franchise TVA[Perte exonération] ou Régime RSI
-          if (params[:parametre][:facSituationImpositionTva].to_s == 'A' || params[:parametre][:facSituationImpositionTva].to_s == 'B1')
-              if @recette.modePaieLib.to_s != 'imputation crédit'
-                  lignetva_create_update_trait
-              end
-          end
       end
       respond_to do |format|
           case @CreateOK
@@ -96,7 +89,7 @@ class RecettesController < ApplicationController
 
 
   # PUT /recettes/1 ********* MISE A JOUR **********************************************************
-  # PUT /recettes/1.xml *** uniquement pour facDateReception et/ou modePaieLib
+  # PUT /recettes/1.xml *** uniquement pour modePaieLib
   def update
       @current_time = DateTime.now
       @erreurUpdate = 0

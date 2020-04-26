@@ -3,5 +3,5 @@ class Depenseold < ApplicationRecord
   include ActiveModel::Serializers::Xml
 
     #belongs_to :paramunold, :foreign_key => 'parametreoldId'
-    
+
 end

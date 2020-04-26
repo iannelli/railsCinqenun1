@@ -95,13 +95,13 @@ class FamilletachesController < ApplicationController
                 if familletache.famtacLib.to_s == params[:familletache][:famtacLib].to_s
                     @erreurUpdate[0] = "1" # 'famtacLib' déjà existant
                 end
-            end      
+            end
         end
         if @erreurUpdate[1].to_s == "1" || @erreurUpdate[0].to_s == "1"
             @UpdateOK = 1
             @famErreurU = "ffamErreurU" + @erreurUpdate.join.to_s
         end
-        
+
         if @UpdateOK == 0
             begin
                 @familletache.update(familletache_params)

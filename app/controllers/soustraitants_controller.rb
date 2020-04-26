@@ -22,7 +22,7 @@ class SoustraitantsController < ApplicationController
     respond_to do |format|
         if @soustraitants.empty?
              format.xml { render request.format.to_sym => "ssouErreurA" } ## Aucun Soustraitant collecté
-        else  
+        else
              format.xml { render xml: @soustraitants }
         end
     end

@@ -18,7 +18,7 @@ module ReactivationTacheCreate
             @tache.tacDateDeb = tacheold.tacDateDeb
             @tache.tacDeadLine = tacheold.tacDeadLine
             @tache.tacAchevement = tacheold.tacAchevement
-            @tache.tacStringTravail = tacheold.tacStringTravail
+            @tache.tacTravail = tacheold.tacTravail
             @tache.typetacUnite = tacheold.typetacUnite
             @tache.typetacTarifUnite = tacheold.typetacTarifUnite
             @tache.typetacET = tacheold.typetacET
@@ -34,7 +34,7 @@ module ReactivationTacheCreate
             @tache.tacPourExec = tacheold.tacPourExec
             @tache.tacCout = tacheold.tacCout
             @tache.tacMarge = tacheold.tacMarge
-            @tache.tacFacString = tacheold.tacFacString
+            @tache.tacPeriode = tacheold.tacPeriode
             @tache.projetId = tacheold.projetoldId
             @tache.typetacheId = tacheold.typetacheId
             @tache.parametreId = tacheold.parametreoldId

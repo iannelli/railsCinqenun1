@@ -1,41 +1,51 @@
 module ProjetArchivageCondition
-    ## Examen des Conditions d'Archivage du Projet
+    ## Examen des Conditions d'Archivage du Projet ------
     def projet_archivage_condition_trait(projet)
-        if projet.proReport.to_i == 0
-            if projet.taches.length != 0
-                regle = 1
-                cpt = 0
-                projet.taches.each do |tache|
-                    if tache.typetacNat.to_s == "FA"
-                        cpt += 1
-                        if tache.tacStatut == '3miFacturé'
-                            @tacFacArray = []
-                            @tacFacArray = tache.tacFacString.split('|')
-                            i = 2
-                            while (i < @tacFacArray.length)
-                                if @tacFacArray[i].to_s != 'R'
-                                    regle = 0
-                                    break
-                                else
-                                    i += 5
-                                end
-                            end
+        if projet.proReportFacture.to_i == 0 && projet.proReportDebours.to_i == 0
+            # Examen de la Situation des Factures du Projet ----
+            projet.factures.each do |facture|
+                if (facture.typeImpr.to_s == '40' || facture.typeImpr.to_s == '41' ||
+                    facture.typeImpr.to_s == '50' || facture.typeImpr.to_s == '51')
+                    if facture.facStatut.to_s == "3Réglé" || facture.facStatut.to_s == "3Reporté"
+                        if facture.facReA.blank? == true
+                            @archivageOK = 1
+                            break 
                         else
-                            if tache.tacStatut != '3Réglé'
-                                regle = 0
+                           @archivageOK = 1
+                           @arrayReA = facture.facReA.split('')
+                           if @arrayReA[3].to_s == "en attente"
+                              @archivageOK = 0
+                              break
+                           end 
+                        end
+                    else
+                        @archivageOK = 0
+                        break
+                    end
+                end
+            end
+            # Examen de la Situation des Tâches du Projet ------
+            if @archivageOK == 1
+                if projet.taches.length != 0
+                    projet.taches.each do |tache|
+                        if tache.typetacNat.to_s == "FA"
+                            if tache.tacStatut.to_s != '3Réglé'
+                                @archivageOK = 0
                                 break
                             end
                         end
                     end
                 end
-                if cpt > 0 && regle == 1
-                    projet.proSituation = '22' ## Projet Clos *****
-                    @archivageOK = 1
-                    @nbreProjetArchiver += 1
-                end
+            end
+            # Situation Finale -----
+            if @archivageOK == 1
+                projet.proSituation = '22' ## Projet Clos *****
+                @nbreProjetArchiver += 1
             end
         end
-        if @archivageOK == 0 # Si Projet 'non Clos' ----------------
+
+        # Si Projet 'non Clos' ----------------
+        if @archivageOK == 0
             t = Time.now
             dateJour = t.strftime("%d") + '/' + t.strftime("%m") + '/' + t.strftime("%Y")
             @dateDuJour = Date.parse(dateJour)

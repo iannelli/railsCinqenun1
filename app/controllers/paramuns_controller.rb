@@ -31,7 +31,7 @@ class ParamunsController < ApplicationController
           # Maj parNouvelAn (changement d'Année) ----
           @paramun.parNouvelAn = @majNewAn
           # Maj de parDateConnex -----------
-          @paramun.parDateConnex = (@current_time.strftime "%Y%m%d%H%M%S").to_s #Date-Heure Connexion 'aaaammjjhhmnss'          
+          @paramun.parDateConnex = (@current_time.strftime "%Y%m%d%H%M%S").to_s #Date-Heure Connexion 'aaaammjjhhmnss'
           @paramun.save
       rescue => e # Incident Find de Paramun
           @erreur = Erreur.new
@@ -416,7 +416,7 @@ class ParamunsController < ApplicationController
                   projet_inactif_depass_seuil_trait
               end
           end
-          
+
           ## Dépassement du Seuil de la Franchise : Maj @paramun.parDepass
           if @depassOK == 1
               totalProjet = @cptProjet + @cptProjetold
@@ -428,7 +428,7 @@ class ParamunsController < ApplicationController
               @paramun.parDepass = @parDepassArray.join(",")
               @paramun.save
           end
-          
+
           ## Constitution des Statistiques de Suivi (pour l'Ecran d'Accueil) ############
           @statRecetteAccueilArray = []
           @statDepenseAccueilArray = []

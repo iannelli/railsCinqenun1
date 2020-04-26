@@ -28,8 +28,7 @@ module ReactivationFactureCreate
             @facture.facTotalDu = factureold.facTotalDu
             @facture.modePaieLib = factureold.modePaieLib
             @facture.facReglMont = factureold.facReglMont
-            @facture.facStringLigne = factureold.facStringLigne
-            @facture.majTache = factureold.majTache
+            @facture.facLignes = factureold.facLignes
             @facture.facDepass = factureold.facDepass
             @facture.facTypeDecla = factureold.facTypeDecla
             @facture.facCourrier = factureold.facCourrier

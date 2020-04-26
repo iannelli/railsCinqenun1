@@ -1,5 +1,5 @@
 module IndexChangementAnnee
-    # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs/Lignetvas
+    # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs
     def index_changement_annee_trait
         @majNewAn = '1'
         # parDepass ----
@@ -82,11 +82,12 @@ module IndexChangementAnnee
                     @recetteold.proLib = recette.proLib
                     @recetteold.montantHt = recette.montantHt
                     @recetteold.montantTva = recette.montantTva
+                    @recetteold.montantTtc = recette.montantTtc
+                    @recetteold.montantDebours = recette.montantDebours
                     @recetteold.facReglMont = recette.facReglMont
                     @recetteold.modePaieLib = recette.modePaieLib
-                    @recetteold.tvaDecla = recette.tvaDecla
-                    @recetteold.tvaPeriode = recette.tvaPeriode
-                    @recetteold.lignesTva = recette.lignesTva
+                    @recetteold.typeTvaImpot = recette.typeTvaImpot
+                    @recetteold.dateEcriture = recette.dateEcriture
                     @recetteold.factureId = recette.factureId
                     @recetteold.parametreoldId = recette.parametreId
                     @recetteold.save
@@ -101,51 +102,29 @@ module IndexChangementAnnee
                     @depenseold = Depenseold.new()
                     @depenseold.id = depense.id
                     @depenseold.dateRegl = depense.dateRegl
-                    @depenseold.refFacture = depense.refFacture
-                    @depenseold.libelle = depense.libelle
                     @depenseold.nature = depense.nature
-                    @depenseold.fournisseur = depense.fournisseur
-                    @depenseold.pays = depense.pays
+                    @depenseold.libelle = depense.libelle
                     @depenseold.montantFactHt = depense.montantFactHt
                     @depenseold.usagePro = depense.usagePro
                     @depenseold.montantHt = depense.montantHt
+                    @depenseold.modeRegl = depense.modeRegl                    
+                    @depenseold.refFacture = depense.refFacture
+                    @depenseold.fournisseur = depense.fournisseur
+                    @depenseold.pays = depense.pays
                     @depenseold.montantTva = depense.montantTva
                     @depenseold.montantTtc = depense.montantTtc
                     @depenseold.tauxTva = depense.tauxTva
                     @depenseold.tauxTvaAutre = depense.tauxTvaAutre
-                    @depenseold.modeRegl = depense.modeRegl
-                    @depenseold.typeDecla = depense.typeDecla
-                    @depenseold.tvaDecla = depense.tvaDecla
-                    @depenseold.tvaPeriode = depense.tvaPeriode
-                    @depenseold.lignesTva = depense.lignesTva
+                    @depenseold.typeTvaImpot = depense.typeTvaImpot
+                    @depenseold.compteDepense = depense.compteDepense
+                    @depenseold.dateEcriture = depense.dateEcriture
                     @depenseold.parametreoldId = depense.parametreId
                     @depenseold.save
                     depense.destroy
                 end
             end
         end
-        # Archivage des Lignetvas de l'année N-2 ----------------
-        if @paramun.lignetvas.length != 0
-            @paramun.lignetvas.each do |lignetva|
-                anDecla = lignetva.tvaPeriode.slice(0,4)
-                if anDecla.to_s == @anMoins2.to_s
-                    @lignetvaold = Lignetvaold.new()
-                    @lignetvaold.id = lignetva.id
-                    @lignetvaold.tvaDecla = lignetva.tvaDecla
-                    @lignetvaold.tvaPeriode = lignetva.tvaPeriode
-                    @lignetvaold.tvaCodeLigne = lignetva.tvaCodeLigne
-                    @lignetvaold.tvaBase = lignetva.tvaBase
-                    @lignetvaold.tvaMontant = lignetva.tvaMontant
-                    @lignetvaold.listeRecetteId = lignetva.listeRecetteId
-                    @lignetvaold.listeDepenseId = lignetva.listeDepenseId
-                    @lignetvaold.listeImmobId = lignetva.listeImmobId
-                    @lignetvaold.parametreoldId = lignetva.parametreId
-                    @lignetvaold.save
-                    lignetva.destroy
-                end
-            end
-        end
-        
+
         # Maj de parAnFac et parNumFact -----------
         @paramun.parAnFact = @anCourant.to_s
         @paramun.parNumFact = '00000'        

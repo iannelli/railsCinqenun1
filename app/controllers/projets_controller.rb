@@ -64,7 +64,7 @@ class ProjetsController < ApplicationController
                       @clientele2.save
                   end
               end
-          end          
+          end
       rescue => e # Incident création du Projet
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
@@ -97,7 +97,7 @@ class ProjetsController < ApplicationController
           @projet = Projet.find(params[:id])
           if @projet.proLib.to_s != params[:projet][:proLib].to_s
               @UpdateOProLib = 1
-          end          
+          end
           begin
               @projet.update(projet_params)
               if @UpdateOProLib == 1
@@ -126,7 +126,7 @@ class ProjetsController < ApplicationController
                           @clientele2.save
                       end
                   end
-              end             
+              end
           rescue => e # Incident Maj Projet
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
