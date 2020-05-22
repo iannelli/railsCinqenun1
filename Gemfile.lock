@@ -106,7 +106,7 @@ GEM
     nokogiri (1.10.9-x64-mingw32)
       mini_portile2 (~> 2.4.0)
     public_suffix (4.0.3)
-    puma (4.3.3)
+    puma (4.3.5)
       nio4r (~> 2.0)
     rack (2.2.2)
     rack-test (1.1.0)
@@ -194,7 +194,7 @@ DEPENDENCIES
   duktape
   jbuilder (~> 2.5)
   mysql2 (~> 0.5.2)
-  puma (~> 4.3.3)
+  puma (~> 4.3.5)
   rails (~> 5.2.2)
   sassc (~> 1.1)
   selenium-webdriver
