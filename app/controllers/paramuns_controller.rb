@@ -222,13 +222,35 @@ class ParamunsController < ApplicationController
                   when 0
                       format.xml { render request.format.to_sym => "pparametreOKFra" }
                   when 1
+                      format.xml { render request.format.to_sym => "pparErreurU2" }
+              end
+          end
+      end
+      # Mise à jour des Taux de Cotisation  ---------------
+      if params[:typeMaj][:maj].to_s == 'UParCotisation'
+          begin
+              @paramun.update(paramun_params)
+          rescue => e # Incident Save Paramun
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = "rails - ParamunsController - update"
+              @erreur.origine = "erreur update Paramun - @paramun.id=" + params[:id].to_s
+              @erreur.numLigne = '164'
+              @erreur.message = e.message
+              @erreur.parametreId = params[:id].to_s
+              @erreur.save
+              @updateOK = 1
+          end
+          respond_to do |format|
+              case @updateOK
+                  when 0
+                      format.xml { render request.format.to_sym => "pparametreOKCot" }
+                  when 1
                       format.xml { render request.format.to_sym => "pparErreurU3" }
               end
           end
       end
   end
-
-
 
 
   # DELETE /paramuns/1
