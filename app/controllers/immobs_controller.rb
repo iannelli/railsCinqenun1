@@ -117,55 +117,6 @@ class ImmobsController < ApplicationController
           @updateOK = 1
       end
       if @updateOK == 0
-          ## Si Modification Amortissement ------------------
-          if params[:parametre][:maj].slice(2,1) == '1' 
-              ## Soustraction des 'anciennes' Annuités de @paramun.parImmob
-              @parImmobArray = @paramun.parImmob.split(",")
-              @imAmorArray = @immob.imAmorString.split("|")
-              i = 0
-              while i < @imAmorArray.length
-                  exerImmob = @imAmorArray[i+1].to_i
-                  indImAmor = immob_indice_millesime_trait(exerImmob)
-                  if indImAmor >= 1 && indImAmor <= 6
-                      parImmob = @parImmobArray[indImAmor].to_i - @imAmorArray[i+2].to_i
-                      @parImmobArray[indImAmor] = parImmob.to_s
-                  end
-                  i += 5
-              end
-              ## Addition des 'nouvelles' Annuités de @paramun.parImmob
-              @imAmorArrayNew = params[:immob][:imAmorString].split("|")
-              i = 0
-              while i < @imAmorArrayNew.length
-                  exerImmob = @imAmorArrayNew[i+1].to_i
-                  indImAmor = immob_indice_millesime_trait(exerImmob)
-                  if indImAmor >= 1 && indImAmor <= 6
-                      parImmob = @parImmobArray[indImAmor].to_i + @imAmorArrayNew[i+2].to_i
-                      @parImmobArray[indImAmor] = parImmob.to_s
-                  end
-                  i += 5
-              end
-              @paramun.parImmob = @parImmobArray.join(',')
-          end
-      end
-      if @updateOK == 0
-          ## Si Modification données Cession ---------------------------
-          if params[:parametre][:maj].slice(4,1) == '1'
-              ## Maj de @paramun.nbreImmob ----
-              @nbreImmobArray = @paramun.nbreImmob.split(",")
-              nbre = @nbreImmobArray[0].to_i - 1
-              @nbreImmobArray[0] = nbre.to_s
-              nbre = @nbreImmobArray[1].to_i + 1
-              @nbreImmobArray[1] = nbre.to_s
-              @paramun.nbreImmob = @nbreImmobArray.join(',')
-              if params[:parametre][:annuiteAnCourantCession] != 'neant'
-                  @parImmobArray = @paramun.parImmob.split(",")
-                  parImmob = @parImmobArray[0].to_i + params[:parametre][:annuiteAnCourantCession].to_i
-                  @parImmobArray[0] = parImmob.to_s
-                  @paramun.parImmob = @parImmobArray.join(',')
-              end
-          end
-      end
-      if @updateOK == 0
           ## Maj de Immob ------
           begin
               @immob.update(immob_params)
@@ -178,90 +129,7 @@ class ImmobsController < ApplicationController
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
-              @updateOK = 3
-          end
-      end
-      if @updateOK == 0
-          ## Si Cession ------
-          if params[:parametre][:maj].slice(4,1) == '1'
-              ## Archivage de Immob
-              @immobold = Immobold.new()
-              @immobold.id = @immob.id
-              @immobold.dateRegl = @immob.dateRegl
-              @immobold.refFacture = @immob.refFacture
-              @immobold.libelle = @immob.libelle
-              @immobold.categorie = @immob.categorie
-              @immobold.fournisseur = @immob.fournisseur
-              @immobold.pays = @immob.pays
-              @immobold.montantHt = @immob.montantHt
-              @immobold.usagePro = @immob.usagePro
-              @immobold.baseAmort = @immob.baseAmort
-              @immobold.tauxTva = @immob.tauxTva
-              @immobold.tauxTvaAutre = @immob.tauxTvaAutre
-              @immobold.montantTva = @immob.montantTva
-              @immobold.montantTtc = @immob.montantTtc
-              @immobold.modeRegl = @immob.modeRegl
-              @immobold.typeDecla = @immob.typeDecla
-              @immobold.tvaDecla = @immob.tvaDecla
-              @immobold.tvaPeriode = @immob.tvaPeriode
-              @immobold.lignesTva = @immob.lignesTva
-              @immobold.imMode = @immob.imMode
-              @immobold.imDuree = @immob.imDuree
-              @immobold.imCoeff = @immob.imCoeff
-              @immobold.imTaux = @immob.imTaux
-              @immobold.imAmorString = @immob.imAmorString
-              @immobold.imATP = @immob.imATP
-              @immobold.imVR = @immob.imVR
-              @immobold.dateCession = @immob.dateCession
-              @immobold.prixCession = @immob.prixCession
-              @immobold.plusMoinsValue = @immob.plusMoinsValue
-              @immobold.parametreoldId = @immob.parametreId
-              begin
-                  @immobold.save
-              rescue => e # Incident création Immobold
-                  @erreur = Erreur.new
-                  @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                  @erreur.appli = "rails - ImmobsController - update"
-                  @erreur.origine = "erreur create Immobld - @immobold.id= " + @immob.id.to_s
-                  @erreur.numLigne = '236'
-                  @erreur.message = e.message
-                  @erreur.parametreId = params[:parametre][:id].to_s
-                  @erreur.save
-                  @updateOK = 2
-              end
-              if @updateOK == 0
-                  begin
-                      @immob.destroy
-                  rescue => e # Incident lors de la suppression de Immob
-                      @erreur = Erreur.new
-                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = 'rails - ImmobsController - update'
-                      @erreur.origine = "erreur Delete Immob - immob.id=" + @immob.id.to_s
-                      @erreur.numLigne = '250'
-                      @erreur.message = e.message
-                      @erreur.parametreId = params[:parametre][:id].to_s
-                      @erreur.save
-                      @destroyOK = 3
-                  end
-              end
-          end
-      end
-      if @updateOK == 0
-          ## Save Paramun ---
-          if (params[:parametre][:maj].slice(2,1) == '1' || params[:parametre][:maj].slice(4,1) == '1')
-              begin
-                  @paramun.save
-              rescue => e # Incident save Parametre
-                  @erreur = Erreur.new
-                  @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                  @erreur.appli = "rails - ImmobsController - update"
-                  @erreur.origine = "erreur save Parametre"
-                  @erreur.numLigne = '269'
-                  @erreur.message = e.message
-                  @erreur.parametreId = params[:parametre][:id].to_s
-                  @erreur.save
-                  @updateOK = 2
-              end
+              @updateOK = 2
           end
       end
       ## FIN du Traitement upDate ------
@@ -273,8 +141,6 @@ class ImmobsController < ApplicationController
                   format.xml { render request.format.to_sym => "iimmErreurU1" }
               when 2
                   format.xml { render request.format.to_sym => "iimmErreurU2" }
-              when 3
-                  format.xml { render request.format.to_sym => "iimmErreurU3" }
           end
       end
   end
