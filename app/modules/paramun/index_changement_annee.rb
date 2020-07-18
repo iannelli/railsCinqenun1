@@ -124,6 +124,63 @@ module IndexChangementAnnee
                 end
             end
         end
+        # Archivage des Immobs étant sorties de l'Actif dans le courant de l'année N-3
+        if @paramun.immobs.length != 0
+            @majParamOK = 0
+            @parImmobNewArray = []
+            @parImmobNewArray = @paramun.parImmob.split(',')
+            @paramun.immobs.each do |immob|
+                if immob.dateCession.to_s.blank? == false
+                    anCession = immob.dateCession.slice(6,4)
+                    if anCession.to_i == @anMoins3
+                        @immobold = Immobold.new()
+                        @immobold.id = immob.id
+                        @immobold.dateRegl = immob.dateRegl
+                        @immobold.refFacture = immob.refFacture
+                        @immobold.libelle = immob.libelle
+                        @immobold.categorie = immob.categorie
+                        @immobold.permitAmort = immob.permitAmort
+                        @immobold.fournisseur = immob.fournisseur
+                        @immobold.pays = immob.pays
+                        @immobold.montantHt = immob.montantHt
+                        @immobold.usagePro = immob.usagePro
+                        @immobold.baseAmort = immob.baseAmort
+                        @immobold.tauxTva = immob.tauxTva
+                        @immobold.tauxTvaAutre = immob.tauxTvaAutre
+                        @immobold.montantTva = immob.montantTva
+                        @immobold.montantTtc = immob.montantTtc
+                        @immobold.modeRegl = immob.modeRegl
+                        @immobold.typeTvaImpot = immob.typeTvaImpot
+                        @immobold.tvaDecla = immob.tvaDecla
+                        @immobold.tvaPeriode = immob.tvaPeriode
+                        @immobold.lignesTva = immob.lignesTva
+                        @immobold.imMode = immob.imMode
+                        @immobold.imDuree = immob.imDuree
+                        @immobold.imCoeff = immob.imCoeff
+                        @immobold.imTaux = immob.imTaux
+                        @immobold.imAmorString = immob.imAmorString
+                        @immobold.imATP = immob.imATP
+                        @immobold.imVR = immob.imVR
+                        @immobold.dateCession = immob.dateCession
+                        @immobold.prixCession = immob.prixCession
+                        @immobold.plusMoinsValue = immob.plusMoinsValue
+                        @immobold.parametreoldId = immob.parametreId
+                        @immobold.save
+                        immob.destroy
+                        # nbreImmob -----
+                        cpt = @parImmobNewArray[0].to_i - 1
+                        @parImmobNewArray[0] = cpt.to_s
+                        cpt = @parImmobNewArray[1].to_i + 1
+                        @parImmobNewArray[1] = cpt.to_s
+                        @majParamOK = 1
+                    end
+                end
+            end
+            if @majParamOK == 1
+                @paramun.parImmob = @parImmobNewArray.join(',')
+                @paramun.save
+            end
+        end
 
         # Maj de parAnFac et parNumFact -----------
         @paramun.parAnFact = @anCourant.to_s
