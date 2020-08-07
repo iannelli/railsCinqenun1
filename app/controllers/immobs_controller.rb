@@ -53,23 +53,8 @@ class ImmobsController < ApplicationController
           ## Maj du Nombre de Immob --------------------------
           @nbreImmobArray = @paramun.nbreImmob.split(",")
           nbre = @nbreImmobArray[0].to_i + 1
-          @arrayLog = []
           @nbreImmobArray[0] = nbre.to_s
           @paramun.nbreImmob = @nbreImmobArray.join(',')
-          ## Maj parImmob --------------------------
-          @imAmorArray = @immob.imAmorString.split("|")
-          @parImmobArray = @paramun.parImmob.split(",")
-          i = 0
-          while i < @imAmorArray.length
-              exerImmob = @imAmorArray[i+1].to_i
-              indImAmor = immob_indice_millesime_trait(exerImmob)
-              if indImAmor >= 1 && indImAmor <= 6
-                  parImmob = @parImmobArray[indImAmor].to_i + @imAmorArray[i+2].to_i
-                  @parImmobArray[indImAmor] = parImmob.to_s
-              end
-              i += 5
-          end
-          @paramun.parImmob = @parImmobArray.join(',')
           begin
               @paramun.save
           rescue => e # Incident save Parametre

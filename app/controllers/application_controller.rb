@@ -11,9 +11,6 @@ class ApplicationController < ActionController::Base
     include UpdateTacheTacperiode
     include VerifPresenceDoublon
     
-    # immobs_controller ---
-    include ImmobIndiceMillesime
-    
     # paramuns_controller ---
     include GetEcritureInitialePositive
     include IndexChangementAnnee
@@ -24,7 +21,7 @@ class ApplicationController < ActionController::Base
     include ProjetInactifDepassSeuil
     include ProjetStatutFacture
     include ProjetStatutTache
-    include StatSuiviFactureimpayee
+    include StatSuiviImpayeeProjetca
     include StatSuiviInit
 
     # projetolds_controller ---

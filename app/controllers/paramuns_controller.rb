@@ -250,6 +250,30 @@ class ParamunsController < ApplicationController
               end
           end
       end
+       # Mise à jour du Bloc Note  ---------------
+      if params[:typeMaj][:maj].to_s == 'UParBlocNote'
+          begin
+              @paramun.update(paramun_params)
+          rescue => e # Incident Save Paramun
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = "rails - ParamunsController - update"
+              @erreur.origine = "erreur update Paramun - @paramun.id=" + params[:id].to_s
+              @erreur.numLigne = '164'
+              @erreur.message = e.message
+              @erreur.parametreId = params[:id].to_s
+              @erreur.save
+              @updateOK = 1
+          end
+          respond_to do |format|
+              case @updateOK
+                  when 0
+                      format.xml { render request.format.to_sym => "pparametreOKCot" }
+                  when 1
+                      format.xml { render request.format.to_sym => "pparErreurU3" }
+              end
+          end
+      end
   end
 
 
@@ -258,7 +282,6 @@ class ParamunsController < ApplicationController
   def destroy
       @dateDuJour = Time.now
       @current_time = Time.now
-      @majParamun = 0
       @cptProjet = 0 # décompte des projets Actifs en dépassement de franchise
       @cptProjetold = 0 # décompte des projets InActifs en dépassement de franchise
       @aaaammRecette = ''
@@ -410,26 +433,6 @@ class ParamunsController < ApplicationController
                       end
                   end # --- Fin de l'examen d'une occurrence de Projet ---
               end ### FIN de l'examen de toutes les occurrences de Projet ----------------------------
-              # Si Archivage des Projets -------------
-              if @nbreProjetArchiver > 0
-                  nbreDevisInactif = 0
-                  nbreProjetInactif = 0
-                  nbreProjetClos = 0
-                  @paramunold.projetolds.each do |projetold|
-                      case projetold.proSituation.to_s
-                          when '20'
-                              nbreDevisInactif += 1
-                          when '21'
-                              nbreProjetInactif += 1
-                          when '22'
-                              nbreProjetClos += 1
-                      end
-                  end
-                  @paramun.nbreDevisInactif = nbreDevisInactif.to_s
-                  @paramun.nbreProjetInactif = nbreProjetInactif.to_s
-                  @paramun.nbreProjetClos = nbreProjetClos.to_s
-                  @majParamun = 1
-              end 
           end ## FIN du Traitement des Projets ACTIFS ------
 
           ## TRAITEMENT DES PROJETS INACTIFS en Dépassement du Seuil de la Franchise *****
@@ -480,21 +483,36 @@ class ParamunsController < ApplicationController
           ## Examen des Dépenses -------
           if @paramun.depenses.length != 0
               @paramun.depenses.each do |depense|
-                  aaaamm = depense.dateRegl.slice(6,4) + depense.dateRegl.slice(3,2)
-                  ind = @statDepenseAccueilArray.find_index(aaaamm)
-                  if ind != nil
-                      ind +=1
-                      montant1 = @statDepenseAccueilArray[ind].to_i
-                      montant2 = depense.montantHt.to_i / 100
-                      @statDepenseAccueilArray[ind] = montant1 + montant2.to_i 
+                  compteDepenseArray = depense.compteDepense.split('|')
+                  if compteDepenseArray[5].to_i != 5
+                      aaaamm = depense.dateRegl.slice(6,4) + depense.dateRegl.slice(3,2)
+                      ind = @statDepenseAccueilArray.find_index(aaaamm)
+                      if ind != nil
+                          ind +=1
+                          montant1 = @statDepenseAccueilArray[ind].to_i
+                          montant2 = depense.montantHt.to_i / 100
+                          @statDepenseAccueilArray[ind] = montant1 + montant2.to_i 
+                      end
                   end
               end
           end
-          ## Examen des Factures impayées -------
+          ## Examen des Devis (pour dénombrement et calcul CA) et des Factures impayées -------
+          @arrayDevisEnAttente = [0,0]
+          @arrayDevisInactif = [0,0]
+          @arrayProjetEnCours = [0,0]
+          @arrayProjetInactif = [0,0]
+          @nbreProjetClos = 0
           if @paramun.projets.length != 0
-              stat_suivi_factureimpayee_trait
+              stat_suivi_impayee_projetca_trait
           end
           ## Enregistrement -----
+          @paramun.parDevisEnAttente = @arrayDevisEnAttente.join('|')
+          @paramun.parProjetEnCours = @arrayProjetEnCours.join('|')
+          if @nbreProjetArchiver > 0
+              @paramun.parDevisInactif = @arrayDevisInactif.join('|')
+              @paramun.parProjetInactif = @arrayProjetInactif.join('|')
+              @paramun.nbreProjetClos = @nbreProjetClos.to_s
+          end
           @paramun.statRecetteAccueil = @statRecetteAccueilArray.join('|')
           @paramun.statDepenseAccueil = @statDepenseAccueilArray.join('|')
           @paramun.statFactureAccueil = @statFactureAccueilArray.join('|')

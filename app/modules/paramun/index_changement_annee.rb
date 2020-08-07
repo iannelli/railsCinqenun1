@@ -44,31 +44,6 @@ module IndexChangementAnnee
         @nbreDepenseNewArray[5] = @nbreDepenseOldArray[4]
         @nbreDepenseNewArray[6] = @nbreDepenseOldArray[5]
         @paramun.nbreDepense = @nbreDepenseNewArray.join(',')
-        # parImmob ---------------------------------------
-        @parImmobNewArray = [0,0,0,0,0,0,0]
-        @parImmobOldArray = @paramun.parImmob.split(',')
-        if @paramun.immobs.length != 0
-            @paramun.immobs.each do |immob|
-                @imAmorArray = immob.imAmorString.split("|")
-                i = 0
-                while i < @imAmorArray.length
-                    exerImmob = @imAmorArray[i+1].to_i
-                    if exerImmob == @anCourant-1
-                        parImmob = @parImmobOldArray[0].to_i + @imAmorArray[i+2].to_i
-                        @parImmobOldArray[0] = parImmob.to_s
-                        break
-                    end
-                    i += 5
-                end
-            end
-        end
-        @parImmobNewArray[1] = @parImmobOldArray[0]
-        @parImmobNewArray[2] = @parImmobOldArray[1]
-        @parImmobNewArray[3] = @parImmobOldArray[2]
-        @parImmobNewArray[4] = @parImmobOldArray[3]
-        @parImmobNewArray[5] = @parImmobOldArray[4]
-        @parImmobNewArray[6] = @parImmobOldArray[5]
-        @paramun.parImmob = @parImmobNewArray.join(',')
         # Archivage des Recettes de l'année N-2 ------------
         if @paramun.recettes.length != 0
             @paramun.recettes.each do |recette|
@@ -127,8 +102,8 @@ module IndexChangementAnnee
         # Archivage des Immobs étant sorties de l'Actif dans le courant de l'année N-3
         if @paramun.immobs.length != 0
             @majParamOK = 0
-            @parImmobNewArray = []
-            @parImmobNewArray = @paramun.parImmob.split(',')
+            @nbreImmobNewArray = []
+            @nbreImmobNewArray = @paramun.nbreImmob.split(',')
             @paramun.immobs.each do |immob|
                 if immob.dateCession.to_s.blank? == false
                     anCession = immob.dateCession.slice(6,4)
@@ -151,9 +126,6 @@ module IndexChangementAnnee
                         @immobold.montantTtc = immob.montantTtc
                         @immobold.modeRegl = immob.modeRegl
                         @immobold.typeTvaImpot = immob.typeTvaImpot
-                        @immobold.tvaDecla = immob.tvaDecla
-                        @immobold.tvaPeriode = immob.tvaPeriode
-                        @immobold.lignesTva = immob.lignesTva
                         @immobold.imMode = immob.imMode
                         @immobold.imDuree = immob.imDuree
                         @immobold.imCoeff = immob.imCoeff
@@ -168,16 +140,16 @@ module IndexChangementAnnee
                         @immobold.save
                         immob.destroy
                         # nbreImmob -----
-                        cpt = @parImmobNewArray[0].to_i - 1
-                        @parImmobNewArray[0] = cpt.to_s
-                        cpt = @parImmobNewArray[1].to_i + 1
-                        @parImmobNewArray[1] = cpt.to_s
+                        cpt = @nbreImmobNewArray[0].to_i - 1
+                        @nbreImmobNewArray[0] = cpt.to_s
+                        cpt = @nbreImmobNewArray[1].to_i + 1
+                        @nbreImmobNewArray[1] = cpt.to_s
                         @majParamOK = 1
                     end
                 end
             end
             if @majParamOK == 1
-                @paramun.parImmob = @parImmobNewArray.join(',')
+                @paramun.nbreImmob = @nbreImmobNewArray.join(',')
                 @paramun.save
             end
         end
