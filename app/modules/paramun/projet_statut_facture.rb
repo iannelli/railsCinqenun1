@@ -33,7 +33,7 @@ module ProjetStatutFacture
                 if ['20', '40', '41', '50', '51'].include?(facture.typeImpr.to_s)
                     if facture.facStatut.to_s != '3Annulé'
                         anMoisEmission = facture.facDateEmis.slice(6,4).to_s + facture.facDateEmis.slice(3,2).to_s
-                        if anMoisEmission.to_i >= @parDepassArray[0].to_i
+                        if anMoisEmission.to_i >= @anMoisDepass.to_i
                             if facture.facMontTva.to_i > 0
                                 facture.facDepass = '0'
                                 facture.save

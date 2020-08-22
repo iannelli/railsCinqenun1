@@ -1,9 +1,26 @@
 module IndexChangementAnnee
     # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs
     def index_changement_annee_trait
-        @majNewAn = '1'
-        # parDepass ----
-        @paramun.parDepass = "neant,v"
+        # parDepass -----------------------------
+        @parStatutRegimeArray = @paramun.parStatutRegime.split("|")
+        @parDepassArray = @paramun.parDepass.split(",")
+        if @parStatutRegimeArray[4].to_s == 'neant' ## Statut Initial
+            if @parStatutRegimeArray[1].to_i < 2 ## Franchise avec ou sans perte d'exonération
+                if @parDepassArray[1].to_i == 0
+                    @parDepassArray[0] = "neant"
+                    @parDepassArray[1] = "v"
+                    @paramun.parDepass = @parDepassArray.join(",")
+                end 
+            end
+        else
+            if @parStatutRegimeArray[5].to_i < 2 ## Franchise avec ou sans perte d'exonération
+                if @parDepassArray[3].to_i == 0
+                    @parDepassArray[2] = "neant"
+                    @parDepassArray[3] = "v"
+                    @paramun.parDepass = @parDepassArray.join(",")
+                end 
+            end
+        end
         # parRecette ----------------------------------------
         @parRecetteNewArray = [0,0,0,0,0,0,0]
         @parRecetteOldArray = @paramun.parRecette.split(',')
@@ -150,7 +167,6 @@ module IndexChangementAnnee
             end
             if @majParamOK == 1
                 @paramun.nbreImmob = @nbreImmobNewArray.join(',')
-                @paramun.save
             end
         end
 

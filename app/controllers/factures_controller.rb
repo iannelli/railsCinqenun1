@@ -319,7 +319,7 @@ class FacturesController < ApplicationController
       if @erreurUpdate == 0 ## Traitement de Paramun
           if params[:operation][:maj] != 'ULet'
               if params[:parametre][:facSituationImpositionTva].to_s == 'C1'
-                  @paramun.parRegimeTva = params[:parametre][:parRegimeTva].to_s
+                  @paramun.parStatutRegime = params[:parametre][parStatutRegime].to_s
                   @paramun.parChoixTauxTva = params[:parametre][:parChoixTauxTva].to_s
                   @paramun.parDepass = params[:parametre][:parDepass].to_s
                   begin

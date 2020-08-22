@@ -24,6 +24,7 @@ module ArchivageFactureCreate
             @factureold.facAcomTaux = facture.facAcomTaux
             @factureold.facAcomMont = facture.facAcomMont
             @factureold.facMontTva = facture.facMontTva
+            @factureold.facTypeTvaImpot = facture.facTypeTvaImpot
             @factureold.facDeboursTtc = facture.facDeboursTtc
             @factureold.facDeboursTva = facture.facDeboursTva
             @factureold.facDeboursImput = facture.facDeboursImput

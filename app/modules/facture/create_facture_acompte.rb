@@ -19,22 +19,23 @@ module CreateFactureAcompte
         #@factureAcompte.facImputProjet = '000'
         #@factureAcompte.facImputClient = '000'
         @factureAcompte.facMontNetHt = @factureAcompteArray[5].to_s
-        @factureAcompte.facAcomTaux = @factureAcompteArray[8].to_s
+        @factureAcompte.facAcomTaux = @factureAcompteArray[6].to_s
         @factureAcompte.facAcomMont = ''
-        @factureAcompte.facMontTva = @factureAcompteArray[6].to_s
+        @factureAcompte.facMontTva = @factureAcompteArray[7].to_s
+        @factureAcompte.facTypeTvaImpot = @factureAcompteArray[8].to_s
         #@factureAcompte.facDeboursTtc = '000'
         #@factureAcompte.facDeboursTva = '000'
         #@factureAcompte.facDeboursImput = '000'
-        @factureAcompte.facTotalDu = @factureAcompteArray[7].to_s # Montant Ttc (si facTotalDu > 0)
-        @factureAcompte.facReglMont = @factureAcompteArray[10].to_s
-        @factureAcompte.modePaieLib = @factureAcompteArray[9].to_s
+        @factureAcompte.facTotalDu = '000'
+        @factureAcompte.facReglMont = @factureAcompteArray[9].to_s
+        @factureAcompte.modePaieLib = @factureAcompteArray[10].to_s
         #@factureAcompte.facDifference = '000'
         @factureAcompte.facLignes = ''
         @factureAcompte.facDepass = ''
         @factureAcompte.facCourrier = ''
         @factureAcompte.facReA = ''
-        @factureAcompte.projetId = @factureAcompteArray[12].to_s
-        @factureAcompte.parametreId = @factureAcompteArray[13].to_s
+        @factureAcompte.projetId = @factureAcompteArray[11].to_s
+        @factureAcompte.parametreId = @factureAcompteArray[12].to_s
         begin
             @factureAcompte.save
         rescue => e  # Incident Création Facture Acompte

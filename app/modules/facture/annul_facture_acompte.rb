@@ -19,22 +19,23 @@ module AnnulFactureAcompte
         @factureAvoir.facMontBrutHt = @factureAvoirArray[5].to_s
         @factureAvoir.facImputProjet = '000'
         @factureAvoir.facImputClient = '000'
-        @factureAvoir.facMontNetHt = @factureAvoirArray[7].to_s
-        @factureAvoir.facAcomTaux = @factureAvoirArray[8].to_s
+        @factureAvoir.facMontNetHt = @factureAvoirArray[6].to_s
+        @factureAvoir.facAcomTaux = @factureAvoirArray[7].to_s
         @factureAvoir.facAcomMont = '000'
-        @factureAvoir.facMontTva = @factureAvoirArray[6].to_s
+        @factureAvoir.facMontTva = @factureAvoirArray[8].to_s
+        @factureAvoir.facTypeTvaImpot = @factureAvoirArray[9].to_s        
         #@factureAvoir.facDeboursTtc = '000'
         #@factureAvoir.facDeboursTva = '000'
         #@factureAvoir.facDeboursImput = '000'
-        @factureAvoir.facTotalDu = @factureAvoirArray[9].to_s
-        @factureAvoir.facReglMont = @factureAvoirArray[10].to_s
-        @factureAvoir.modePaieLib = @factureAvoirArray[11].to_s
+        @factureAvoir.facTotalDu = @factureAvoirArray[10].to_s
+        @factureAvoir.facReglMont = @factureAvoirArray[11].to_s
+        @factureAvoir.modePaieLib = @factureAvoirArray[12].to_s
         @factureAvoir.facDifference = '000'
         @factureAvoir.facLignes = ''
         @factureAvoir.facDepass = '0'
         @factureAvoir.facCourrier = ''
         @factureAvoir.facReA = ''
-        @factureAvoir.projetId = @factureAvoirArray[13].to_s
+        @factureAvoir.projetId = @factureAvoirArray[14].to_s
         @factureAvoir.parametreId = params[:parametre][:id].to_s
         begin
             @factureAvoir.save
@@ -51,7 +52,7 @@ module AnnulFactureAcompte
         end
         if @erreurUpdate == 0 ## Maj Facture Annulée ----------------------
             begin
-                @factureannul = Facture.find(@factureAvoirArray[12].to_i)
+                @factureannul = Facture.find(@factureAvoirArray[13].to_i)
                 @factureannul.facStatut = "3Annulé"
                 @factureannul.facMention = "**** Facture Annulée ****"
                 @factureannul.save
@@ -69,7 +70,7 @@ module AnnulFactureAcompte
          end
          if @erreurUpdate == 0 ## Maj Projet ----------------------
             begin
-                @projet = Projet.find(@factureAvoirArray[13].to_i)
+                @projet = Projet.find(@factureAvoirArray[14].to_i)
                 @proNumRangArray = @projet.proNumRang.split("|")
                 numRang = @proNumRangArray[1].to_i
                 numRang -= 1
@@ -80,7 +81,7 @@ module AnnulFactureAcompte
                 @projet.proReportFacture = '000'
                 @projet.proReportDebours = '000'
                 @projet.proSituation = '00'
-                @projet.majDate = @factureAvoirArray[14].to_s
+                @projet.majDate = @current_time.strftime "%d/%m/%Y"
                 @projet.save
             rescue => e  # Incident Maj Projet
                 @erreur = Erreur.new

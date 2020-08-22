@@ -24,6 +24,7 @@ module ReactivationFactureCreate
             @facture.facAcomTaux = factureold.facAcomTaux
             @facture.facAcomMont = factureold.facAcomMont
             @facture.facMontTva = factureold.facMontTva
+            @facture.facTypeTvaImpot = factureold.facTypeTvaImpot
             @facture.facDeboursTtc = factureold.facDeboursTtc
             @facture.facDeboursTva = factureold.facDeboursTva
             @facture.facDeboursImput = factureold.facDeboursImput

@@ -186,6 +186,7 @@ class ProjetoldsController < ApplicationController
                   @factureold.facAcomTaux = facture.facAcomTaux
                   @factureold.facAcomMont = facture.facAcomMont
                   @factureold.facMontTva = facture.facMontTva
+                  @factureold.facTypeTvaImpot = facture.facTypeTvaImpot
                   @factureold.facDeboursTtc = facture.facDeboursTtc
                   @factureold.facDeboursTva = facture.facDeboursTva
                   @factureold.facDeboursImput = facture.facDeboursImput
@@ -431,6 +432,7 @@ class ProjetoldsController < ApplicationController
                   @facture.facAcomTaux = factureold.facAcomTaux
                   @facture.facAcomMont = factureold.facAcomMont                  
                   @facture.facMontTva = factureold.facMontTva
+                  @facture.facTypeTvaImpot = factureold.facTypeTvaImpot
                   @facture.facDeboursTtc = factureold.facDeboursTtc
                   @facture.facDeboursTva = factureold.facDeboursTva
                   @facture.facTotalDu = factureold.facTotalDu

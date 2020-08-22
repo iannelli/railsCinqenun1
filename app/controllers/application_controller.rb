@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
     # paramuns_controller ---
     include GetEcritureInitialePositive
     include IndexChangementAnnee
+    include ParamDepassFranchise
     include ProjetArchivageCondition
     include ProjetArchivageFacture
     include ProjetArchivageProjet

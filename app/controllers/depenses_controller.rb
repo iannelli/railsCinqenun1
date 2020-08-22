@@ -53,9 +53,15 @@ class DepensesController < ApplicationController
           @CreateOK = 1
       end
       if @CreateOK == 0  ## Maj de @paramun.nbreDepense et de @paramun.parDepense ------
-          if @paramun.parRegimeTva.to_i == 0
+          @parStatutRegimeArray = @paramun.parStatutRegime.split('|')         
+          if @parStatutRegimeArray[3].to_s = 'neant'
+              parRegimeTva = @parStatutRegimeArray[1].to_s
+          else
+             parRegimeTva = @parStatutRegimeArray[5].to_s
+          end
+          if parRegimeTva.to_i == 0
               @montantDepense = @depense.montantTtc.to_i
-          else   
+          else
               @montantDepense = @depense.montantHt.to_i
           end
           @nbreDepenseArray = @paramun.nbreDepense.split(',')
@@ -115,7 +121,13 @@ class DepensesController < ApplicationController
           @depense = Depense.find(params[:id])
           @depense.dateEcriture = (@current_time.strftime "%Y-%m-%d-%H-%M").to_s #Date-Heure-Mn 'aaaa-mm-jj-hh-mn'
           @depense.save
-          if @paramun.parRegimeTva.to_i == 0
+          @parStatutRegimeArray = @paramun.parStatutRegime.split('|')         
+          if @parStatutRegimeArray[3].to_s == 'neant'
+              parRegimeTva = @parStatutRegimeArray[1].to_s
+          else
+             parRegimeTva = @parStatutRegimeArray[5].to_s
+          end
+          if parRegimeTva.to_i == 0
               @montantDepenseOld = @depense.montantTtc.to_i
           else
               @montantDepenseOld = @depense.montantHt.to_i
@@ -179,7 +191,13 @@ class DepensesController < ApplicationController
       end
 
       if @updateOK == 0  ## Maj parDepense -----------
-          if @paramun.parRegimeTva.to_i == 0
+          @parStatutRegimeArray = @paramun.parStatutRegime.split('|')         
+          if @parStatutRegimeArray[3].to_s = 'neant'
+              parRegimeTva = @parStatutRegimeArray[1].to_s
+          else
+             parRegimeTva = @parStatutRegimeArray[5].to_s
+          end
+          if parRegimeTva.to_i == 0
               @montantDepense = @depense.montantTtc.to_i
           else
               @montantDepense = @depense.montantHt.to_i

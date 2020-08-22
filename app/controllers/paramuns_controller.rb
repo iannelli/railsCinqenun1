@@ -27,9 +27,9 @@ class ParamunsController < ApplicationController
           # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs
           if @anCourant > @paramun.parDateConnex.slice(0,4).to_i
               index_changement_annee_trait
-          end
-          # Maj parNouvelAn (changement d'Année) ----
-          @paramun.parNouvelAn = @majNewAn
+              # Maj parNouvelAn (changement d'Année) ----
+              @paramun.parNouvelAn = @majNewAn
+          end          
           # Maj de parDateConnex -----------
           @paramun.parDateConnex = (@current_time.strftime "%Y%m%d%H%M%S").to_s #Date-Heure Connexion 'aaaammjjhhmnss'
           @paramun.save
@@ -290,19 +290,25 @@ class ParamunsController < ApplicationController
           @erreurArchivage = 0
           @archivageOK = 0
           @nbreProjetArchiver = 0
+          @depassOK = 0
+          @statut = ''
+          @anMoisDepass = ''
           ## Examen des Conditions de Dépassement de la Franchise TVA -----------
           @paramun = Paramun.find(params[:id])
+          @parStatutRegimeArray = @paramun.parStatutRegime.split("|")
           @parDepassArray = @paramun.parDepass.split(",")
-          @depassOK = 0
-          if @parDepassArray[0].to_s != 'neant'
-              if @parDepassArray[1].to_s == 'v'
-                  @depassOK = 1
-              else 
-                  if @parDepassArray[1].to_i > 0
-                       @depassOK = 1
-                  end
+          if @parStatutRegimeArray[4].to_s == 'neant' ## Statut Initial
+              if @parStatutRegimeArray[1].to_i < 2 ## Franchise avec ou sans perte d'exonération
+                  @statut = 'I'
+                  param_depass_franchise_trait
+              end
+          else ## Statut Modifié    
+              if @parStatutRegimeArray[5].to_i < 2 ## Franchise avec ou sans perte d'exonération
+                  @statut = 'M'
+                  param_depass_franchise_trait
               end
           end
+          
           # Find de @paramunold (ou création si 1ère fois) ----
           @paramunold = Paramunold.where(["id = ?", params[:id].to_i]).first
           if @paramunold.nil?          
@@ -321,7 +327,6 @@ class ParamunsController < ApplicationController
                   if projet.taches.length != 0
                       projet_statut_tache_trait(projet)
                   end
-
                   ## Facture : suivi de leurs Statuts et Examen au regard du Dépassement du Seuil de la Franchise
                   ## et Incidence sur le Projet ------
                   @cptFacture = 0
@@ -363,7 +368,13 @@ class ParamunsController < ApplicationController
                   ## Si Archivage OK -------------------
                   if @archivageOK == 1
                       # Archivage du Projet en ProjetOld
-                      projet_archivage_projet_trait(projet)
+                      begin
+                          @projetold1 = Projetold.find(projet.id)
+                          @projetold1.destroy
+                          projet_archivage_projet_trait(projet)
+                      rescue ActiveRecord::RecordNotFound => e
+                          projet_archivage_projet_trait(projet)
+                      end
                       # Archivage des Taches en Tachesold
                       if @erreurArchivage == 0
                           if projet.taches.length != 0
@@ -445,11 +456,11 @@ class ParamunsController < ApplicationController
           ## Dépassement du Seuil de la Franchise : Maj @paramun.parDepass
           if @depassOK == 1
               totalProjet = @cptProjet + @cptProjetold
-              if totalProjet == 0
-                  @parDepassArray[1] = '0'
-              else
-                  @parDepassArray[1] = totalProjet
-              end
+              if @statut == 'I' ## Statut Initial
+                  @parDepassArray[1] = totalProjet.to_s       
+              else ## Statut Modifié
+                  @parDepassArray[3] = totalProjet.to_s
+              end         
               @paramun.parDepass = @parDepassArray.join(",")
               @paramun.save
           end
