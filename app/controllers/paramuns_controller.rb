@@ -24,6 +24,7 @@ class ParamunsController < ApplicationController
           @paramun = Paramun.find(params[:parametre][:id])
           @anCourant = Time.new.year
           @anMoins2 = @anCourant - 2
+          @anMoins3 = @anCourant - 3
           # Traitement de Changement d'année : Ré-Initialisation et Archivage des Recettes/Dépenses/Immobs
           if @anCourant > @paramun.parDateConnex.slice(0,4).to_i
               index_changement_annee_trait
