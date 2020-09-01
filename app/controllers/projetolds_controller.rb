@@ -77,15 +77,19 @@ class ProjetoldsController < ApplicationController
       if @erreurArchivage == 0
           @projetold = Projetold.new(projetold_params)
           @projetold.parametreoldId = params[:parametre][:parametreId].to_s
+          @arrayDevisInactif = @paramun.parDevisInactif.split('|')
+          @arrayProjetInactif = @paramun.parProjetInactif.split('|')
           begin
               @projetold.save
               case @projetold.proSituation.to_s
                   when '20'
-                      cpt = @paramun.nbreDevisInactif.to_i + 1
-                      @paramun.nbreDevisInactif = cpt.to_s
+                      cpt = @arrayDevisInactif[0].to_i + 1
+                      @arrayDevisInactif[0] = cpt
+                      @paramun.parDevisInactif = @arrayDevisInactif.join('|')
                   when '21'
-                      cpt = @paramun.nbreProjetInactif.to_i + 1
-                      @paramun.nbreProjetInactif = cpt.to_s
+                      cpt = @arrayProjetInactif[0].to_i + 1
+                      @arrayProjetInactif[0] = cpt
+                      @paramun.parProjetInactif = @arrayProjetInactif.join('|')
                   when '22'
                       cpt = @paramun.nbreProjetClos.to_i + 1
                       @paramun.nbreProjetClos = cpt.to_s
@@ -326,15 +330,19 @@ class ProjetoldsController < ApplicationController
           @projet = Projet.new(projetold_params)
           @projet.majDate = @current_time.strftime "%d/%m/%Y"
           @projet.parametreId = params[:parametre][:parametreId].to_s
+          @arrayDevisInactif = @paramun.parDevisInactif.split('|')
+          @arrayProjetInactif = @paramun.parProjetInactif.split('|')
           begin
               @projet.save
               case @projet.proSituation.to_s
                   when '00'
-                      cpt = @paramun.nbreDevisInactif.to_i - 1
-                      @paramun.nbreDevisInactif = cpt.to_s
+                      cpt = @arrayDevisInactif[0].to_i - 1
+                      @arrayDevisInactif[0] = cpt
+                      @paramun.parDevisInactif = @arrayDevisInactif.join('|')
                   when '01'
-                      cpt = @paramun.nbreProjetInactif.to_i - 1
-                      @paramun.nbreProjetInactif = cpt.to_s
+                      cpt = @arrayProjetInactif[0].to_i - 1
+                      @arrayProjetInactif[0] = cpt
+                      @paramun.parProjetInactif = @arrayProjetInactif.join('|')
               end
               @paramun.save
           rescue => e # erreur Projet Create
