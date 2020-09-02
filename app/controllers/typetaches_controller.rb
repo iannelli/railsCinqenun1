@@ -41,8 +41,8 @@ class TypetachesController < ApplicationController
       rescue => e # Incident création Typetache
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - TypetachesController - create"
-          @erreur.origine = "erreur Création Typetache"
+          @erreur.appli = "1"
+          @erreur.origine = "TypetachesController[create]: erreur Création Typetache"
           @erreur.numLigne = '40'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
@@ -87,8 +87,8 @@ class TypetachesController < ApplicationController
           @erreur = Erreur.new
           current_time = DateTime.now
           @erreur.dateHeure = current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - TypetachesController - update"
-          @erreur.origine = "Incident Find Typetache.id=" + params[:id].to_s
+          @erreur.appli = "1"
+          @erreur.origine = "TypetachesController[update]: Incident Find Typetache.id=" + params[:id].to_s
           @erreur.numLigne = '67'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
@@ -118,9 +118,9 @@ class TypetachesController < ApplicationController
           @erreur = Erreur.new
           current_time = DateTime.now
           @erreur.dateHeure = current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - TypetachesController - destroy'
-          @erreur.origine = "Incident Find Typetache.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '109'
+          @erreur.appli = '1'
+          @erreur.origine = "TypetachesController[destroy]: Incident Find Typetache.find(params[:id])=" + params[:id].to_s
+          @erreur.numLigne = '116'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -145,9 +145,9 @@ class TypetachesController < ApplicationController
               @erreur = Erreur.new
               current_time = DateTime.now
               @erreur.dateHeure = current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - TypetachesController - destroy'
-              @erreur.origine = "erreur Delete Typetache - typetache.id=" + params[:id].to_s
-              @erreur.numLigne = '134'
+              @erreur.appli = '1'
+              @erreur.origine = "TypetachesController[destroy]: erreur Delete Typetache - typetache.id=" + params[:id].to_s
+              @erreur.numLigne = '143'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save

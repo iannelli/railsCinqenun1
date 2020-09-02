@@ -57,9 +57,9 @@ class FamilletachesController < ApplicationController
         rescue => e # Incident création Familletache
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = "rails - FamilletachesController - create"
-            @erreur.origine = "erreur Création Familletache"
-            @erreur.numLigne = '40'
+            @erreur.appli = "1"
+            @erreur.origine = "FamilletachesController[create]: erreur Création Familletache"
+            @erreur.numLigne = '56'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
             @erreur.save
@@ -108,9 +108,9 @@ class FamilletachesController < ApplicationController
             rescue => e # Incident Save Familletache
                 @erreur = Erreur.new
                 @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreur.appli = "rails - FamilletachesController - update"
-                @erreur.origine = "erreur Save Familletache - Familletache.id=" + params[:id].to_s
-                @erreur.numLigne = '70'
+                @erreur.appli = "1"
+                @erreur.origine = "FamilletachesController[update]: erreur Familletache - Familletache.id=" + params[:id].to_s
+                @erreur.numLigne = '107'
                 @erreur.message = e.message
                 @erreur.parametreId = params[:parametre][:id].to_s
                 @erreur.save
@@ -120,9 +120,9 @@ class FamilletachesController < ApplicationController
     rescue => e # Incident Find de Familletache
         @erreur = Erreur.new
         @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-        @erreur.appli = "rails - FamilletachesController - update"
-        @erreur.origine = "erreur Find Familletache.find(params[:id])=" + params[:id].to_s
-        @erreur.numLigne = '68'
+        @erreur.appli = "1"
+        @erreur.origine = "FamilletachesController[update]: erreur Find Familletache.find(params[:id])=" + params[:id].to_s
+        @erreur.numLigne = '89'
         @erreur.message = e.message
         @erreur.parametreId = params[:parametre][:id].to_s
         @erreur.save
@@ -153,9 +153,9 @@ class FamilletachesController < ApplicationController
         rescue => e # Incident lors de la suppression de Familletache
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = 'rails - FamilletachesController - destroy'
-            @erreur.origine = "erreur Delete Familletache - familletache.id=" + params[:id].to_s
-            @erreur.numLigne = '111'
+            @erreur.appli = '1'
+            @erreur.origine = "FamilletachesController[destroy]: erreur Delete Familletache - familletache.id=" + params[:id].to_s
+            @erreur.numLigne = '152'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
             @erreur.save
@@ -164,9 +164,9 @@ class FamilletachesController < ApplicationController
     rescue => e # Incident Find de Familletache
         @erreur = Erreur.new
         @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-        @erreur.appli = 'rails - FamilletachesController - destroy'
-        @erreur.origine = "erreur Find Familletache - familletache.id=" + params[:id].to_s
-        @erreur.numLigne = '109'
+        @erreur.appli = '1'
+        @erreur.origine = "FamilletachesController[destroy]: erreur Find Familletache - familletache.id=" + params[:id].to_s
+        @erreur.numLigne = '150'
         @erreur.message = e.message
         @erreur.parametreId = params[:parametre][:id].to_s
         @erreur.save

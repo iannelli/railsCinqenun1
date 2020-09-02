@@ -52,14 +52,14 @@ module UpdateFactureTacperiode
                     @erreur = Erreur.new
                     current_time = DateTime.now
                     @erreur.dateHeure = current_time.strftime "%d/%m/%Y %H:%M:%S"
+                    @erreur.appli = '1'
                     if @origine == 'C'
-                        @erreur.appli = "rails - FacturesController - Create - UpdateFactureTacperiode"
+                        @erreur.origine = "Module[UpdateFactureTacperiode]: Create - erreur Find Tache - facPeriodeTacheArray[0]=" + facPeriodeTacheArray[0].to_s
                         @erreurCreate = 1
                     else
-                        @erreur.appli = "rails - FacturesController - Update - UpdateFactureTacperiode"
+                        @erreur.origine = "rails - FacturesController - Update - erreur Find Tache - facPeriodeTacheArray[0]=" + facPeriodeTacheArray[0].to_s
                         @erreurUpdate = 1
-                    end
-                    @erreur.origine = "erreur Find Tache - facPeriodeTacheArray[0]=" + facPeriodeTacheArray[0].to_s
+                    end                  
                     @erreur.numLigne = '13'
                     @erreur.message = e.message
                     @erreur.parametreId = params[:parametre][:id].to_s

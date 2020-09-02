@@ -41,9 +41,9 @@ module CreateFactureAcompte
         rescue => e  # Incident Création Facture Acompte
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = "rails - FacturesController - ApplicationController[createFactureAcompte]"
-            @erreur.origine = "erreur Création Facture Acompte"
-            @erreur.numLigne = '178'
+            @erreur.appli = "1"
+            @erreur.origine = "Module[createFactureAcompte]: erreur Création Facture Acompte"
+            @erreur.numLigne = '40'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
             @erreur.save
@@ -62,9 +62,9 @@ module CreateFactureAcompte
             rescue => e  # Incident Maj Projet
                 @erreur = Erreur.new
                 @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreur.appli = "rails - FacturesController[Update] - ApplicationController[createFactureAcompte]"
-                @erreur.origine = "erreur Maj Projet.proNumrang - ApplicationController[createFactureAcompte]"
-                @erreur.numLigne = '198'
+                @erreur.appli = "1"
+                @erreur.origine = "Module[createFactureAcompte]: erreur Find Projet.id=params[:projet][:id] " + params[:projet][:id].to_s
+                @erreur.numLigne = '54'
                 @erreur.message = e.message
                 @erreur.parametreId = params[:parametre][:id].to_s
                 @erreur.save
@@ -78,9 +78,9 @@ module CreateFactureAcompte
             rescue => e  # Incident Maj Parametre
                 @erreur = Erreur.new
                 @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreur.appli = "rails - FacturesController[Update] - ApplicationController[createFactureAcompte]"
-                @erreur.origine = "erreur Maj Parametre - ApplicationController[createFactureAcompte]"
-                @erreur.numLigne = '192'
+                @erreur.appli = "1"
+                @erreur.origine = "Module[createFactureAcompte]: erreur Maj Parametre.parNumFact"
+                @erreur.numLigne = '77'
                 @erreur.message = e.message
                 @erreur.parametreId = params[:parametre][:id].to_s
                 @erreur.save

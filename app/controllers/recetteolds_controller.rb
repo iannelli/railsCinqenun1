@@ -12,8 +12,8 @@ class RecetteoldsController < ApplicationController
           @erreur = Erreur.new
           @current_time = DateTime.now
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - RecetteoldsController - index'
-          @erreur.origine = 'Incident Find Parametreold - @paramunold.id=' + params[:parametre][:id].to_s
+          @erreur.appli = '1'
+          @erreur.origine = 'RecetteoldsController[index]: Incident Find Parametreold - @paramunold.id=' + params[:parametre][:id].to_s
           @erreur.numLigne = '10'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s

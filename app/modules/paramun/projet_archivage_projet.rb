@@ -37,9 +37,9 @@ module ProjetArchivageProjet
         rescue => e # erreur Projetold Create
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = 'rails - ParamunsController - destroy'
-            @erreur.origine = 'Incident Save Projetold - projet.id=' + projet.id.to_s
-            @erreur.numLigne = '530'
+            @erreur.appli = '1'
+            @erreur.origine = 'Module[ProjetArchivageProjet]: Incident Create Projetold - projet.id=' + projet.id.to_s
+            @erreur.numLigne = '36'
             @erreur.message = e.message
             @erreur.parametreId = params[:id].to_s
             @erreur.save

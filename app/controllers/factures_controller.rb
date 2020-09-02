@@ -63,9 +63,9 @@ class FacturesController < ApplicationController
       rescue => e  # Incident Find Projet
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - FacturesController - create"
-          @erreur.origine = "erreur Find Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
-          @erreur.numLigne = '44'
+          @erreur.appli = "1"
+          @erreur.origine = "FacturesController[create]: Find Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
+          @erreur.numLigne = '41'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -136,9 +136,9 @@ class FacturesController < ApplicationController
                                   rescue => e  # Incident Save Facture annulée
                                       @erreur = Erreur.new
                                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                                      @erreur.appli = "rails - FacturesController - create"
-                                      @erreur.origine = "erreur Save Facture annulée - params[:factannul][:id]=" + params[:factannul][:id].to_s
-                                      @erreur.numLigne = '196'
+                                      @erreur.appli = "1"
+                                      @erreur.origine = "FacturesController[create]: erreur Save Facture annulée - params[:factannul][:id]=" + params[:factannul][:id].to_s
+                                      @erreur.numLigne = '135'
                                       @erreur.message = e.message
                                       @erreur.parametreId = params[:parametre][:id].to_s
                                       @erreur.save
@@ -147,9 +147,9 @@ class FacturesController < ApplicationController
                               rescue => e  # Incident Find Facture annulée
                                   @erreur = Erreur.new
                                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                                  @erreur.appli = "rails - FacturesController - create"
-                                  @erreur.origine = "erreur Find Facture annulée - params[:factannul][:id]=" + params[:factannul][:id].to_s
-                                  @erreur.numLigne = '183'
+                                  @erreur.appli = "1"
+                                  @erreur.origine = "FacturesController[create]: erreur Find Facture annulée - params[:factannul][:id]=" + params[:factannul][:id].to_s
+                                  @erreur.numLigne = '115'
                                   @erreur.message = e.message
                                   @erreur.parametreId = params[:parametre][:id].to_s
                                   @erreur.save
@@ -161,9 +161,9 @@ class FacturesController < ApplicationController
               rescue => e  # Incident Save Projet
                   @erreur = Erreur.new
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                  @erreur.appli = "rails - FacturesController - create"
-                  @erreur.origine = "erreur Maj Projet @projet.id=" + @projet.id.to_s
-                  @erreur.numLigne = '165'
+                  @erreur.appli = "1"
+                  @erreur.origine = "FacturesController[create]: erreur Maj Projet @projet.id=" + @projet.id.to_s
+                  @erreur.numLigne = '103'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -172,9 +172,9 @@ class FacturesController < ApplicationController
           rescue => e  # Incident Save Facture
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - FacturesController - create"
-              @erreur.origine = "erreur Maj Facture"
-              @erreur.numLigne = '124'
+              @erreur.appli = "1"
+              @erreur.origine = "FacturesController[create]: erreur Maj Facture"
+              @erreur.numLigne = '87'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -192,9 +192,9 @@ class FacturesController < ApplicationController
               rescue => e  # Incident Find Save Clientele
                   @erreur = Erreur.new
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                  @erreur.appli = "rails - FacturesController - create"
-                  @erreur.origine = "erreur Find/Maj Clientele.cliCompte"
-                  @erreur.numLigne = '265'
+                  @erreur.appli = "1"
+                  @erreur.origine = "FacturesController[create]: erreur Find/Maj Clientele.cliCompte"
+                  @erreur.numLigne = '189'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -231,9 +231,9 @@ class FacturesController < ApplicationController
       rescue => e  # Incident Find BdC/Facture
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - FacturesController - update"
-          @erreur.origine = "erreur Find Facture - Facture.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '428'
+          @erreur.appli = "1"
+          @erreur.origine = "FacturesController[update]: Find Facture - Facture.find(params[:id])=" + params[:id].to_s
+          @erreur.numLigne = '229'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -246,9 +246,9 @@ class FacturesController < ApplicationController
           rescue => e  # Incident Update Bdc/Facture
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - FacturesController - update"
-              @erreur.origine = "erreur Update Facture - Facture.find(params[:id])=" + params[:id].to_s
-              @erreur.numLigne = '467'
+              @erreur.appli = "1"
+              @erreur.origine = "FacturesController[update]: Facture.find(params[:id])=" + params[:id].to_s
+              @erreur.numLigne = '245'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -284,9 +284,9 @@ class FacturesController < ApplicationController
           rescue => e  # Incident Save Facture
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - FacturesController - update"
-              @erreur.origine = "erreur Save Facture - @facture.id=" + @facture.id.to_s
-              @erreur.numLigne = '501'
+              @erreur.appli = "1"
+              @erreur.origine = "FacturesController[update]: erreur Save Facture - @facture.id=" + @facture.id.to_s
+              @erreur.numLigne = '283'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -304,9 +304,9 @@ class FacturesController < ApplicationController
                   rescue => e  # Incident Save Clientele
                       @erreur = Erreur.new
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = "rails - FacturesController - update"
-                      @erreur.origine = "erreur Find/Save Clientele - @clientele.id=" + @clientele.id.to_s
-                      @erreur.numLigne = '520'
+                      @erreur.appli = "1"
+                      @erreur.origine = "FacturesController[update]: Find/Save Clientele - @clientele.id=" + @clientele.id.to_s
+                      @erreur.numLigne = '301'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:parametre][:id].to_s
                       @erreur.save
@@ -327,9 +327,9 @@ class FacturesController < ApplicationController
                   rescue => e  # Incident Save Paramun
                       @erreur = Erreur.new
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = "rails - FacturesController - update"
-                      @erreur.origine = "erreur Save Paramun - @paramun.id=" + @paramun.id.to_s
-                      @erreur.numLigne = '529'
+                      @erreur.appli = "1"
+                      @erreur.origine = "FacturesController[update]: erreur Save Paramun - @paramun.id=" + @paramun.id.to_s
+                      @erreur.numLigne = '326'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:parametre][:id].to_s
                       @erreur.save
@@ -385,9 +385,9 @@ class FacturesController < ApplicationController
                   rescue => e  # Incident Save Projet
                       @erreur = Erreur.new
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = "rails - FacturesController - update"
-                      @erreur.origine = "erreur Save Projet - params[:projet][:id]=" + params[:projet][:id].to_s
-                      @erreur.numLigne = '617'
+                      @erreur.appli = "1"
+                      @erreur.origine = "FacturesController[update]: erreur Save Projet - params[:projet][:id]=" + params[:projet][:id].to_s
+                      @erreur.numLigne = '384'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:parametre][:id].to_s
                       @erreur.save
@@ -396,9 +396,9 @@ class FacturesController < ApplicationController
               rescue => e  # Incident Find Projet
                   @erreur = Erreur.new
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                  @erreur.appli = "rails - FacturesController - update"
-                  @erreur.origine = "erreur Find Projet - params[:projet][:id]=" + params[:projet][:id].to_s
-                  @erreur.numLigne = '595'
+                  @erreur.appli = "1"
+                  @erreur.origine = "FacturesController[update]: erreur Find Projet - params[:projet][:id]=" + params[:projet][:id].to_s
+                  @erreur.numLigne = '358'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -450,9 +450,9 @@ class FacturesController < ApplicationController
                   rescue => e # Incident Maj du Projet
                       @erreur = Erreur.new
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = 'rails - FacturesController - destroy'
-                      @erreur.origine = "erreur Save projet - @projet.id=" + @projet.id.to_s
-                      @erreur.numLigne = '669'
+                      @erreur.appli = '1'
+                      @erreur.origine = "FacturesController[destroy]: erreur Save projet - @projet.id=" + @projet.id.to_s
+                      @erreur.numLigne = '449'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:parametre][:id].to_s
                       @erreur.save
@@ -461,9 +461,9 @@ class FacturesController < ApplicationController
               rescue => e # Incident Find Projet
                   @erreur = Erreur.new
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                  @erreur.appli = 'rails - FacturesController - destroy'
-                  @erreur.origine = "erreur Find Projet - Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
-                  @erreur.numLigne = '661'
+                  @erreur.appli = '1'
+                  @erreur.origine = "FacturesController[destroy]: erreur Find Projet - Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
+                  @erreur.numLigne = '441'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -472,9 +472,9 @@ class FacturesController < ApplicationController
           rescue => e # Incident lors de la suppression de la Facture
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - FacturesController - destroy'
-              @erreur.origine = "erreur Delete Facture - Facture.id=" + params[:id].to_s
-              @erreur.numLigne = '659'
+              @erreur.appli = '1'
+              @erreur.origine = "FacturesController[destroy]: erreur Delete Facture - Facture.id=" + params[:id].to_s
+              @erreur.numLigne = '439'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -483,9 +483,9 @@ class FacturesController < ApplicationController
       rescue => e # Incident Find de la Facture
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - FacturesController - destroy'
-          @erreur.origine = "erreur Find Facture - Facture.id=" + params[:id].to_s
-          @erreur.numLigne = '657'
+          @erreur.appli = '1'
+          @erreur.origine = "FacturesController[destroy]: erreur Find Facture - Facture.id=" + params[:id].to_s
+          @erreur.numLigne = '437'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save

@@ -12,8 +12,8 @@ class DepenseoldsController < ApplicationController
           @erreur = Erreur.new
           @current_time = DateTime.now
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - DepenseoldsController - index'
-          @erreur.origine = 'Incident Find Parametreold - params[:parametre][:id]=' + params[:parametre][:id].to_s
+          @erreur.appli = '1'
+          @erreur.origine = 'DepenseoldsController[index]: Find Parametreold - params[:parametre][:id]=' + params[:parametre][:id].to_s
           @erreur.numLigne = '10'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s

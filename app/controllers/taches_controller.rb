@@ -45,9 +45,9 @@ class TachesController < ApplicationController
           rescue => e # Incident Update Projet
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - TachesController - create'
-              @erreur.origine = 'Incident Update Projet.id=' + params[:projet][:id].to_s
-              @erreur.numLigne = '43'
+              @erreur.appli = '1'
+              @erreur.origine = 'TachesController[create]: Incident Update Projet.id=' + params[:projet][:id].to_s
+              @erreur.numLigne = '42'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -56,9 +56,9 @@ class TachesController < ApplicationController
       rescue => e  # erreur Find Projet
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = "rails - TachesController - create"
-            @erreur.origine = "erreur Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
-            @erreur.numLigne = '40'
+            @erreur.appli = "1"
+            @erreur.origine = "TachesController[create]: erreur Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
+            @erreur.numLigne = '41'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
             @erreur.save
@@ -70,9 +70,9 @@ class TachesController < ApplicationController
           rescue => e # Incident création Tache
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - TachesController - create"
-              @erreur.origine = "erreur Création Tache"
-              @erreur.numLigne = '68'
+              @erreur.appli = "1"
+              @erreur.origine = "TachesController[create]: erreur Création Tache"
+              @erreur.numLigne = '69'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -100,9 +100,9 @@ class TachesController < ApplicationController
       rescue => e  # erreur Find Tache
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - TachesController - create"
-          @erreur.origine = "erreur Tache.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '97'
+          @erreur.appli = "1"
+          @erreur.origine = "TachesController[update]: erreur Tache.find(params[:id])=" + params[:id].to_s
+          @erreur.numLigne = '99'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -116,9 +116,9 @@ class TachesController < ApplicationController
               rescue => e # Incident Maj Projet
                   @erreur = Erreur.new
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                  @erreur.appli = 'rails - TachesController - update'
-                  @erreur.origine = 'Incident Maj Projet.id=' + params[:projet][:id].to_s
-                  @erreur.numLigne = '113'
+                  @erreur.appli = '1'
+                  @erreur.origine = 'TachesController[update]: Incident Maj Projet.id=' + params[:projet][:id].to_s
+                  @erreur.numLigne = '115'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -127,9 +127,9 @@ class TachesController < ApplicationController
           rescue => e  # erreur Find Projet
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - TachesController - create"
-              @erreur.origine = "Incident Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
-              @erreur.numLigne = '111'
+              @erreur.appli = "1"
+              @erreur.origine = "TachesController[update]: Incident Projet.find(params[:projet][:id])=" + params[:projet][:id].to_s
+              @erreur.numLigne = '113'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -142,9 +142,9 @@ class TachesController < ApplicationController
           rescue => e
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - TachesController - update'
-              @erreur.origine = 'Maj Tache - tache.id=' + params[:id].to_s
-              @erreur.numLigne = '139'
+              @erreur.appli = '1'
+              @erreur.origine = 'TachesController[update]: Maj Tache - tache.id=' + params[:id].to_s
+              @erreur.numLigne = '141'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -175,9 +175,9 @@ class TachesController < ApplicationController
           rescue => e # Incident destroy Tache
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - TachesController - destroy'
+              @erreur.appli = '1'
               @erreur.origine = 'Incident destroy Tache.id=' + params[:id].to_s
-              @erreur.numLigne = '171'
+              @erreur.numLigne = '174'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -186,9 +186,9 @@ class TachesController < ApplicationController
       rescue => e # Incident Find Tache
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - TachesController - destroy'
-          @erreur.origine = 'Incident Find Tache.id=' + params[:id].to_s
-          @erreur.numLigne = '169'
+          @erreur.appli = '1'
+          @erreur.origine = 'TachesController[destroy]: Incident Find Tache.id=' + params[:id].to_s
+          @erreur.numLigne = '172'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -203,9 +203,9 @@ class TachesController < ApplicationController
               rescue => e
                   @erreur = Erreur.new
                   @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                  @erreur.appli = 'rails - TachesController - destroy'
-                  @erreur.origine = 'Maj Projet - projet.id=' + params[:projet][:id].to_s
-                  @erreur.numLigne = '199'
+                  @erreur.appli = '1'
+                  @erreur.origine = 'TachesController[destroy]: Maj Projet - projet.id=' + params[:projet][:id].to_s
+                  @erreur.numLigne = '202'
                   @erreur.message = e.message
                   @erreur.parametreId = params[:parametre][:id].to_s
                   @erreur.save
@@ -214,9 +214,9 @@ class TachesController < ApplicationController
           rescue => e # Incident Find Projet
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - TachesController - destroy'
-              @erreur.origine = 'Incident Projet.find(params[:projet][:id])=' + params[:projet][:id].to_s
-              @erreur.numLigne = '197'
+              @erreur.appli = '1'
+              @erreur.origine = 'TachesController[destroy]: Incident Projet.find(params[:projet][:id])=' + params[:projet][:id].to_s
+              @erreur.numLigne = '200'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save

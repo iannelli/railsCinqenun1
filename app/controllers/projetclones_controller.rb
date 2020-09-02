@@ -49,9 +49,9 @@ class ProjetclonesController < ApplicationController
            rescue => e # Incident Création @projetclone
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - ProjetclonesController - update'
-              @erreur.origine = "Incident Création Projetclone - Projet.id = " + params[:id].to_s
-              @erreur.numLigne = '45'
+              @erreur.appli = '1'
+              @erreur.origine = "ProjetclonesController[update]: Incident Création Projetclone - Projet.id = " + params[:id].to_s
+              @erreur.numLigne = '48'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -60,9 +60,9 @@ class ProjetclonesController < ApplicationController
       rescue => e # Incident Find Projet
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - ProjetclonesController - update'
-          @erreur.origine = "Incident Find Projet.id = " + projet.id.to_s
-          @erreur.numLigne = '22'
+          @erreur.appli = '1'
+          @erreur.origine = "ProjetclonesController[update]: Incident Find Projet/Projetold - params[:id]= " + params[:id].to_s
+          @erreur.numLigne = '24/26'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -121,9 +121,9 @@ class ProjetclonesController < ApplicationController
                   rescue => e
                       @erreur = Erreur.new
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = 'rails - ProjetclonesController - update'
-                      @erreur.origine = 'Create Clonetache - tache.id=' + tache.id.to_s
-                      @erreur.numLigne = '110'
+                      @erreur.appli = '1'
+                      @erreur.origine = 'ProjetclonesController[update]: Create Clonetache - tache.id=' + tache.id.to_s
+                      @erreur.numLigne = '120'
                       @erreur.message = e.message
                       @erreur.parametreId = params[:parametre][:id].to_s
                       @erreur.save

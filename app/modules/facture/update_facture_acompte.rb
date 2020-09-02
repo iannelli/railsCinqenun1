@@ -8,9 +8,9 @@ module UpdateFactureAcompte
         rescue => e  # Incident Maj Facture
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = "rails - FacturesController[Update] - ApplicationController[upteteFactureAcompte]"
-            @erreur.origine = "erreur Maj Facture.modePaieLib"
-            @erreur.numLigne = '7'
+            @erreur.appli = "1"
+            @erreur.origine = "Module[UpdateFactureAcompte]: erreur Find Facture.id=@factureAcompteArray[1].to_i " + @factureAcompteArray[1].to_s
+            @erreur.numLigne = '5'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
             @erreur.save

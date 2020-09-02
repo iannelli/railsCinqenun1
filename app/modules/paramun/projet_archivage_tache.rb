@@ -43,9 +43,9 @@ module ProjetArchivageTache
             rescue => e # erreur Tacheold Save
                 @erreur = Erreur.new
                 @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreur.appli = 'rails - ParamunsController - destroy'
-                @erreur.origine = 'Incident Save Tacheold - tache.id=' + tache.id.to_s
-                @erreur.numLigne = '585'
+                @erreur.appli = '1'
+                @erreur.origine = 'Module[ProjetArchivageTache]: Incident Create Tacheold - tache.id=' + tache.id.to_s
+                @erreur.numLigne = '42'
                 @erreur.message = e.message
                 @erreur.parametreId = params[:id].to_s
                 @erreur.save

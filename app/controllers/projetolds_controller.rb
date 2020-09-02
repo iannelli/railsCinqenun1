@@ -1,6 +1,5 @@
 class ProjetoldsController < ApplicationController
 
-
   # GET /projetolds ****** CHARGEMENT ************************
   def index
       #@projetolds = Projetold.all
@@ -48,8 +47,8 @@ class ProjetoldsController < ApplicationController
        rescue => e
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - ProjetoldsController - create'
-          @erreur.origine = 'Incident Find Parametre - @paramun.id=' + params[:parametre][:parametreId].to_s
+          @erreur.appli = '1'
+          @erreur.origine = 'ProjetoldsController[create]: Incident Find Parametre - @paramun.id=' + params[:parametre][:parametreId].to_s
           @erreur.numLigne = '46'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:parametreId].to_s
@@ -61,14 +60,14 @@ class ProjetoldsController < ApplicationController
           begin
               @projet = Projet.find(params[:projetold][:id].to_i)
           rescue => e
-              @erreurold = Erreurold.new
-              @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreurold.appli = 'rails - ProjetoldsController - create'
-              @erreurold.origine = 'Incident Find Projet - projet.id=' + params[:projetold][:id].to_s
-              @erreurold.numLigne = '61'
-              @erreurold.message = e.message
-              @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-              @erreurold.save
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = '1'
+              @erreur.origine = 'ProjetoldsController[create]: Incident Find Projet - projet.id=' + params[:projetold][:id].to_s
+              @erreur.numLigne = '61'
+              @erreur.message = e.message
+              @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+              @erreur.save
               @erreurArchivage = 1
               
           end
@@ -77,33 +76,17 @@ class ProjetoldsController < ApplicationController
       if @erreurArchivage == 0
           @projetold = Projetold.new(projetold_params)
           @projetold.parametreoldId = params[:parametre][:parametreId].to_s
-          @arrayDevisInactif = @paramun.parDevisInactif.split('|')
-          @arrayProjetInactif = @paramun.parProjetInactif.split('|')
           begin
               @projetold.save
-              case @projetold.proSituation.to_s
-                  when '20'
-                      cpt = @arrayDevisInactif[0].to_i + 1
-                      @arrayDevisInactif[0] = cpt
-                      @paramun.parDevisInactif = @arrayDevisInactif.join('|')
-                  when '21'
-                      cpt = @arrayProjetInactif[0].to_i + 1
-                      @arrayProjetInactif[0] = cpt
-                      @paramun.parProjetInactif = @arrayProjetInactif.join('|')
-                  when '22'
-                      cpt = @paramun.nbreProjetClos.to_i + 1
-                      @paramun.nbreProjetClos = cpt.to_s
-              end
-              @paramun.save
           rescue => e
-              @erreurold = Erreurold.new
-              @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreurold.appli = 'rails - ProjetoldsController - create'
-              @erreurold.origine = 'Incident Create Projetold'
-              @erreurold.numLigne = '80'
-              @erreurold.message = e.message
-              @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-              @erreurold.save
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = '1'
+              @erreur.origine = 'ProjetoldsController[create]: Incident Create Projetold'
+              @erreur.numLigne = '80'
+              @erreur.message = e.message
+              @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+              @erreur.save
               @erreurArchivage = 1
           end
       end
@@ -150,14 +133,14 @@ class ProjetoldsController < ApplicationController
                   begin
                       @tacheold.save
                   rescue => e # erreur Tacheold Create
-                      @erreurold = Erreurold.new
-                      @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreurold.appli = 'rails - ProjetoldsController - create'
-                      @erreurold.origine = 'Incident Create Tacheold - tache.id=' + tache.id.to_s
-                      @erreurold.numLigne = '147'
-                      @erreurold.message = e.message
-                      @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-                      @erreurold.save
+                      @erreur = Erreur.new
+                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                      @erreur.appli = '1'
+                      @erreur.origine = 'ProjetoldsController[create]: Incident Create Tacheold - tache.id=' + tache.id.to_s
+                      @erreur.numLigne = '134'
+                      @erreur.message = e.message
+                      @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+                      @erreur.save
                       @erreurArchivage = 1
                       break
                   end
@@ -207,14 +190,14 @@ class ProjetoldsController < ApplicationController
                   begin
                       @factureold.save
                   rescue => e # erreur Factureold Create
-                      @erreurold = Erreurold.new
-                      @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreurold.appli = 'rails - ProjetoldsController - create'
-                      @erreurold.origine = 'Incident Create Factureold - facture.id=' + facture.id.to_s
-                      @erreurold.numLigne = '197'
-                      @erreurold.message = e.message
-                      @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-                      @erreurold.save
+                      @erreur = Erreur.new
+                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                      @erreur.appli = '1'
+                      @erreur.origine = 'ProjetoldsController[create]: Incident Create Factureold - facture.id=' + facture.id.to_s
+                      @erreur.numLigne = '191'
+                      @erreur.message = e.message
+                      @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+                      @erreur.save
                       @erreurArchivage = 1
                       break
                   end
@@ -228,14 +211,14 @@ class ProjetoldsController < ApplicationController
                    begin
                       tache.destroy
                   rescue => e  # Incident destroy Tache
-                      @erreurold = Erreurold.new
-                      @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreurold.appli = 'rails - ProjetoldsController - create'
-                      @erreurold.origine = "erreur destroy Tache - tache.id =" + tache.id.to_s
-                      @erreurold.numLigne = '218'
-                      @erreurold.message = e.message
-                      @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-                      @erreurold.save
+                      @erreur = Erreur.new
+                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                      @erreur.appli = '1'
+                      @erreur.origine = "ProjetoldsController[create]: erreur destroy Tache - tache.id =" + tache.id.to_s
+                      @erreur.numLigne = '212'
+                      @erreur.message = e.message
+                      @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+                      @erreur.save
                       @erreurArchivage = 1
                   end
               end
@@ -248,14 +231,14 @@ class ProjetoldsController < ApplicationController
                   begin
                       facture.destroy
                   rescue => e  # Incident destroy Facture
-                      @erreurold = Erreurold.new
-                      @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreurold.appli = 'rails - ProjetoldsController - create'
-                      @erreurold.origine = "erreur destroy Facture - facture.id =" + facture.id.to_s
-                      @erreurold.numLigne = '238'
-                      @erreurold.message = e.message
-                      @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-                      @erreurold.save
+                      @erreur = Erreur.new
+                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                      @erreur.appli = '1'
+                      @erreur.origine = "ProjetoldsController[create]: erreur destroy Facture - facture.id =" + facture.id.to_s
+                      @erreur.numLigne = '232'
+                      @erreur.message = e.message
+                      @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+                      @erreur.save
                       @erreurArchivage = 1
                   end
               end
@@ -266,14 +249,14 @@ class ProjetoldsController < ApplicationController
           begin
               @projet.destroy
           rescue => e  # Incident destroy Projet
-              @erreurold = Erreurold.new
-              @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreurold.appli = 'rails - ProjetoldsController - create'
-              @erreurold.origine = "erreur destroy Projet - @projet.id =" + @projet.id.to_s
-              @erreurold.numLigne = '256'
-              @erreurold.message = e.message
-              @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-              @erreurold.save
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = '1'
+              @erreur.origine = "ProjetoldsController[create]: erreur destroy Projet - @projet.id =" + @projet.id.to_s
+              @erreur.numLigne = '250'
+              @erreur.message = e.message
+              @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+              @erreur.save
               @erreurArchivage = 1
           end
       end
@@ -299,14 +282,14 @@ class ProjetoldsController < ApplicationController
       begin
           @paramun = Paramun.find(params[:parametre][:parametreId].to_i)
       rescue => e
-          @erreurold = Erreurold.new
-          @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreurold.appli = 'rails - ProjetoldsController - update'
-          @erreurold.origine = 'Incident Find Parametre.id ' + params[:parametre][:parametreId].to_s
-          @erreurold.numLigne = '286'
-          @erreurold.message = e.message
-          @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-          @erreurold.save
+          @erreur = Erreur.new
+          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+          @erreur.appli = '1'
+          @erreur.origine = 'ProjetoldsController[update]: Incident Find Parametre.id ' + params[:parametre][:parametreId].to_s
+          @erreur.numLigne = '283'
+          @erreur.message = e.message
+          @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+          @erreur.save
           @erreurReactivation = 1
       end
       # Find Projetold ---
@@ -314,14 +297,14 @@ class ProjetoldsController < ApplicationController
           begin
               @projetold = Projetold.find(params[:id])
           rescue => e
-              @erreurold = Erreurold.new
-              @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreurold.appli = 'rails - ProjetoldsController - update'
-              @erreurold.origine = 'Incident Find Projetold.id ' + params[:id].to_s
-              @erreurold.numLigne = '301'
-              @erreurold.message = e.message
-              @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-              @erreurold.save
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = '1'
+              @erreur.origine = 'ProjetoldsController[update]: Incident Find Projetold.id ' + params[:id].to_s
+              @erreur.numLigne = '298'
+              @erreur.message = e.message
+              @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+              @erreur.save
               @erreurReactivation = 1
           end
       end
@@ -330,30 +313,17 @@ class ProjetoldsController < ApplicationController
           @projet = Projet.new(projetold_params)
           @projet.majDate = @current_time.strftime "%d/%m/%Y"
           @projet.parametreId = params[:parametre][:parametreId].to_s
-          @arrayDevisInactif = @paramun.parDevisInactif.split('|')
-          @arrayProjetInactif = @paramun.parProjetInactif.split('|')
           begin
               @projet.save
-              case @projet.proSituation.to_s
-                  when '00'
-                      cpt = @arrayDevisInactif[0].to_i - 1
-                      @arrayDevisInactif[0] = cpt
-                      @paramun.parDevisInactif = @arrayDevisInactif.join('|')
-                  when '01'
-                      cpt = @arrayProjetInactif[0].to_i - 1
-                      @arrayProjetInactif[0] = cpt
-                      @paramun.parProjetInactif = @arrayProjetInactif.join('|')
-              end
-              @paramun.save
           rescue => e # erreur Projet Create
-              @erreurold = Erreurold.new
-              @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreurold.appli = 'rails - ProjetoldsController - update'
-              @erreurold.origine = 'Incident Create Projet - projet.id=' + params[:id].to_s
-              @erreurold.numLigne = '319'
-              @erreurold.message = e.message
-              @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-              @erreurold.save
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = '1'
+              @erreur.origine = 'ProjetoldsController[update]: Incident Create Projet - projet.id=' + params[:id].to_s
+              @erreur.numLigne = '317'
+              @erreur.message = e.message
+              @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+              @erreur.save
               @erreurReactivation = 1
           end
       end
@@ -400,14 +370,14 @@ class ProjetoldsController < ApplicationController
                   begin
                       @tache.save
                   rescue => e # erreur Tache Create
-                      @erreurold = Erreurold.new
-                      @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreurold.appli = 'rails - ProjetoldsController - update'
-                      @erreurold.origine = 'Incident Create Tache - tacheold.id=' + tacheold.id.to_s
-                      @erreurold.numLigne = '383'
-                      @erreurold.message = e.message
-                      @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-                      @erreurold.save
+                      @erreur = Erreur.new
+                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                      @erreur.appli = '1'
+                      @erreur.origine = 'ProjetoldsController[update]: Incident Create Tache - tacheold.id=' + tacheold.id.to_s
+                      @erreur.numLigne = '371'
+                      @erreur.message = e.message
+                      @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+                      @erreur.save
                       @erreurReactivation = 1
                       break
                   end
@@ -456,14 +426,14 @@ class ProjetoldsController < ApplicationController
                   begin
                       @facture.save
                   rescue => e # erreur Facture Create
-                      @erreurold = Erreurold.new
-                      @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreurold.appli = 'rails - ProjetoldsController - update'
-                      @erreurold.origine = 'Incident Create Facture - factureold.id=' + factureold.id.to_s
-                      @erreurold.numLigne = '433'
-                      @erreurold.message = e.message
-                      @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-                      @erreurold.save
+                      @erreur = Erreur.new
+                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                      @erreur.appli = '1'
+                      @erreur.origine = 'ProjetoldsController[update]: Incident Create Facture - factureold.id=' + factureold.id.to_s
+                      @erreur.numLigne = '427'
+                      @erreur.message = e.message
+                      @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+                      @erreur.save
                       @erreurReactivation = 1
                       break
                   end
@@ -477,14 +447,14 @@ class ProjetoldsController < ApplicationController
                    begin
                       tacheold.destroy
                   rescue => e  # Incident destroy Tacheold
-                      @erreurold = Erreurold.new
-                      @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreurold.appli = 'rails - ProjetoldsController - update'
-                      @erreurold.origine = "erreur destroy Tacheold - tacheold.id =" + tacheold.id.to_s
-                      @erreurold.numLigne = '454'
-                      @erreurold.message = e.message
-                      @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-                      @erreurold.save
+                      @erreur = Erreur.new
+                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                      @erreur.appli = '1'
+                      @erreur.origine = "ProjetoldsController[update]: erreur destroy Tacheold - tacheold.id =" + tacheold.id.to_s
+                      @erreur.numLigne = '448'
+                      @erreur.message = e.message
+                      @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+                      @erreur.save
                       @erreurReactivation = 1
                   end
               end
@@ -497,14 +467,14 @@ class ProjetoldsController < ApplicationController
                   begin
                       factureold.destroy
                   rescue => e  # Incident destroy Factureold
-                      @erreurold = Erreurold.new
-                      @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreurold.appli = 'rails - ProjetoldsController - update'
-                      @erreurold.origine = "erreur destroy Factureold - factureold.id =" + factureold.id.to_s
-                      @erreurold.numLigne = '474'
-                      @erreurold.message = e.message
-                      @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-                      @erreurold.save
+                      @erreur = Erreur.new
+                      @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+                      @erreur.appli = '1'
+                      @erreur.origine = "ProjetoldsController[update]: erreur destroy Factureold - factureold.id =" + factureold.id.to_s
+                      @erreur.numLigne = '468'
+                      @erreur.message = e.message
+                      @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+                      @erreur.save
                       @erreurReactivation = 1
                   end
               end
@@ -515,14 +485,14 @@ class ProjetoldsController < ApplicationController
           begin
               @projetold.destroy
           rescue => e  # Incident destroy Projetold
-              @erreurold = Erreurold.new
-              @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreurold.appli = 'rails - ProjetoldsController - update'
-              @erreurold.origine = "erreur destroy Projetold - @projetold.id =" + @projetold.id.to_s
-              @erreurold.numLigne = '492'
-              @erreurold.message = e.message
-              @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
-              @erreurold.save
+              @erreur = Erreur.new
+              @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+              @erreur.appli = '1'
+              @erreur.origine = "ProjetoldsController[update]: erreur destroy Projetold - @projetold.id =" + @projetold.id.to_s
+              @erreur.numLigne = '486'
+              @erreur.message = e.message
+              @erreur.parametreoldId = params[:parametre][:parametreId].to_s
+              @erreur.save
               @erreurReactivation = 1
           end
       end

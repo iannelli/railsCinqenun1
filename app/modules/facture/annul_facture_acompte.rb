@@ -42,9 +42,9 @@ module AnnulFactureAcompte
         rescue => e  # Incident Création Facture d'Avoir (Acompte)
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = "rails - FacturesController - ApplicationController[annulFactureAcompte]"
-            @erreur.origine = "erreur Création Facture Acompte"
-            @erreur.numLigne = '183'
+            @erreur.appli = "1"
+            @erreur.origine = "Module[annulFactureAcompte]: erreur Création Facture d'Avoir de l'Acompte"
+            @erreur.numLigne = '41'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
             @erreur.save
@@ -59,9 +59,9 @@ module AnnulFactureAcompte
             rescue => e  # Incident Maj Facture Annulée
                 @erreur = Erreur.new
                 @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreur.appli = "rails - FacturesController[Update] - ApplicationController[annulFactureAcompte]"
-                @erreur.origine = "erreur Maj Facture Annulée - ApplicationController[annulFactureAcompte]"
-                @erreur.numLigne = '287'
+                @erreur.appli = "1"
+                @erreur.origine = "Module[annulFactureAcompte]: erreur Find Facture Annulée - Facture.id=@factureAvoirArray[13].to_i " + @factureAvoirArray[13].to_s
+                @erreur.numLigne = '55'
                 @erreur.message = e.message
                 @erreur.parametreId = params[:parametre][:id].to_s
                 @erreur.save
@@ -86,9 +86,9 @@ module AnnulFactureAcompte
             rescue => e  # Incident Maj Projet
                 @erreur = Erreur.new
                 @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreur.appli = "rails - FacturesController[Update] - ApplicationController[annulFactureAcompte]"
-                @erreur.origine = "erreur Maj Projet.proNumrang - ApplicationController[annulFactureAcompte]"
-                @erreur.numLigne = '312'
+                @erreur.appli = "1"
+                @erreur.origine = "Module[annulFactureAcompte]: erreur Find Projet.id(@factureAvoirArray[14].to_i)= " + @factureAvoirArray[14].to_s
+                @erreur.numLigne = '73'
                 @erreur.message = e.message
                 @erreur.parametreId = params[:parametre][:id].to_s
                 @erreur.save
@@ -102,9 +102,9 @@ module AnnulFactureAcompte
             rescue => e  # Incident Maj Parametre
                 @erreur = Erreur.new
                 @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreur.appli = "rails - FacturesController[Update] - ApplicationController[annulFactureAcompte]"
-                @erreur.origine = "erreur Maj Parametre - ApplicationController[annulFactureAcompte]"
-                @erreur.numLigne = '328'
+                @erreur.appli = "1"
+                @erreur.origine = "Module[annulFactureAcompte]: erreur Maj Parametre (parNumFact)"
+                @erreur.numLigne = '101'
                 @erreur.message = e.message
                 @erreur.parametreId = params[:parametre][:id].to_s
                 @erreur.save

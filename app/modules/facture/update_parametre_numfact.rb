@@ -8,10 +8,10 @@ module UpdateParametreNumfact
         rescue => e  # Incident Maj Parametre
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = "rails - FacturesController[Create] - ApplicationController[update_parametre_numfact_trait]"
+            @erreur.appli = "1"
             @erreurCreate = 1         
-            @erreur.origine = "erreur Maj Parametre - ApplicationController[update_parametre_numfact_trait]"
-            @erreur.numLigne = '10'
+            @erreur.origine = "Module[update_parametre_numfact_trait]: erreur Maj Parametre.parNumFact"
+            @erreur.numLigne = '7'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
             @erreur.save

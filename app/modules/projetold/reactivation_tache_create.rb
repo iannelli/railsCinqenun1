@@ -43,9 +43,9 @@ module ReactivationTacheCreate
             rescue => e # erreur Tache Create
                 @erreurold = Erreurold.new
                 @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreurold.appli = 'rails - ProjetoldsController - update'
-                @erreurold.origine = 'Incident Create Tache - tacheold.id=' + tacheold.id.to_s
-                @erreurold.numLigne = '383'
+                @erreurold.appli = '1'
+                @erreurold.origine = 'Module[ReactivationTacheCreate]: Incident Create Tache - tacheold.id=' + tacheold.id.to_s
+                @erreurold.numLigne = '42'
                 @erreurold.message = e.message
                 @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
                 @erreurold.save

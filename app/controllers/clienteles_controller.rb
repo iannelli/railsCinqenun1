@@ -40,8 +40,8 @@ class ClientelesController < ApplicationController
       rescue => e # Incident lors de la création de Clientele
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - ClientelesController - create"
-          @erreur.origine = "erreur Création Clientele"
+          @erreur.appli = "1"
+          @erreur.origine = "ClientelesController[create]: erreur Création Clientele"
           @erreur.numLigne = '39'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
@@ -70,8 +70,8 @@ class ClientelesController < ApplicationController
           rescue => e # Incident Save Clientele
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - ClientelesController - update"
-              @erreur.origine = "erreur update Clientele - clientele.id=" + params[:id].to_s
+              @erreur.appli = "1"
+              @erreur.origine = "ClientelesController[update]: clientele.id=" + params[:id].to_s
               @erreur.numLigne = '69'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
@@ -81,8 +81,8 @@ class ClientelesController < ApplicationController
       rescue => e # Incident Find de Clientele
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - ClientelesController - update"
-          @erreur.origine = "erreur Find Clientele.find(params[:id])" + params[:id].to_s
+          @erreur.appli = "1"
+          @erreur.origine = "ClientelesController[update]: Clientele.find(params[:id])" + params[:id].to_s
           @erreur.numLigne = '67'
           @erreur.message = e.message
           @erreur.parametreId = ""
@@ -114,8 +114,8 @@ class ClientelesController < ApplicationController
                   rescue => e # Incident destroy Contact
                       @erreur = Erreur.new
                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                      @erreur.appli = 'rails - ClientelesController - destroy'
-                      @erreur.origine = 'Suppression Contact - contact.id=' + contact.id.to_s +
+                      @erreur.appli = '1'
+                      @erreur.origine = 'ClientelesController[destroy]: Suppression Contact - contact.id=' + contact.id.to_s +
                                         'Clientele.find(params[:id])=' + params[:id].to_s
                       @erreur.numLigne = '113'
                       @erreur.message = e.message
@@ -129,8 +129,8 @@ class ClientelesController < ApplicationController
       rescue => e # Incident Find Clientele
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - ClientelesController - destroy'
-          @erreur.origine = 'Incident Find - Clientele.find(params[:id])=' + params[:id].to_s
+          @erreur.appli = '1'
+          @erreur.origine = 'ClientelesController[destroy]:  Clientele.find(params[:id])=' + params[:id].to_s
           @erreur.numLigne = '108'
           @erreur.message = e.message
           @erreur.parametreId = ""
@@ -144,8 +144,8 @@ class ClientelesController < ApplicationController
           rescue => e # Incident lors de la suppression de la Clientele
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - ClientelesController - destroy'
-              @erreur.origine = "erreur Delete Clientele - clientele.id=" + params[:id].to_s
+              @erreur.appli = '1'
+              @erreur.origine = "ClientelesController[destroy]: Delete Clientele - clientele.id=" + params[:id].to_s
               @erreur.numLigne = '143'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s

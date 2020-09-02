@@ -45,9 +45,9 @@ class ContactsController < ApplicationController
           rescue => e
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - ContactsController - create'
-              @erreur.origine = 'Erreur Create Contact'
-              @erreur.numLigne = '43'
+              @erreur.appli = '1'
+              @erreur.origine = 'ContactsController[create]: Create Contact'
+              @erreur.numLigne = '44'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -56,9 +56,9 @@ class ContactsController < ApplicationController
       rescue => e  # erreur Find Clientele
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails'
-          @erreur.origine = 'ContactsController - create'
-          @erreur.numLigne = '39'
+          @erreur.appli = '1'
+          @erreur.origine = 'ContactsController[create]: Find Clientele ' + @clientele.id.to_s
+          @erreur.numLigne = '40'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -87,9 +87,9 @@ class ContactsController < ApplicationController
           rescue => e # Incident Save Contact
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - ContactsController - update"
-              @erreur.origine = "erreur Update Contact - Contact.id=" + params[:id].to_s
-              @erreur.numLigne = '85'
+              @erreur.appli = "1"
+              @erreur.origine = "ContactsController[update]: Contact.id=" + params[:id].to_s
+              @erreur.numLigne = '86'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -98,9 +98,9 @@ class ContactsController < ApplicationController
       rescue => e # Incident Find de Contact
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - ContactsController - update"
-          @erreur.origine = "erreur Find Contact.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '83'
+          @erreur.appli = "1"
+          @erreur.origine = "ContactsController[update]: Contact.find(params[:id])=" + params[:id].to_s
+          @erreur.numLigne = '84'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -128,9 +128,9 @@ class ContactsController < ApplicationController
           rescue => e  # erreur destroy de Contact
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - ContactsController - destroy'
-              @erreur.origine = "erreur destroy de Contact - @contact.id =" + @contact.id.to_s
-              @erreur.numLigne = '126'
+              @erreur.appli = '1'
+              @erreur.origine = "ContactsController[destroy]: @contact.id =" + @contact.id.to_s
+              @erreur.numLigne = '127'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -139,9 +139,9 @@ class ContactsController < ApplicationController
        rescue => e # Incident Find Contact
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = 'rails - ContactsController - destroy'
-            @erreur.origine = 'Incident Find - Contact.find(params[:id])=' + params[:id].to_s
-            @erreur.numLigne = '124'
+            @erreur.appli = '1'
+            @erreur.origine = 'ContactsController[destroy]: Contact.find(params[:id])=' + params[:id].to_s
+            @erreur.numLigne = '125'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
             @erreur.save

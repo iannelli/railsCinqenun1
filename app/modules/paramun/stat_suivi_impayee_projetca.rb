@@ -3,7 +3,14 @@ module StatSuiviImpayeeProjetca
     def stat_suivi_impayee_projetca_trait
         ## Examen des Projets ------
         @paramun.projets.each do |projet|
-            if projet.factures.length != 0
+            if projet.factures.length == 0
+                case projet.proSituation.to_s
+                    when '00' # Devis en attente
+                        @arrayDevisEnAttente[0] += 1
+                    when '01' # Projet enCours
+                        @arrayProjetEnCours[0] += 1
+                end           
+            else
                 projet.factures.each do |facture|
                     ## Examen des Devis pour dénombrement et calcul CA
           					if facture.typeImpr.to_s == '10'
@@ -47,7 +54,14 @@ module StatSuiviImpayeeProjetca
               			if projetold.proSituation.to_s == '22'
                         @nbreProjetClos += 1
                     else
-                        if projetold.factureolds.length != 0
+                        if projetold.factureolds.length == 0
+                            case projetold.proSituation.to_s
+                                when '20' # Devis en attente Inactif
+                                    @arrayDevisInactif[0] += 1
+                                when '21' # Projet enCours Inactif
+                                    @arrayProjetInactif[0] += 1
+                            end
+                        else
                             projetold.factureolds.each do |factureold|
                 						    ## Examen des Devis pour dénombrement et calcul CA
                 								if factureold.typeImpr.to_s == '10'

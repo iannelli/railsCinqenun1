@@ -44,9 +44,9 @@ class DepensesController < ApplicationController
       rescue => e # Incident création de Depense
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - DepensesController - create"
-          @erreur.origine = "erreur Création Depense"
-          @erreur.numLigne = '42'
+          @erreur.appli = "1"
+          @erreur.origine = "DepensesController[create]: erreur Création Depense"
+          @erreur.numLigne = '43'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -87,9 +87,9 @@ class DepensesController < ApplicationController
           rescue => e # Incident save Parametre
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - DepensesController - create"
-              @erreur.origine = "erreur save Parametre"
-              @erreur.numLigne = '79'
+              @erreur.appli = "1"
+              @erreur.origine = "DepensesController[create]: erreur save Parametre"
+              @erreur.numLigne = '86'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -135,9 +135,9 @@ class DepensesController < ApplicationController
       rescue => e # erreur Find Depense
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - DepensesController - update"
-          @erreur.origine = "erreur Find Depense - depense.id=" + params[:id].to_s
-          @erreur.numLigne = '115'
+          @erreur.appli = "1"
+          @erreur.origine = "DepensesController[update]: Find Depense - depense.id=" + params[:id].to_s
+          @erreur.numLigne = '121'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -180,9 +180,9 @@ class DepensesController < ApplicationController
           rescue => e # Incident lors de la Maj de Depense
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - DepensesController - update"
-              @erreur.origine = "erreur Modification Depense - depense.id=" + params[:id].to_s
-              @erreur.numLigne = '167'
+              @erreur.appli = "1"
+              @erreur.origine = "DepensesController[update]: depense.id=" + params[:id].to_s
+              @erreur.numLigne = '179'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save

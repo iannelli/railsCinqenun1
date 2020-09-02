@@ -41,8 +41,8 @@ class ImmobsController < ApplicationController
       rescue => e # Incident création de Immob
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - ImmobsController - create"
-          @erreur.origine = "erreur Création Immob"
+          @erreur.appli = "1"
+          @erreur.origine = "ImmobsController[create]: erreur Création Immob"
           @erreur.numLigne = '40'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
@@ -60,9 +60,9 @@ class ImmobsController < ApplicationController
           rescue => e # Incident save Parametre
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - ImmobsController - create"
-              @erreur.origine = "erreur save Parametre"
-              @erreur.numLigne = '74'
+              @erreur.appli = "1"
+              @erreur.origine = "mmobsController[create]: erreur save Parametre"
+              @erreur.numLigne = '59'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -93,9 +93,9 @@ class ImmobsController < ApplicationController
       rescue => e # erreur Find Immob
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - ImmobsController - update"
-          @erreur.origine = "erreur Find Immob - immob.id=" + params[:id].to_s
-          @erreur.numLigne = '112'
+          @erreur.appli = "1"
+          @erreur.origine = "ImmobsController[update]: erreur Find Immob - immob.id=" + params[:id].to_s
+          @erreur.numLigne = '92'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -108,9 +108,9 @@ class ImmobsController < ApplicationController
           rescue => e # Incident lors de la Maj de Immob
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - ImmobsController - update"
-              @erreur.origine = "erreur Modification Immob - immob.id=" + params[:id].to_s
-              @erreur.numLigne = '187'
+              @erreur.appli = "1"
+              @erreur.origine = "ImmobsController[update]: erreur Modification Immob - immob.id=" + params[:id].to_s
+              @erreur.numLigne = '107'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -142,9 +142,9 @@ class ImmobsController < ApplicationController
       rescue => e # Incident Find Depense
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = 'rails - ImmobsController - destroy'
-          @erreur.origine = "erreur Find Immob - Immob.find(params[:id])=" + params[:id].to_s
-          @erreur.numLigne = '306'
+          @erreur.appli = '1'
+          @erreur.origine = "ImmobsController[destroy]: erreur Find Immob - Immob.find(params[:id])=" + params[:id].to_s
+          @erreur.numLigne = '141'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -160,9 +160,9 @@ class ImmobsController < ApplicationController
           rescue => e # Incident save Parametre
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - ImmobsController - destroy"
-              @erreur.origine = "erreur save Parametre"
-              @erreur.numLigne = '329'
+              @erreur.appli = "1"
+              @erreur.origine = "ImmobsController[destroy]: erreur save Parametre"
+              @erreur.numLigne = '159'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -175,9 +175,9 @@ class ImmobsController < ApplicationController
           rescue => e # Incident lors de la suppression de Immob
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = 'rails - ImmobsController - destroy'
-              @erreur.origine = "erreur Delete Immob - immob.id=" + params[:id].to_s
-              @erreur.numLigne = '344'
+              @erreur.appli = '1'
+              @erreur.origine = "ImmobsController[destroy]: erreur Delete Immob - immob.id=" + params[:id].to_s
+              @erreur.numLigne = '174'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save

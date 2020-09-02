@@ -42,9 +42,9 @@ class RecettesController < ApplicationController
       rescue => e # Incident création de Recette
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - RecettesController - create"
-          @erreur.origine = "erreur Création Recette"
-          @erreur.numLigne = '40'
+          @erreur.appli = "1"
+          @erreur.origine = "RecettesController[create]: erreur Création Recette"
+          @erreur.numLigne = '41'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save
@@ -100,9 +100,9 @@ class RecettesController < ApplicationController
           rescue => e # Incident Maj de Recette
               @erreur = Erreur.new
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-              @erreur.appli = "rails - RecettesController - update"
-              @erreur.origine = "erreur Modification Recette.id=" + params[:id].to_s
-              @erreur.numLigne = '106'
+              @erreur.appli = "1"
+              @erreur.origine = "RecettesController[update]: erreur Modification Recette.id=" + params[:id].to_s
+              @erreur.numLigne = '99'
               @erreur.message = e.message
               @erreur.parametreId = params[:parametre][:id].to_s
               @erreur.save
@@ -111,9 +111,9 @@ class RecettesController < ApplicationController
       rescue => e # Incident Find Recette
           @erreur = Erreur.new
           @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreur.appli = "rails - RecettesController - update"
-          @erreur.origine = "Incident Find Recette.id=" + params[:id].to_s
-          @erreur.numLigne = '104'
+          @erreur.appli = "1"
+          @erreur.origine = "RecettesController[update]: Incident Find Recette.id=" + params[:id].to_s
+          @erreur.numLigne = '97'
           @erreur.message = e.message
           @erreur.parametreId = params[:parametre][:id].to_s
           @erreur.save

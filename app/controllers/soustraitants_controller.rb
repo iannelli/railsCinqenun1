@@ -41,8 +41,8 @@ class SoustraitantsController < ApplicationController
     rescue => e # Incident création Soustraitant
         @erreur = Erreur.new
         @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-        @erreur.appli = "rails - SoustraitantsController - create"
-        @erreur.origine = "erreur Création Soustraitant"
+        @erreur.appli = "1"
+        @erreur.origine = "SoustraitantsController[create]: erreur Création Soustraitant"
         @erreur.numLigne = '40'
         @erreur.message = e.message
         @erreur.parametreId = params[:parametre][:id].to_s
@@ -71,8 +71,8 @@ class SoustraitantsController < ApplicationController
         rescue => e # Incident Save Soustraitant
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = "rails - SoustraitantsController - update"
-            @erreur.origine = "Incident Update Soustraitant.id=" + params[:id].to_s
+            @erreur.appli = "1"
+            @erreur.origine = "SoustraitantsController[update]: Incident Update Soustraitant.id=" + params[:id].to_s
             @erreur.numLigne = '70'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
@@ -82,8 +82,8 @@ class SoustraitantsController < ApplicationController
     rescue => e # Incident Find Soustraitant
         @erreur = Erreur.new
         @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-        @erreur.appli = "rails - SoustraitantsController - update"
-        @erreur.origine = "Incident Find Soustraitant.find(params[:id])=" + params[:id].to_s
+        @erreur.appli = "1"
+        @erreur.origine = "SoustraitantsController[update]: Incident Find Soustraitant.find(params[:id])=" + params[:id].to_s
         @erreur.numLigne = '68'
         @erreur.message = e.message
         @erreur.parametreId = params[:parametre][:id].to_s
@@ -112,8 +112,8 @@ class SoustraitantsController < ApplicationController
         rescue => e # Incident lors de la suppression de Soustraitant
             @erreur = Erreur.new
             @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-            @erreur.appli = 'rails - SoustraitantsController - destroy'
-            @erreur.origine = "erreur Delete Soustraitant.id=" + params[:id].to_s
+            @erreur.appli = '1'
+            @erreur.origine = "SoustraitantsController[destroy]: erreur Delete Soustraitant.id=" + params[:id].to_s
             @erreur.numLigne = '111'
             @erreur.message = e.message
             @erreur.parametreId = params[:parametre][:id].to_s
@@ -123,8 +123,8 @@ class SoustraitantsController < ApplicationController
     rescue => e # Incident Find de Soustraitant
         @erreur = Erreur.new
         @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-        @erreur.appli = 'rails - SoustraitantsController - destroy'
-        @erreur.origine = "erreur Find Soustraitant.id=" + params[:id].to_s
+        @erreur.appli = '1'
+        @erreur.origine = "SoustraitantsController[destroy]: erreur Find Soustraitant.id=" + params[:id].to_s
         @erreur.numLigne = '109'
         @erreur.message = e.message
         @erreur.parametreId = params[:parametre][:id].to_s

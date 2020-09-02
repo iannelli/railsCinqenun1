@@ -8,14 +8,14 @@ class ParamunoldsController < ApplicationController
       begin
           @paramunold = Paramunold.find(params[:parametre][:id].to_i)
       rescue => e  # Incident Find Tache
-          @erreurold = Erreur.new
-          @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-          @erreurold.appli = "rails - ParamunoldsController - index"
-          @erreurold.origine = "erreur Find tache - @paramunold=" + params[:parametre][:id].to_s
-          @erreurold.numLigne = '7'
-          @erreurold.message = e.message
-          @erreurold.parametreoldId = params[:parametre][:id].to_s
-          @erreurold.save
+          @erreur = Erreur.new
+          @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
+          @erreur.appli = "1"
+          @erreur.origine = "ParamunoldsController[index]: erreur Find tache - @paramunold=" + params[:parametre][:id].to_s
+          @erreur.numLigne = '9'
+          @erreur.message = e.message
+          @erreur.parametreId = params[:parametre][:id].to_s
+          @erreur.save
           @erreurIndex = 1
       end
       respond_to do |format|

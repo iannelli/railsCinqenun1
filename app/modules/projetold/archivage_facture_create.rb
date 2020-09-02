@@ -43,9 +43,9 @@ module ArchivageFactureCreate
             rescue => e # erreur Factureold Create
                 @erreurold = Erreurold.new
                 @erreurold.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
-                @erreurold.appli = 'rails - ProjetoldsController - create'
-                @erreurold.origine = 'Incident Create Factureold - facture.id=' + facture.id.to_s
-                @erreurold.numLigne = '197'
+                @erreurold.appli = '1'
+                @erreurold.origine = 'Module[ArchivageFactureCreate]: Incident Create Factureold - facture.id=' + facture.id.to_s
+                @erreurold.numLigne = '42'
                 @erreurold.message = e.message
                 @erreurold.parametreoldId = params[:parametre][:parametreId].to_s
                 @erreurold.save
