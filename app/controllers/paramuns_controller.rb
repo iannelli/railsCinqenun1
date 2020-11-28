@@ -180,16 +180,7 @@ class ParamunsController < ApplicationController
               end
           end
       end
-      
-      # Clôture de l'Abonnement suite à refus à l'issu de la Période d'essai
-      if params[:typeMaj][:maj].to_s == 'UParAbonneClos'
-          @abonne = Abonne.find(@paramun.abonneId)
-          @aboAbonAbonneArray = @abonne.aboAbon.split("|")
-          @aboAbonAbonneArray[4] = @current_time.strftime "%d/%m/%Y"
-          @aboAbonAbonneArray[5] = '5'
-          @abonne.aboAbon = @aboAbonAbonneArray.join('|')
-          @abonne.save
-      end
+
       # Mise à jour des Données de la FranchiseTVA suite à l'Ouverture de Cinqenun  ---------------
       if params[:typeMaj][:maj].to_s == 'UParFranchiseOuverture'
           begin
@@ -199,7 +190,7 @@ class ParamunsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "1"
               @erreur.origine = "ParamunsController[update]: erreur update Paramun - @paramun.id=" + params[:id].to_s
-              @erreur.numLigne = '196'
+              @erreur.numLigne = '187'
               @erreur.message = e.message
               @erreur.parametreId = params[:id].to_s
               @erreur.save
@@ -223,7 +214,7 @@ class ParamunsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "1"
               @erreur.origine = "ParamunsController[update]: erreur update Paramun - @paramun.id=" + params[:id].to_s
-              @erreur.numLigne = '220'
+              @erreur.numLigne = '211'
               @erreur.message = e.message
               @erreur.parametreId = params[:id].to_s
               @erreur.save
@@ -247,7 +238,7 @@ class ParamunsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "1"
               @erreur.origine = "ParamunsController[update]: erreur update Paramun - @paramun.id=" + params[:id].to_s
-              @erreur.numLigne = '244'
+              @erreur.numLigne = '235'
               @erreur.message = e.message
               @erreur.parametreId = params[:id].to_s
               @erreur.save
@@ -271,7 +262,7 @@ class ParamunsController < ApplicationController
               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
               @erreur.appli = "1"
               @erreur.origine = "ParamunsController[update]: erreur update Paramun - @paramun.id=" + params[:id].to_s
-              @erreur.numLigne = '268'
+              @erreur.numLigne = '259'
               @erreur.message = e.message
               @erreur.parametreId = params[:id].to_s
               @erreur.save
@@ -410,7 +401,7 @@ class ParamunsController < ApplicationController
                                       @erreurdateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                                       @erreur.appli = '1'
                                       @erreur.origine = "ParamunsController[destroy]: erreur destroy Tache - tache.id =" + tache.id.to_s
-                                      @erreur.numLigne = '407'
+                                      @erreur.numLigne = '398'
                                       @erreur.message = e.message
                                       @erreur.parametreId = params[:id].to_s
                                       @erreur.save
@@ -430,7 +421,7 @@ class ParamunsController < ApplicationController
                                       @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                                       @erreur.appli = '1'
                                       @erreur.origine = "ParamunsController[destroy]: erreur destroy Facture - facture.id =" + facture.id.to_s
-                                      @erreur.numLigne = '427'
+                                      @erreur.numLigne = '418'
                                       @erreur.message = e.message
                                       @erreur.parametreId = params[:id].to_s
                                       @erreur.save
@@ -448,7 +439,7 @@ class ParamunsController < ApplicationController
                               @erreur.dateHeure = @current_time.strftime "%d/%m/%Y %H:%M:%S"
                               @erreur.appli = '1'
                               @erreur.origine = "ParamunsController[destroy]: erreur destroy Projet - projet.id =" + projet.id.to_s
-                              @erreur.numLigne = '445'
+                              @erreur.numLigne = '436'
                               @erreur.message = e.message
                               @erreur.parametreId = params[:id].to_s
                               @erreur.save
