@@ -54,7 +54,7 @@ class DepensesController < ApplicationController
       end
       if @CreateOK == 0  ## Maj de @paramun.nbreDepense et de @paramun.parDepense ------
           @parStatutRegimeArray = @paramun.parStatutRegime.split('|')         
-          if @parStatutRegimeArray[3].to_s = 'neant'
+          if @parStatutRegimeArray[3].to_s == 'neant'
               parRegimeTva = @parStatutRegimeArray[1].to_s
           else
              parRegimeTva = @parStatutRegimeArray[5].to_s
@@ -192,7 +192,7 @@ class DepensesController < ApplicationController
 
       if @updateOK == 0  ## Maj parDepense -----------
           @parStatutRegimeArray = @paramun.parStatutRegime.split('|')         
-          if @parStatutRegimeArray[3].to_s = 'neant'
+          if @parStatutRegimeArray[3].to_s == 'neant'
               parRegimeTva = @parStatutRegimeArray[1].to_s
           else
              parRegimeTva = @parStatutRegimeArray[5].to_s
