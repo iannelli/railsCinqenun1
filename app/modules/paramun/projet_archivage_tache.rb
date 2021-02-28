@@ -2,6 +2,11 @@ module ProjetArchivageTache
     # Archivage des Taches en Tachesold
     def projet_archivage_tache_trait(projet)
         projet.taches.each do |tache|
+            # Vérification présence de TacheOld
+            @tacheold1 = Tacheold.where("id = ?", tache.id).first
+            unless @tacheold1.nil? # Suppression de la Tacheold
+                @tacheold1.destroy
+            end
             @tacheold = Tacheold.new
             @tacheold.id = tache.id
             @tacheold.famtacNum = tache.famtacNum

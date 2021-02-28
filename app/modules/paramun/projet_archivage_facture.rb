@@ -2,6 +2,11 @@ module ProjetArchivageFacture
     # Archivage des Factures en Facturesold
     def projet_archivage_facture_trait(projet)
         projet.factures.each do |facture|
+            # Vérification présence de Factureold
+            @factureold1 = Factureold.where("id = ?", facture.id).first
+            unless @factureold1.nil? # Suppression de la Factureold
+                @factureold1.destroy
+            end
             @factureold = Factureold.new
             @factureold.id = facture.id
             @factureold.typeImpr = facture.typeImpr
