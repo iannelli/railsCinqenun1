@@ -10,7 +10,7 @@ gem 'rails', '~> 5.2.4'
 gem 'mysql2', '~> 0.5.2'
 
 # Use Puma as the app server
-gem 'puma', '~> 4.3.5'
+gem 'puma', '~> 4.3.8'
 # Use SCSS for stylesheets
 #gem 'sass-rails', '~> 5.0'
 gem 'sassc', '~> 1.1'
@@ -37,7 +37,7 @@ gem 'activemodel-serializers-xml'
 # gem 'capistrano-rails', group: :development
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.1.0', require: false
+gem 'bootsnap', '>= 1.1.7', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

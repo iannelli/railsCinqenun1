@@ -106,7 +106,7 @@ GEM
     nokogiri (1.11.1-x64-mingw32)
       mini_portile2 (~> 2.4.0)
     public_suffix (4.0.6)
-    puma (4.3.6)
+    puma (4.3.8)
       nio4r (~> 2.0)
     rack (2.2.3)
     rack-test (1.1.0)
@@ -186,7 +186,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemodel-serializers-xml
-  bootsnap (>= 1.1.0)
+  bootsnap (>= 1.1.7)
   byebug
   capybara (>= 2.15)
   chromedriver-helper
@@ -194,7 +194,7 @@ DEPENDENCIES
   duktape
   jbuilder (~> 2.5)
   mysql2 (~> 0.5.2)
-  puma (~> 4.3.5)
+  puma (~> 4.3.8)
   rails (~> 5.2.4)
   sassc (~> 1.1)
   selenium-webdriver
