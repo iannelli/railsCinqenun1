@@ -1,19 +1,16 @@
 module ProjetArchivageCondition
-    ## Examen des Conditions d'Archivage du Projet ------
+    ## Examen des Conditions d'Archivage du Projet en 'Projet Clos' ------
     def projet_archivage_condition_trait(projet)
         if projet.proReportFacture.to_i == 0 && projet.proReportDebours.to_i == 0
+            @archivageOK = 1
             # Examen de la Situation des Factures du Projet ----
             projet.factures.each do |facture|
                 if (facture.typeImpr.to_s == '40' || facture.typeImpr.to_s == '41' ||
                     facture.typeImpr.to_s == '50' || facture.typeImpr.to_s == '51')
                     if facture.facStatut.to_s == "3Réglé" || facture.facStatut.to_s == "3Reporté"
-                        if facture.facReA.blank? == true
-                            @archivageOK = 1
-                            break 
-                        else
-                           @archivageOK = 1
-                           @arrayReA = facture.facReA.split('')
-                           if @arrayReA[3].to_s == "en attente"
+                        if facture.facReA.to_s.length != 0
+                           @arrayReA = facture.facReA.split('|')
+                           if @arrayReA[4].to_s == "en attente"
                               @archivageOK = 0
                               break
                            end 
