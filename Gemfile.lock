@@ -199,7 +199,7 @@ DEPENDENCIES
   duktape
   jbuilder (~> 2.5)
   mysql2 (~> 0.5.3)
-  puma (>= 4.3.12)
+  puma (>= 3.11)
   rails (~> 5.2.8.1)
   sassc (~> 1.1)
   selenium-webdriver
